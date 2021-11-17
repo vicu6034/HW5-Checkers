@@ -7,8 +7,12 @@ class TripleKingPiece : public PiecePrototype
 {
 
 public:
-    TripleKingPiece(std::string prototype_name, Position pos)
-        : PiecePrototype(prototype_name, pos) {}
+    TripleKingPiece(std::string prototype_name)
+        : PiecePrototype(prototype_name) {}
+
+    PiecePrototype *Clone() const override {
+        return new TripleKingPiece(*this);
+    }
 
 };
 

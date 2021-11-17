@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     */
 
     gameboard_ = new GameBoard();
+
 }
 
 MainWindow::~MainWindow()
