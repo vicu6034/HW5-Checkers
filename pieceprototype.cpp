@@ -20,15 +20,3 @@ QPainterPath PiecePrototype::shape() const {
     path.addEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
     return path;
 }
-
-// Set Piece visibility traits (color, size)
-void PiecePrototype::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
-    Q_UNUSED(widget);
-    Q_UNUSED(item);
-
-    QBrush b = painter->brush();
-    painter->setBrush(QBrush(QColor(255,0,0)));
-
-    painter->drawEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
-    painter->setBrush(b);
-}

@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsItem>
-
+#include <QDebug>
 // forward declaration of Player to solve cyclic dependency
 // if we need *owner
 // class Player;
@@ -19,19 +19,18 @@ class PiecePrototype : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
-private:
-    static const int RADIUS = 20;
-
 protected:
+    static const int RADIUS = 20;
     std::string prototype_name_;
     Position pos_;
+    bool is_red_;
     // Player* owner_;
 
 public:
     // constructors
-    PiecePrototype() {};
-    PiecePrototype(std::string prototype_name)
-        : prototype_name_(prototype_name) {}
+    PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red) {};
+    //PiecePrototype(std::string prototype_name)
+    //    : prototype_name_(prototype_name) {}
 
     // destructor
     virtual ~PiecePrototype() {}
@@ -39,6 +38,8 @@ public:
     // copy constructor
     PiecePrototype(const PiecePrototype& p);
 
+    // test method
+    virtual void Test() {};
     // clone method
     virtual PiecePrototype *Clone() const = 0;
 
@@ -56,7 +57,11 @@ public:
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override {
+        Q_UNUSED(painter);
+        Q_UNUSED(item);
+        Q_UNUSED(widget);
+    }
 
 };
 

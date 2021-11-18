@@ -11,29 +11,30 @@
 #include <kingpiece.h>
 #include <triplekingpiece.h>
 
-class PiecePrototypeFactory
+class PieceFactory
 {
 
-private:
-    std::unordered_map<PieceType, PiecePrototype*, std::hash<int>> prototypes_;
-
 public:
-    PiecePrototypeFactory() {
-        prototypes_[PieceType::RegularPiece] = new RegularPiece("RegularPiece");
-        prototypes_[PieceType::KingPiece] = new KingPiece("KingPiece");
-        prototypes_[PieceType::RegularPiece] = new TripleKingPiece("TripleKingPiece");
-    }
+    virtual ~PieceFactory() {}
 
-    ~PiecePrototypeFactory() {
-        delete prototypes_[PieceType::RegularPiece];
-        delete prototypes_[PieceType::KingPiece];
-        delete prototypes_[PieceType::TripleKingPiece];
-    }
-
-    PiecePrototype *CreatePrototype(PieceType type) {
-        return prototypes_[type]->Clone();
-    }
+    virtual PiecePrototype* CreatePrototype(Position pos, bool is_red) const = 0;
 
 };
 
+class RegularPieceFactory : PieceFactory {
+public:
+    PiecePrototype* CreatePrototype(Position pos, bool is_red) const override { return new RegularPiece(pos,is_red); }
+};
+
+class KingPieceFactory : PieceFactory {
+public:
+    PiecePrototype* CreatePrototype(Position pos, bool is_red) const override { return new KingPiece(pos,is_red); }
+};
+
+class TripleKingPieceFactory : PieceFactory {
+public:
+    PiecePrototype* CreatePrototype(Position pos, bool is_red) const override { return new TripleKingPiece(pos,is_red); }
+};
+
 #endif // PIECEPROTOTYPEFACTORY_H
+

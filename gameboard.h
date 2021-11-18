@@ -9,14 +9,20 @@
 class GameBoard
 {
 
+private:
+    RegularPieceFactory* r_factory_;
+    KingPieceFactory* k_factory_;
+    TripleKingPieceFactory* t_factory_;
+    std::vector<Tile*> tiles_;
+    std::vector<Player*> players_;
+    std::vector<PowerUp*> powerups_;
+
 public:
     GameBoard();
 
-private:
-    PiecePrototypeFactory* factory_;
-    std::vector<Tile*> board_;
-    std::vector<Player*> players_;
-    std::vector<PowerUp*> powerups_;
+    // getters for GraphicsItems so we can add them to scene
+    std::vector<Tile*> getBoard() { return tiles_; }
+    std::vector<PiecePrototype*> getPieces();
 
 };
 
