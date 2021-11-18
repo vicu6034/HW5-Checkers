@@ -9,6 +9,7 @@ class PieceFactory
 {
 
 public:
+    // Factory creates pieces with Type, Pos, color (bool)
     PiecePrototype* CreatePiece(PieceType type, Position pos, bool is_red) {
         switch (type){
             case PieceType::RegularPiece:
@@ -17,7 +18,6 @@ public:
                 return new KingPiece(pos,is_red);
             case PieceType::TripleKingPiece:
                 return new TripleKingPiece(pos,is_red);
-
         }
     }
 

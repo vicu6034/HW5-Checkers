@@ -20,22 +20,22 @@ class PiecePrototype : public QGraphicsObject //public QObject, public QGraphics
     Q_OBJECT
 
 protected:
-    static const int RADIUS = 20;
-    std::string prototype_name_;
+    // each Piece has a Pos and color (bool)
     Position pos_;
     bool is_red_;
     // Player* owner_;
 
+    // all Pieces have same size on screen
+    static const int RADIUS = 20;
+
 public:
     // constructors
     PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red) {};
-    //PiecePrototype(std::string prototype_name)
-    //    : prototype_name_(prototype_name) {}
 
     // destructor
     virtual ~PiecePrototype() {}
 
-    // copy constructor
+    // reimplement copy constructor becuase QObject deletes it
     PiecePrototype(const PiecePrototype& p);
 
     // test method
@@ -43,15 +43,11 @@ public:
     // clone method
     virtual PiecePrototype *Clone() const = 0;
 
-    // get / set position
-    // if we passed Pos in the constructor, it would have to be a dummy Pos, so theres no reason to
-    // due to constructor being called through the Factory on its initialization we cant get Pos until
-    // we need to make the Piece
+    // get / set
     Position get_position() const { return pos_; }
+    bool get_is_red() const { return is_red_; }
+
     void set_position(Position pos) { pos_ = pos; }
-
-    std::string get_name() const { return prototype_name_; }
-
     //void set_owner(Player* owner) { owner_ = owner; }
 
     // necessary Qt bounding and drawing methods

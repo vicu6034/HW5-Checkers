@@ -19,6 +19,7 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
+    // all methods will need to be callable from GameBoard
     GameBoard* gameboard_;
 
 public:

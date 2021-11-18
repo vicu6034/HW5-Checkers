@@ -2,11 +2,11 @@
 
 #include <QtWidgets>
 
-// reimplement copy constructor becuase QObject deletes it
+// copy old vals to new Piece
 PiecePrototype::PiecePrototype(const PiecePrototype& old_p)
 {
-    prototype_name_ = old_p.get_name();
     pos_ = old_p.get_position();
+    is_red_ = old_p.get_is_red();
 }
 
 // Set piece position

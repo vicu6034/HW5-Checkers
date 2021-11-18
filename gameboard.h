@@ -10,12 +10,15 @@ class GameBoard
 {
 
 private:
+    // game has a factory
     PieceFactory* factory_;
+    // game has tiles, pieces, and powerups
     std::vector<Tile*> tiles_;
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
 
 public:
+    // only need default constructor
     GameBoard();
 
     // getters for GraphicsItems so we can add them to scene
