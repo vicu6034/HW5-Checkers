@@ -10,9 +10,7 @@ class GameBoard
 {
 
 private:
-    RegularPieceFactory* r_factory_;
-    KingPieceFactory* k_factory_;
-    TripleKingPieceFactory* t_factory_;
+    PieceFactory* factory_;
     std::vector<Tile*> tiles_;
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
