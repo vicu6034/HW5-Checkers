@@ -1,23 +1,22 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <QObject>
-#include <QGraphicsItem>
-
 #include <pieceprototype.h>
 
-class Tile : public QObject, public QGraphicsItem
+class Tile : public QGraphicsObject //public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
 private:
+    // each tile has a position and a color
     Position pos_;
     bool is_red_;
 
+    // all tiles have the same size on screen
     static const int WIDTH = 30;
 
 public:
-    Tile() {};
+    // paramterized constructor
     Tile(Position pos, bool is_red) : pos_(pos), is_red_(is_red) {}
 
     // necessary Qt bounding and drawing methods

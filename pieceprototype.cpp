@@ -2,11 +2,11 @@
 
 #include <QtWidgets>
 
-// reimplement copy constructor becuase QObject deletes it
+// copy old vals to new Piece
 PiecePrototype::PiecePrototype(const PiecePrototype& old_p)
 {
-    prototype_name_ = old_p.get_name();
     pos_ = old_p.get_position();
+    is_red_ = old_p.get_is_red();
 }
 
 // Set piece position
@@ -19,16 +19,4 @@ QPainterPath PiecePrototype::shape() const {
     QPainterPath path;
     path.addEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
     return path;
-}
-
-// Set Piece visibility traits (color, size)
-void PiecePrototype::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
-    Q_UNUSED(widget);
-    Q_UNUSED(item);
-
-    QBrush b = painter->brush();
-    painter->setBrush(QBrush(QColor(255,0,0)));
-
-    painter->drawEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
-    painter->setBrush(b);
 }

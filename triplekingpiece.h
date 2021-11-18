@@ -7,12 +7,19 @@ class TripleKingPiece : public PiecePrototype
 {
 
 public:
-    TripleKingPiece(std::string prototype_name)
-        : PiecePrototype(prototype_name) {}
+    // constructor inherits from PiecePrototype
+    TripleKingPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) {}
 
+    // clone method (implicityly called by factory)
     PiecePrototype *Clone() const override {
-        return new TripleKingPiece(*this);
+       return new TripleKingPiece(*this);
     }
+
+    // Test function to prove difference between Pieces
+    void Test() override { qDebug() << "TripleKing"; }
+
+    // override paint so Pieces have their own appearance
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 
 };
 

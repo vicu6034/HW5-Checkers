@@ -14,9 +14,6 @@ MainWindow::MainWindow(QWidget *parent)
     // we need to set up the ui before we draw on our scene
     ui->setupUi(this);
 
-    // must create gameGraphicsView in UI
-
-
     // the QGraphicsView is the UI element that contains the
     // scene that we will actually get to draw on.
     QGraphicsView * view = ui->gameGraphicsView;
@@ -29,8 +26,22 @@ MainWindow::MainWindow(QWidget *parent)
     // make the scene the same size as the view containing it
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
 
-
     gameboard_ = new GameBoard();
+
+    // add all tiles to the scene
+    for (Tile* tile : gameboard_->getTiles() ) {
+        scene->addItem(tile);
+    }
+
+    // add all pieces to the scene
+    for (PiecePrototype* piece : gameboard_->getPieces() ) {
+        scene->addItem(piece);
+    }
+
+    // add all powerups to the scene
+    for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+        scene->addItem(powerup);
+    }
 
 }
 
