@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // must create gameGraphicsView in UI
 
-    /*
+
     // the QGraphicsView is the UI element that contains the
     // scene that we will actually get to draw on.
     QGraphicsView * view = ui->gameGraphicsView;
@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     view->setScene(scene);
     // make the scene the same size as the view containing it
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
-    */
+
 
     gameboard_ = new GameBoard();
 

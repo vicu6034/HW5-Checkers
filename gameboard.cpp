@@ -2,7 +2,7 @@
 
 GameBoard::GameBoard()
 {
-    factory_ = new PiecePrototypeFactory();
+    //factory_ = new PiecePrototypeFactory();
     // use this to create instances of prototypes
     // here we will set up the starting state of the game
 
