@@ -7,26 +7,18 @@ GameBoard::GameBoard()
     // TODO: positions need to be converted to grid (1,1 through 10,10)
     //       they currently are still just the pixel values
     // Then we can instantiate all the tiles here
+    // Tile(Pos, is_red)
     tiles_.push_back(new Tile(Position{1,1}, true));
     tiles_.push_back(new Tile(Position{1,30}, false));
 
-    // old factory usage
-    // We're gonna want to go back to something like this
-    // I just made it more simple for now so it works
-    /*
-    PiecePrototype* pt = factory_->CreatePrototype(PieceType::RegularPiece);
-    pieces.push_back(pt);
-    */
+    // initialize factory (this is called implicitly so unnecessary)
+    // factory_ = new PieceFactory();
 
-    // new factory setup
-    r_factory_ = new RegularPieceFactory();
-    k_factory_ = new KingPieceFactory();
-    t_factory_ = new TripleKingPieceFactory();
-
-    // creating pieces with new factories
-    PiecePrototype* r = r_factory_->CreatePrototype(Position{40,1}, true);
-    PiecePrototype* k = k_factory_->CreatePrototype(Position{80,1}, false);
-    PiecePrototype* t = t_factory_->CreatePrototype(Position{120,1}, true);
+    // make Pieces like this
+    // CreatePiece(Type, Pos, is_red)
+    PiecePrototype* r = factory_->CreatePiece(PieceType::RegularPiece, Position{40,1}, true);
+    PiecePrototype* k = factory_->CreatePiece(PieceType::KingPiece, Position{80,1}, false);
+    PiecePrototype* t = factory_->CreatePiece(PieceType::TripleKingPiece, Position{120,1}, true);
 
     // proving they're correct types
     r->Test();
@@ -40,9 +32,11 @@ GameBoard::GameBoard()
     pieces.push_back(t);
 
     // add players to the game
+    // Player(is_red, vec<PiecePrototype*>)
     players_.push_back(new Player(false, pieces));
 
     // add powerups to the game
+    // PowerUp(pos, is_addPiece)
     powerups_.push_back(new PowerUp(Position{100,100}, true));
     powerups_.push_back(new PowerUp(Position{150,150}, false));
 
