@@ -19,7 +19,7 @@ void TripleKingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *i
 
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
-    painter->drawText(pos.x+6, pos.y+13, "T");
+    painter->drawText(pos.x+20, pos.y+30, "T");
 
     painter->setBrush(b);
 }
