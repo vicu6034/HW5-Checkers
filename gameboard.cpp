@@ -11,7 +11,7 @@ GameBoard::GameBoard()
     tiles_.push_back(new Tile(Position{0,0}, true));
     tiles_.push_back(new Tile(Position{0,1}, false));
     tiles_.push_back(new Tile(Position{0,2}, true));
-    tiles_.push_back(new Tile(Position{10,10}, true));
+    tiles_.push_back(new Tile(Position{9,9}, true));
 
     // initialize factory (this is called implicitly so unnecessary)
     // factory_ = new PieceFactory();
@@ -39,8 +39,8 @@ GameBoard::GameBoard()
 
     // add powerups to the game
     // PowerUp(pos, is_addPiece)
-    powerups_.push_back(new PowerUp(Position{10,0}, true));
-    powerups_.push_back(new PowerUp(Position{0,10}, false));
+    powerups_.push_back(new PowerUp(Position{9,0}, true));
+    powerups_.push_back(new PowerUp(Position{0,9}, false));
 
 }
 

@@ -26,7 +26,7 @@ protected:
     // Player* owner_;
 
     // all Pieces have same size on screen
-    static const int RADIUS = 20;
+    static const int RADIUS = 50;
 
 public:
     // constructors
@@ -39,7 +39,7 @@ public:
     PiecePrototype(const PiecePrototype& p);
 
     // convert a position from tile #s to screen position
-    Position ConvertPosition() const { return Position{pos_.x*30 + 5, pos_.y*30 + 5}; }
+    Position ConvertPosition() const { return Position{pos_.x*60 + 5, pos_.y*60 + 5}; }
 
     // test method
     virtual void Test() {};

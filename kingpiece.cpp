@@ -19,7 +19,7 @@ void KingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, Q
 
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
-    painter->drawText(pos.x+6, pos.y+13, "K");
+    painter->drawText(pos.x+20, pos.y+30, "K");
 
     painter->setBrush(b);
 }

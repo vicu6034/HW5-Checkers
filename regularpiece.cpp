@@ -22,7 +22,7 @@ void RegularPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item
 
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
-    painter->drawText(pos.x+6, pos.y+13, "R");
+    painter->drawText(pos.x+20, pos.y+30, "R");
 
     painter->setBrush(b);
 }

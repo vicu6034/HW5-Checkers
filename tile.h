@@ -26,7 +26,7 @@ public:
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 
-    static const int WIDTH = 30;
+    static const int WIDTH = 60;
 
 };
 

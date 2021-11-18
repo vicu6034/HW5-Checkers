@@ -15,13 +15,13 @@ private:
     bool is_addPiece_;
 
     // all PowerUps have same size on screen
-    static const int RADIUS = 20;
+    static const int RADIUS = 50;
 
 public:
     // paramterized constructor with initialization list
     PowerUp(Position pos, bool is_addPiece) : pos_(pos), is_addPiece_(is_addPiece) {}
     // convert pos_ to oncreen position
-    Position ConvertPosition() const { return Position{pos_.x*30 + 5, pos_.y*30 + 5}; }
+    Position ConvertPosition() const { return Position{pos_.x*60 + 5, pos_.y*60 + 5}; }
 
     // get what kind of PowerUp this is
     bool is_add_piece() { return is_addPiece_; }
