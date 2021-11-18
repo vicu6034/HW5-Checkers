@@ -33,7 +33,7 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
 
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
-    painter->drawText(pos.x+6, pos.y+13, "P");
+    painter->drawText(pos.x+20, pos.y+30, "P");
 
     painter->setBrush(b);
 }
