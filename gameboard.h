@@ -21,7 +21,8 @@ public:
     GameBoard();
 
     // getters for GraphicsItems so we can add them to scene
-    std::vector<Tile*> getBoard() { return tiles_; }
+    std::vector<Tile*> getTiles() { return tiles_; }
+    std::vector<PowerUp*> getPowerUps() { return powerups_; }
     std::vector<PiecePrototype*> getPieces();
 
 };

@@ -1,9 +1,9 @@
 #ifndef PIECEPROTOTYPE_H
 #define PIECEPROTOTYPE_H
 
-#include <QObject>
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QDebug>
+
 // forward declaration of Player to solve cyclic dependency
 // if we need *owner
 // class Player;
@@ -15,7 +15,7 @@ enum class PieceType { RegularPiece = 0, KingPiece, TripleKingPiece };
 struct Position { int x, y; };
 
 // PiecePrototype inherits both QObject & QGraphicsItem
-class PiecePrototype : public QObject, public QGraphicsItem
+class PiecePrototype : public QGraphicsObject //public QObject, public QGraphicsItem
 {
     Q_OBJECT
 

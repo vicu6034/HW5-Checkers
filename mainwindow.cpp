@@ -29,13 +29,18 @@ MainWindow::MainWindow(QWidget *parent)
     gameboard_ = new GameBoard();
 
     // add all tiles to the scene
-    for (Tile* tile : gameboard_->getBoard() ) {
+    for (Tile* tile : gameboard_->getTiles() ) {
         scene->addItem(tile);
     }
 
     // add all pieces to the scene
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
         scene->addItem(piece);
+    }
+
+    // add all powerups to the scene
+    for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+        scene->addItem(powerup);
     }
 
 }

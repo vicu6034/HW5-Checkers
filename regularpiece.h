@@ -2,7 +2,6 @@
 #define REGULARPIECE_H
 
 #include <pieceprototype.h>
-#include <QDebug>
 
 class RegularPiece : public PiecePrototype
 {

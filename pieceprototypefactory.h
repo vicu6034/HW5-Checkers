@@ -1,12 +1,6 @@
 #ifndef PIECEPROTOTYPEFACTORY_H
 #define PIECEPROTOTYPEFACTORY_H
 
-#include <iostream>
-#include <iomanip>
-#include <functional>
-#include <unordered_set>
-#include <unordered_map>
-
 #include <regularpiece.h>
 #include <kingpiece.h>
 #include <triplekingpiece.h>

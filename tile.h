@@ -1,12 +1,9 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <QObject>
-#include <QGraphicsItem>
-
 #include <pieceprototype.h>
 
-class Tile : public QObject, public QGraphicsItem
+class Tile : public QGraphicsObject //public QObject, public QGraphicsItem
 {
     Q_OBJECT
 

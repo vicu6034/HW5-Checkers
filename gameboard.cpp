@@ -39,7 +39,12 @@ GameBoard::GameBoard()
     pieces.push_back(k);
     pieces.push_back(t);
 
+    // add players to the game
     players_.push_back(new Player(false, pieces));
+
+    // add powerups to the game
+    powerups_.push_back(new PowerUp(Position{100,100}, true));
+    powerups_.push_back(new PowerUp(Position{150,150}, false));
 
 }
 
