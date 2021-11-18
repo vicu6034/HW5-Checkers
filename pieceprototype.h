@@ -38,6 +38,9 @@ public:
     // reimplement copy constructor becuase QObject deletes it
     PiecePrototype(const PiecePrototype& p);
 
+    // convert a position from tile #s to screen position
+    Position ConvertPosition() const { return Position{pos_.x*30 + 5, pos_.y*30 + 5}; }
+
     // test method
     virtual void Test() {};
     // clone method

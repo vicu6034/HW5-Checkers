@@ -8,17 +8,19 @@ GameBoard::GameBoard()
     //       they currently are still just the pixel values
     // Then we can instantiate all the tiles here
     // Tile(Pos, is_red)
-    tiles_.push_back(new Tile(Position{1,1}, true));
-    tiles_.push_back(new Tile(Position{1,30}, false));
+    tiles_.push_back(new Tile(Position{0,0}, true));
+    tiles_.push_back(new Tile(Position{0,1}, false));
+    tiles_.push_back(new Tile(Position{0,2}, true));
+    tiles_.push_back(new Tile(Position{10,10}, true));
 
     // initialize factory (this is called implicitly so unnecessary)
     // factory_ = new PieceFactory();
 
     // make Pieces like this
     // CreatePiece(Type, Pos, is_red)
-    PiecePrototype* r = factory_->CreatePiece(PieceType::RegularPiece, Position{40,1}, true);
-    PiecePrototype* k = factory_->CreatePiece(PieceType::KingPiece, Position{80,1}, false);
-    PiecePrototype* t = factory_->CreatePiece(PieceType::TripleKingPiece, Position{120,1}, true);
+    PiecePrototype* r = factory_->CreatePiece(PieceType::RegularPiece, Position{0,0}, true);
+    PiecePrototype* k = factory_->CreatePiece(PieceType::KingPiece, Position{0,1}, false);
+    PiecePrototype* t = factory_->CreatePiece(PieceType::TripleKingPiece, Position{10,10}, true);
 
     // proving they're correct types
     r->Test();
@@ -37,8 +39,8 @@ GameBoard::GameBoard()
 
     // add powerups to the game
     // PowerUp(pos, is_addPiece)
-    powerups_.push_back(new PowerUp(Position{100,100}, true));
-    powerups_.push_back(new PowerUp(Position{150,150}, false));
+    powerups_.push_back(new PowerUp(Position{10,0}, true));
+    powerups_.push_back(new PowerUp(Position{0,10}, false));
 
 }
 

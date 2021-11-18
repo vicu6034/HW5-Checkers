@@ -11,12 +11,14 @@ PiecePrototype::PiecePrototype(const PiecePrototype& old_p)
 
 // Set piece position
 QRectF PiecePrototype::boundingRect() const {
-    return QRectF(pos_.x, pos_.y, RADIUS, RADIUS);
+    Position pos = ConvertPosition();
+    return QRectF(pos.x, pos.y, RADIUS, RADIUS);
 }
 
 // Set Piece shape
 QPainterPath PiecePrototype::shape() const {
     QPainterPath path;
-    path.addEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
+    Position pos = ConvertPosition();
+    path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
     return path;
 }

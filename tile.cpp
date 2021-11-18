@@ -4,13 +4,15 @@
 
 // Set Tile position
 QRectF Tile::boundingRect() const {
-    return QRectF(pos_.x, pos_.y, WIDTH, WIDTH);
+    Position pos = ConvertPosition();
+    return QRectF(pos.x, pos.y, WIDTH, WIDTH);
 }
 
 // Set Tile shape
 QPainterPath Tile::shape() const {
     QPainterPath path;
-    path.addRect(pos_.x, pos_.y, WIDTH, WIDTH);
+    Position pos = ConvertPosition();
+    path.addRect(pos.x, pos.y, WIDTH, WIDTH);
     return path;
 }
 
@@ -27,6 +29,8 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
         painter->setBrush(QBrush(QColor(0,0,0)));
     }
 
-    painter->drawRect(pos_.x, pos_.y, WIDTH, WIDTH);
+    Position pos = ConvertPosition();
+
+    painter->drawRect(pos.x, pos.y, WIDTH, WIDTH);
     painter->setBrush(b);
 }
