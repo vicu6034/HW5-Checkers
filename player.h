@@ -11,16 +11,19 @@ private:
     // otherwise use Player 1, Player 2 until then
     //std::string name_;
 
-    int player_num_;
+    // one Player is_red_, the other is not (to represent who is who)
+    bool is_red_;
+    // each player has a vec of their Pieces
     std::vector<PiecePrototype*> pieces_;
 
 public:
-    // should never get player num -1
-    Player() { player_num_ = -1; }
-    Player(int player_num, std::vector<PiecePrototype*> pieces)
-        : player_num_(player_num), pieces_(pieces) {}
+    // paramterized constructor with initialization list
+    Player(bool is_red, std::vector<PiecePrototype*> pieces)
+        : is_red_(is_red), pieces_(pieces) {}
 
-    int get_player_num() { return player_num_; }
+    // getters
+    bool get_is_red() { return is_red_; }
+    std::vector<PiecePrototype*> get_pieces() { return pieces_; }
 
 };
 

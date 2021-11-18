@@ -15,14 +15,17 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
+    // all methods will need to be callable from GameBoard
     GameBoard* gameboard_;
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
+
+
 };
 #endif // MAINWINDOW_H

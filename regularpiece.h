@@ -7,12 +7,19 @@ class RegularPiece : public PiecePrototype
 {
 
 public:
-    RegularPiece(std::string prototype_name)
-        : PiecePrototype(prototype_name) {}
+    // constructor inherits from PiecePrototype
+    RegularPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) {}
 
+    // clone method (implicityly called by factory)
     PiecePrototype *Clone() const override {
-        return new RegularPiece(*this);
+       return new RegularPiece(*this);
     }
+
+    // Test function to prove difference between Pieces
+    void Test() override { qDebug() << "Regular"; }
+
+    // override paint so Pieces have their own appearance
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 
 };
 

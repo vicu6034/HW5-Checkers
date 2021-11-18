@@ -7,12 +7,19 @@ class KingPiece : public PiecePrototype
 {
 
 public:
-    KingPiece(std::string prototype_name)
-        : PiecePrototype(prototype_name) {}
+    // constructor inherits from PiecePrototype
+    KingPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) {}
 
+    // clone method (implicityly called by factory)
     PiecePrototype *Clone() const override {
         return new KingPiece(*this);
     }
+
+     // Test function to prove difference between Pieces
+     void Test() override { qDebug() << "King" << pos_.x; }
+
+     // override paint so Kings have their own appearance
+     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 
 };
 
