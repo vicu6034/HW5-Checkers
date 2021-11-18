@@ -13,16 +13,20 @@ private:
     bool is_red_;
 
     // all tiles have the same size on screen
-    static const int WIDTH = 30;
+
 
 public:
     // paramterized constructor
     Tile(Position pos, bool is_red) : pos_(pos), is_red_(is_red) {}
 
+    Position ConvertPosition() const { return Position{pos_.x*WIDTH, pos_.y*WIDTH}; }
+
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
+
+    static const int WIDTH = 30;
 
 };
 

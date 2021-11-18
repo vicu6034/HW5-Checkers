@@ -18,9 +18,11 @@ void RegularPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item
         painter->setPen(Qt::red);
     }
 
-    painter->drawEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
+    Position pos = ConvertPosition();
 
-    painter->drawText(pos_.x+6, pos_.y+13, "R");
+    painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
+
+    painter->drawText(pos.x+6, pos.y+13, "R");
 
     painter->setBrush(b);
 }

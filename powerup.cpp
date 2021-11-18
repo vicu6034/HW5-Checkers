@@ -4,13 +4,15 @@
 
 // Set piece position
 QRectF PowerUp::boundingRect() const {
-    return QRectF(pos_.x, pos_.y, RADIUS, RADIUS);
+    Position pos = ConvertPosition();
+    return QRectF(pos.x, pos.y, RADIUS, RADIUS);
 }
 
 // Set Piece shape
 QPainterPath PowerUp::shape() const {
     QPainterPath path;
-    path.addEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
+    Position pos = ConvertPosition();
+    path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
     return path;
 }
 
@@ -27,9 +29,11 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
         painter->setBrush(QBrush(QColor(0,0,255)));
     }
 
-    painter->drawEllipse(pos_.x, pos_.y, RADIUS, RADIUS);
+    Position pos = ConvertPosition();
 
-    painter->drawText(pos_.x+6, pos_.y+13, "P");
+    painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
+
+    painter->drawText(pos.x+6, pos.y+13, "P");
 
     painter->setBrush(b);
 }
