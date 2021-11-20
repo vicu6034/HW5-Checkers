@@ -41,6 +41,7 @@ public:
 signals:
     void addPiece(PiecePrototype* p);
     void updateTurnLabel(int turn);
+    void updatePiecesLabel(bool red, int pieces);
 
 public slots:
     void tileSelected(Tile* t);

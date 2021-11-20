@@ -23,6 +23,7 @@ public:
 
     Position ConvertPosition() const { return Position{pos_.x*WIDTH, pos_.y*WIDTH}; }
     Position get_position() const { return pos_; }
+    bool get_is_red() const { return is_red_; }
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;
     QPainterPath shape() const override;

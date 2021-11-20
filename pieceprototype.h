@@ -14,12 +14,10 @@ enum class PieceType { RegularPiece = 0, KingPiece, TripleKingPiece };
 // standard Position struct
 struct Position {
     int x, y;
+
     friend bool operator==(Position p1, Position p2) {
-        if ((p1.x == p2.x) && (p1.y == p2.y)) {
-            return true;
-        } else {
-            return false;
-        }
+        if ((p1.x == p2.x) && (p1.y == p2.y)) return true;
+        else return false;
     }
 };
 
