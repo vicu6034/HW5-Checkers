@@ -18,6 +18,8 @@ private:
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
 
+    int current_player_;
+
 public:
     // only need default constructor
     GameBoard();
@@ -31,6 +33,7 @@ public:
 
 signals:
     void addPiece(PiecePrototype* p);
+    void updateTurnLabel(int turn);
 
 public slots:
     void tileSelected(Tile* t);

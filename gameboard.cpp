@@ -2,6 +2,7 @@
 
 GameBoard::GameBoard()
 {
+    current_player_ = 0;
     // here we will set up the starting state of the game
 
     // instantiate initial Tiles and Pieces
@@ -67,17 +68,28 @@ void GameBoard::deselectPiece() {
 void GameBoard::tileSelected(Tile* t) {
     if (getSelectedPiece() != nullptr) {
         PiecePrototype* p = getSelectedPiece();
-        PieceType pt = p->get_type();
-        bool red = p->get_is_red();
-        delete p;
-        PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), red);
-        connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
-        if (red) {
+        bool p_red = p->get_is_red();
+        if (p_red && current_player_ == 0) {
+            PieceType pt = p->get_type();
+            delete p;
+            PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), p_red);
+            connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
             players_[0]->addPiece(newPiece);
-        } else {
+            current_player_ = 1;
+            emit updateTurnLabel(current_player_);
+            emit addPiece(newPiece);
+        } else if (!p_red && current_player_ == 1) {
+            PieceType pt = p->get_type();
+            delete p;
+            PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), p_red);
+            connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
             players_[1]->addPiece(newPiece);
+            current_player_ = 0;
+            emit updateTurnLabel(current_player_);
+            emit addPiece(newPiece);
         }
-        emit addPiece(newPiece);
+
+
     }
 }
 

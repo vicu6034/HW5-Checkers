@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     gameboard_ = new GameBoard();
     connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel(int)));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
@@ -46,12 +47,20 @@ MainWindow::MainWindow(QWidget *parent)
         scene->addItem(powerup);
     }
 
+    ui->turnLabel->setText("TURN: RED");
 }
 
 void MainWindow::addPiece(PiecePrototype* p) {
     scene->addItem(p);
 }
 
+void MainWindow::updateTurnLabel(int turn) {
+    if (turn == 0) {
+        ui->turnLabel->setText("TURN: RED");
+    } else {
+        ui->turnLabel->setText("TURN: BLACK");
+    }
+}
 MainWindow::~MainWindow()
 {
     delete ui;

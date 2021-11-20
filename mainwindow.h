@@ -28,6 +28,8 @@ public:
 
 public slots:
     void addPiece(PiecePrototype* p);
+    void updateTurnLabel(int turn);
 
 };
+
 #endif // MAINWINDOW_H
