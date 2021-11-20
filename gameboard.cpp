@@ -44,3 +44,43 @@ std::vector<PiecePrototype*> GameBoard::getPieces() {
     vec1.insert(vec1.end(), vec2.begin(), vec2.end());
     return vec1;
 }
+
+PiecePrototype* GameBoard::getSelectedPiece() {
+    std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
+    std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
+    vec1.insert(vec1.end(), vec2.begin(), vec2.end());
+    for (PiecePrototype* p : vec1) {
+        if (p->get_selected()) return p;
+    }
+    return nullptr;
+}
+
+void GameBoard::deselectPiece() {
+    std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
+    std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
+    vec1.insert(vec1.end(), vec2.begin(), vec2.end());
+    for (PiecePrototype* p : vec1) {
+        if (p->get_selected()) p->set_selected(false);
+    }
+}
+
+void GameBoard::tileSelected(Tile* t) {
+    if (getSelectedPiece() != nullptr) {
+        PiecePrototype* p = getSelectedPiece();
+        PieceType pt = p->get_type();
+        bool red = p->get_is_red();
+        delete p;
+        PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), red);
+        connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+        if (red) {
+            players_[0]->addPiece(newPiece);
+        } else {
+            players_[1]->addPiece(newPiece);
+        }
+        emit addPiece(newPiece);
+    }
+}
+
+void GameBoard::pieceSelected() {
+    deselectPiece();
+}

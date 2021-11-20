@@ -6,8 +6,9 @@
 #include <pieceprototypefactory.h>
 #include <powerup.h>
 
-class GameBoard
+class GameBoard : public QObject
 {
+    Q_OBJECT
 
 private:
     // game has a factory
@@ -25,7 +26,16 @@ public:
     std::vector<Tile*> getTiles() { return tiles_; }
     std::vector<PowerUp*> getPowerUps() { return powerups_; }
     std::vector<PiecePrototype*> getPieces();
+    void deselectPiece();
+    PiecePrototype* getSelectedPiece();
 
+signals:
+    void addPiece(PiecePrototype* p);
+
+public slots:
+    void tileSelected(Tile* t);
+    void pieceSelected();
 };
+
 
 #endif // GAMEBOARD_H

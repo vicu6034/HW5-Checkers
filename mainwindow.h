@@ -26,6 +26,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void addPiece(PiecePrototype* p);
 
 };
 #endif // MAINWINDOW_H

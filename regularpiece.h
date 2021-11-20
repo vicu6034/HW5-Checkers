@@ -8,7 +8,7 @@ class RegularPiece : public PiecePrototype
 
 public:
     // constructor inherits from PiecePrototype
-    RegularPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) {}
+    RegularPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) { type_ = PieceType::RegularPiece; }
 
     // clone method (implicityly called by factory)
     PiecePrototype *Clone() const override {

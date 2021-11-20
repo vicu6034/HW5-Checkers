@@ -27,14 +27,17 @@ MainWindow::MainWindow(QWidget *parent)
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
 
     gameboard_ = new GameBoard();
+    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
+        connect(tile, SIGNAL(gotSelected(Tile*)), gameboard_, SLOT(tileSelected(Tile*)));
         scene->addItem(tile);
     }
 
     // add all pieces to the scene
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
+        connect(piece, SIGNAL(gotSelected()), gameboard_, SLOT(pieceSelected()));
         scene->addItem(piece);
     }
 
@@ -43,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
         scene->addItem(powerup);
     }
 
+}
+
+void MainWindow::addPiece(PiecePrototype* p) {
+    scene->addItem(p);
 }
 
 MainWindow::~MainWindow()

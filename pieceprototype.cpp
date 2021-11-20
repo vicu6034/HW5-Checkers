@@ -9,6 +9,14 @@ PiecePrototype::PiecePrototype(const PiecePrototype& old_p)
     is_red_ = old_p.get_is_red();
 }
 
+void PiecePrototype::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        if (!is_selected_)
+            emit gotSelected();
+            is_selected_ = true;
+    }
+}
+
 // Set piece position
 QRectF PiecePrototype::boundingRect() const {
     Position pos = ConvertPosition();

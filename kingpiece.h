@@ -8,7 +8,7 @@ class KingPiece : public PiecePrototype
 
 public:
     // constructor inherits from PiecePrototype
-    KingPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) {}
+    KingPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) { type_ = PieceType::KingPiece; }
 
     // clone method (implicityly called by factory)
     PiecePrototype *Clone() const override {

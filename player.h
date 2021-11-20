@@ -25,6 +25,8 @@ public:
     bool get_is_red() { return is_red_; }
     std::vector<PiecePrototype*> get_pieces() { return pieces_; }
 
+    void addPiece(PiecePrototype* p) { pieces_.push_back(p); }
+
 };
 
 #endif // PLAYER_H

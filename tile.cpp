@@ -34,3 +34,9 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
     painter->drawRect(pos.x, pos.y, WIDTH, WIDTH);
     painter->setBrush(b);
 }
+
+void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        emit gotSelected(this);
+    }
+}
