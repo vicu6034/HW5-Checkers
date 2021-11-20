@@ -12,18 +12,32 @@ GameBoard::GameBoard()
     for (int i = 0; i < 10; i++) {
         // create pieces
         if (i % 2 == 0) {
-            black_pieces.push_back(factory_->CreatePiece(PieceType::RegularPiece, Position{i,0}, false));
-            black_pieces.push_back(factory_->CreatePiece(PieceType::RegularPiece, Position{i,2}, false));
-            red_pieces.push_back(factory_->CreatePiece(PieceType::RegularPiece, Position{i,8}, true));
+            PiecePrototype* b1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,0}, false);
+            PiecePrototype* b2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,2}, false);
+            PiecePrototype* r = factory_->CreatePiece(PieceType::RegularPiece, Position{i,8}, true);
+            connect(b1, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(b2, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(r, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            black_pieces.push_back(b1);
+            black_pieces.push_back(b2);
+            red_pieces.push_back(r);
         } else {
-            black_pieces.push_back(factory_->CreatePiece(PieceType::RegularPiece, Position{i,1}, false));
-            red_pieces.push_back(factory_->CreatePiece(PieceType::RegularPiece, Position{i,7}, true));
-            red_pieces.push_back(factory_->CreatePiece(PieceType::RegularPiece, Position{i,9}, true));  
+            PiecePrototype* b = factory_->CreatePiece(PieceType::RegularPiece, Position{i,1}, false);
+            PiecePrototype* r1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,7}, true);
+            PiecePrototype* r2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,9}, true);
+            connect(b, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(r1, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(r2, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            black_pieces.push_back(b);
+            red_pieces.push_back(r1);
+            red_pieces.push_back(r2);
         }
 
         // create tiles
         for (int j = 0; j < 10; j++) {
-            tiles_.push_back(new Tile(Position{i,j}, switcher));
+            Tile* tile = new Tile(Position{i,j}, switcher);
+            connect(tile, SIGNAL(gotSelected(Tile*)), this, SLOT(tileSelected(Tile*)));
+            tiles_.push_back(tile);
             switcher = !switcher;
         }
         switcher = !switcher;
@@ -39,6 +53,40 @@ GameBoard::GameBoard()
     powerups_.push_back(new PowerUp(Position{4,4}, true));
     powerups_.push_back(new PowerUp(Position{5,5}, false));
 
+}
+
+void GameBoard::Reset() {
+    current_player_ = 0;
+    std::vector<PiecePrototype*> red_pieces;
+    std::vector<PiecePrototype*> black_pieces;
+    for (int i = 0; i < 10; i++) {
+        // create pieces
+        if (i % 2 == 0) {
+            PiecePrototype* b1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,0}, false);
+            PiecePrototype* b2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,2}, false);
+            PiecePrototype* r = factory_->CreatePiece(PieceType::RegularPiece, Position{i,8}, true);
+            connect(b1, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(b2, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(r, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            black_pieces.push_back(b1);
+            black_pieces.push_back(b2);
+            red_pieces.push_back(r);
+        } else {
+            // odd black pieces
+            PiecePrototype* b = factory_->CreatePiece(PieceType::RegularPiece, Position{i,1}, false);
+            connect(b, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            black_pieces.push_back(b);
+            // odd red pieces
+            PiecePrototype* r1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,7}, true);
+            PiecePrototype* r2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,9}, true);
+            connect(r1, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(r2, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            red_pieces.push_back(r1);
+            red_pieces.push_back(r2);
+        }
+     }
+     players_[0]->set_pieces(red_pieces);
+     players_[1]->set_pieces(black_pieces);
 }
 
 // method to return all pieces
@@ -68,6 +116,14 @@ PiecePrototype* GameBoard::getPiece(Position pos) {
     }
     // if no pieces selected, return null
     return nullptr;
+}
+
+Player* GameBoard::getOtherPlayer() {
+    if (current_player_ == 0) {
+        return players_[1];
+    } else {
+        return players_[0];
+    }
 }
 
 // method to deselect pieces

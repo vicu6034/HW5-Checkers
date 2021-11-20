@@ -26,11 +26,16 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void Reset();
+
 public slots:
     void addPiece(PiecePrototype* p);
     void updateTurnLabel(int turn);
     void updatePiecesLabel(bool red, int pieces);
 
+private slots:
+    void on_resetButton_clicked();
+    void on_surrenderButton_clicked();
 };
 
 #endif // MAINWINDOW_H

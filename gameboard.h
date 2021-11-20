@@ -23,17 +23,22 @@ private:
 public:
     // only need default constructor
     GameBoard();
-
+    void Reset();
     // getters for GraphicsItems so we can add them to scene
     std::vector<Tile*> getTiles() { return tiles_; }
     std::vector<PowerUp*> getPowerUps() { return powerups_; }
     std::vector<PiecePrototype*> getPieces();
+    Player* getCurrentPlayer() { return players_[current_player_]; }
+    Player* getOtherPlayer();
+    // get piece by Position
     PiecePrototype* getPiece(Position pos);
     // get the selected piece
     PiecePrototype* getSelectedPiece();
+
     // deselect pieces
     void deselectPiece();
 
+    // check if a tile is valid for a piece to move to
     bool checkValidity(Tile* t, PiecePrototype* p);
     // helper method for tileSelected
     void handleSelected(Tile* t, PiecePrototype* p, bool red);

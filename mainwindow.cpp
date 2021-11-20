@@ -33,13 +33,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
-        connect(tile, SIGNAL(gotSelected(Tile*)), gameboard_, SLOT(tileSelected(Tile*)));
         scene->addItem(tile);
     }
 
     // add all pieces to the scene
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
-        connect(piece, SIGNAL(gotSelected()), gameboard_, SLOT(pieceSelected()));
         scene->addItem(piece);
     }
 
@@ -75,8 +73,44 @@ void MainWindow::updatePiecesLabel(bool red, int pieces) {
     }
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
+void MainWindow::Reset() {
+    for (PiecePrototype* piece : gameboard_->getPieces() ) {
+         scene->removeItem(piece);
+    }
+    gameboard_->Reset();
+    for (PiecePrototype* piece : gameboard_->getPieces() ) {
+        scene->addItem(piece);
+    }
+
+    ui->turnLabel->setText("TURN: RED");
+    std::string s= "RED: " + std::to_string(15) + " Pieces Remaining";
+    QString pop_q(const_cast<char*>(s.c_str()));
+    ui->redPiecesLabel->setText(pop_q);
+
+    std::string s2= "BLACK: " + std::to_string(15) + " Pieces Remaining";
+    QString pop2_q(const_cast<char*>(s2.c_str()));
+    ui->blackPiecesLabel->setText(pop2_q);
+}
+
+void MainWindow::on_resetButton_clicked() {
+    Reset();
+}
+
+void MainWindow::on_surrenderButton_clicked() {
+   Player * p = gameboard_->getOtherPlayer();
+   p->set_num_wins(p->get_num_wins()+1);
+   if (p->get_is_red()) {
+       std::string s= "RED: " + std::to_string(p->get_num_wins()) + " Wins";
+       QString pop_q(const_cast<char*>(s.c_str()));
+       ui->redWinsLabel->setText(pop_q);
+   } else {
+       std::string s= "BLACK: " + std::to_string(p->get_num_wins()) + " Wins";
+       QString pop_q(const_cast<char*>(s.c_str()));
+       ui->blackWinsLabel->setText(pop_q);
+   }
+   Reset();
+}
