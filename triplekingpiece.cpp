@@ -2,6 +2,7 @@
 
 #include <QtWidgets>
 
+// override paint to give TripleKing Pieces their own appearance
 void TripleKingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
     Q_UNUSED(widget);
     Q_UNUSED(item);

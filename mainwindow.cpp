@@ -61,6 +61,7 @@ void MainWindow::updateTurnLabel(int turn) {
         ui->turnLabel->setText("TURN: BLACK");
     }
 }
+
 MainWindow::~MainWindow()
 {
     delete ui;

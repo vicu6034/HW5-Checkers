@@ -39,6 +39,7 @@ GameBoard::GameBoard()
 
 }
 
+// method to return all pieces
 std::vector<PiecePrototype*> GameBoard::getPieces() {
     std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
     std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
@@ -46,53 +47,133 @@ std::vector<PiecePrototype*> GameBoard::getPieces() {
     return vec1;
 }
 
+// method to return the selected piece
 PiecePrototype* GameBoard::getSelectedPiece() {
-    std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
-    std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
-    vec1.insert(vec1.end(), vec2.begin(), vec2.end());
-    for (PiecePrototype* p : vec1) {
+    // get all pieces
+    for (PiecePrototype* p : getPieces()) {
+        // if ones selected, return it
         if (p->get_selected()) return p;
     }
+    // if no pieces selected, return null
     return nullptr;
 }
 
+PiecePrototype* GameBoard::getPiece(Position pos) {
+    // get all pieces
+    for (PiecePrototype* p : getPieces()) {
+        // if ones selected, return it
+        if (p->get_position() == pos) return p;
+    }
+    // if no pieces selected, return null
+    return nullptr;
+}
+
+// method to deselect pieces
 void GameBoard::deselectPiece() {
-    std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
-    std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
-    vec1.insert(vec1.end(), vec2.begin(), vec2.end());
-    for (PiecePrototype* p : vec1) {
+    // get all pieces
+    for (PiecePrototype* p : getPieces()) {
+        // set them all to not be selected
         if (p->get_selected()) p->set_selected(false);
     }
 }
 
-void GameBoard::tileSelected(Tile* t) {
-    if (getSelectedPiece() != nullptr) {
-        PiecePrototype* p = getSelectedPiece();
-        bool p_red = p->get_is_red();
-        if (p_red && current_player_ == 0) {
-            PieceType pt = p->get_type();
-            delete p;
-            PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), p_red);
-            connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+bool GameBoard::checkValidity(Tile* t, PiecePrototype*p) {
+   Position p_pos = p->get_position();
+   Position t_pos = t->get_position();
+
+   if (p->get_is_red()) {
+       // reds turn
+       if ((t_pos.x == p_pos.x+1 || t_pos.x == p_pos.x-1) && t_pos.y == p_pos.y-1) {
+           // try to go one space
+           if (getPiece(t_pos) == nullptr) {
+               return true;
+           }
+       } else if (t_pos.x == p_pos.x-2 && t_pos.y == p_pos.y-2) {
+           // try to jump piece to left
+           if (getPiece(Position{p_pos.x-1, p_pos.y-1}) != nullptr) {
+               if (getPiece(t_pos) == nullptr && !getPiece(Position{p_pos.x-1, p_pos.y-1})->get_is_red()) {
+                    // red single jump black
+                    delete getPiece(Position{p_pos.x-1, p_pos.y-1});
+                    return true;
+               }
+           }
+       } else if (t_pos.x == p_pos.x+2 && t_pos.y == p_pos.y-2) {
+           // try to jump piece to right
+           if (getPiece(Position{p_pos.x+1, p_pos.y-1}) != nullptr) {
+               if (getPiece(t_pos) == nullptr && !getPiece(Position{p_pos.x+1, p_pos.y-1})->get_is_red()) {
+                    // red single jump black
+                    delete getPiece(Position{p_pos.x+1, p_pos.y-1});
+                    return true;
+               }
+           }
+       }
+   } else {
+       // blacks turn
+       if ((t_pos.x == p_pos.x+1 || t_pos.x == p_pos.x-1) && t_pos.y == p_pos.y+1) {
+           // try to go one tile
+           if (getPiece(t_pos) == nullptr) {
+               return true;
+           }
+       } else if ((t_pos.x == p_pos.x-2) && (t_pos.y == p_pos.y+2)) {
+           // try to jump a Piece to the left
+           if (getPiece(Position{p_pos.x-1, p_pos.y+1}) != nullptr) {
+               if (getPiece(t_pos) == nullptr && getPiece(Position{p_pos.x-1, p_pos.y+1})->get_is_red()) {
+                    // black single jumps red
+                    delete getPiece(Position{p_pos.x-1, p_pos.y+1});
+                    return true;
+               }
+           }
+       } else if ((t_pos.x == p_pos.x+2) && (t_pos.y == p_pos.y+2)) {
+           // try to jump a Piece to the right
+           // check theres a piece to jump
+           if (getPiece(Position{p_pos.x+1, p_pos.y+1}) != nullptr) {
+               // check the tile we want to go to is open, and that the Piece to jump is correct color
+               if (getPiece(t_pos) == nullptr && getPiece(Position{p_pos.x+1, p_pos.y+1})->get_is_red()) {
+                    // black single jumps red
+                    delete getPiece(Position{p_pos.x+1, p_pos.y+1});
+                    return true;
+               }
+           }
+       }
+   }
+
+   return false;
+}
+
+// helper for when tile is selected
+void GameBoard::handleSelected(Tile* t, PiecePrototype* p, bool red) {
+    if (checkValidity(t, p)) {
+        PieceType pt = p->get_type();
+        delete p;
+        PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), red);
+        connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+        if (red) {
             players_[0]->addPiece(newPiece);
             current_player_ = 1;
-            emit updateTurnLabel(current_player_);
-            emit addPiece(newPiece);
-        } else if (!p_red && current_player_ == 1) {
-            PieceType pt = p->get_type();
-            delete p;
-            PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), p_red);
-            connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+        } else {
             players_[1]->addPiece(newPiece);
             current_player_ = 0;
-            emit updateTurnLabel(current_player_);
-            emit addPiece(newPiece);
         }
-
-
+        emit updateTurnLabel(current_player_);
+        emit addPiece(newPiece);
     }
 }
 
+// slot for when a tile gets selected
+void GameBoard::tileSelected(Tile* t) {
+    // first make sure we have a Piece selected
+    if (getSelectedPiece() != nullptr) {
+        PiecePrototype* p = getSelectedPiece();
+        bool p_red = p->get_is_red();
+        // check that the selected piece is the same color as current player
+        if ((p_red && current_player_ == 0) || (!p_red && current_player_ == 1)) {
+            handleSelected(t, p, p_red);
+        }
+    // do nothing if checks dont pass
+    }
+}
+
+// when a piece is selected, deselect all other pieces
 void GameBoard::pieceSelected() {
     deselectPiece();
 }

@@ -28,8 +28,15 @@ public:
     std::vector<Tile*> getTiles() { return tiles_; }
     std::vector<PowerUp*> getPowerUps() { return powerups_; }
     std::vector<PiecePrototype*> getPieces();
-    void deselectPiece();
+    PiecePrototype* getPiece(Position pos);
+    // get the selected piece
     PiecePrototype* getSelectedPiece();
+    // deselect pieces
+    void deselectPiece();
+
+    bool checkValidity(Tile* t, PiecePrototype* p);
+    // helper method for tileSelected
+    void handleSelected(Tile* t, PiecePrototype* p, bool red);
 
 signals:
     void addPiece(PiecePrototype* p);
