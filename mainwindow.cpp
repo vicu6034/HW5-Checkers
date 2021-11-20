@@ -27,14 +27,19 @@ MainWindow::MainWindow(QWidget *parent)
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
 
     gameboard_ = new GameBoard();
+    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel(int)));
+    connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel(bool,int)));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
+        connect(tile, SIGNAL(gotSelected(Tile*)), gameboard_, SLOT(tileSelected(Tile*)));
         scene->addItem(tile);
     }
 
     // add all pieces to the scene
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
+        connect(piece, SIGNAL(gotSelected()), gameboard_, SLOT(pieceSelected()));
         scene->addItem(piece);
     }
 
@@ -43,6 +48,31 @@ MainWindow::MainWindow(QWidget *parent)
         scene->addItem(powerup);
     }
 
+    ui->turnLabel->setText("TURN: RED");
+}
+
+void MainWindow::addPiece(PiecePrototype* p) {
+    scene->addItem(p);
+}
+
+void MainWindow::updateTurnLabel(int turn) {
+    if (turn == 0) {
+        ui->turnLabel->setText("TURN: RED");
+    } else {
+        ui->turnLabel->setText("TURN: BLACK");
+    }
+}
+
+void MainWindow::updatePiecesLabel(bool red, int pieces) {
+    if (red) {
+        std::string s= "RED: " + std::to_string(pieces) + " Pieces Remaining";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->redPiecesLabel->setText(pop_q);
+    } else {
+        std::string s= "BLACK: " + std::to_string(pieces) + " Pieces Remaining";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->blackPiecesLabel->setText(pop_q);
+    }
 }
 
 MainWindow::~MainWindow()

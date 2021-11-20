@@ -26,6 +26,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void addPiece(PiecePrototype* p);
+    void updateTurnLabel(int turn);
+    void updatePiecesLabel(bool red, int pieces);
 
 };
+
 #endif // MAINWINDOW_H

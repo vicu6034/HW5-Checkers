@@ -2,6 +2,7 @@
 
 #include <QtWidgets>
 
+// override paint to give Kings their own appearance
 void KingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
     Q_UNUSED(widget);
     Q_UNUSED(item);

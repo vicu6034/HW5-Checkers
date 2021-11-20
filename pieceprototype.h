@@ -12,7 +12,14 @@
 enum class PieceType { RegularPiece = 0, KingPiece, TripleKingPiece };
 
 // standard Position struct
-struct Position { int x, y; };
+struct Position {
+    int x, y;
+
+    friend bool operator==(Position p1, Position p2) {
+        if ((p1.x == p2.x) && (p1.y == p2.y)) return true;
+        else return false;
+    }
+};
 
 // PiecePrototype inherits both QObject & QGraphicsItem
 class PiecePrototype : public QGraphicsObject //public QObject, public QGraphicsItem
@@ -23,14 +30,20 @@ protected:
     // each Piece has a Pos and color (bool)
     Position pos_;
     bool is_red_;
+    bool is_selected_;
+    PieceType type_;
     // Player* owner_;
 
     // all Pieces have same size on screen
     static const int RADIUS = 50;
 
+    // handles what happens when the mouse is clicked
+    // revive cell for left click, kill cell for right click
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
 public:
     // constructors
-    PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red) {};
+    PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red), is_selected_(false) {};
 
     // destructor
     virtual ~PiecePrototype() {}
@@ -47,10 +60,13 @@ public:
     virtual PiecePrototype *Clone() const = 0;
 
     // get / set
+    PieceType get_type() const { return type_; }
     Position get_position() const { return pos_; }
     bool get_is_red() const { return is_red_; }
+    bool get_selected() const { return is_selected_; }
 
     void set_position(Position pos) { pos_ = pos; }
+    void set_selected(bool is_selected) { is_selected_ = is_selected; }
     //void set_owner(Player* owner) { owner_ = owner; }
 
     // necessary Qt bounding and drawing methods
@@ -61,6 +77,9 @@ public:
         Q_UNUSED(item);
         Q_UNUSED(widget);
     }
+
+signals:
+    void gotSelected();
 
 };
 

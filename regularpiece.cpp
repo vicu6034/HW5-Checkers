@@ -2,9 +2,7 @@
 
 #include <QtWidgets>
 
-// you can override the pieces paint methods to change their appearance
-
-// Set Piece visibility traits (color, size)
+// override paint to give Regular Pieces their own appearance
 void RegularPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
     Q_UNUSED(widget);
     Q_UNUSED(item);
