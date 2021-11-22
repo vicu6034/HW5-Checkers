@@ -22,7 +22,7 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
     Q_UNUSED(item);
 
     QBrush b = painter->brush();
-
+    // tiles are red or black
     if (is_red_) {
         painter->setBrush(QBrush(QColor(255,0,0)));
     } else {
@@ -35,8 +35,11 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
     painter->setBrush(b);
 }
 
+// emit gotselected signal for left clicks on black tiles
+// slot for gotselected will check if the tile is a valid move for
+// previously selected piece
 void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
+    if (event->button() == Qt::LeftButton && !is_red_) {
         emit gotSelected(this);
     }
 }

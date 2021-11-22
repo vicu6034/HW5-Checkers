@@ -46,7 +46,7 @@ GameBoard::GameBoard()
 
     // create players with their initial pieces
     players_.push_back(new Player(true, red_pieces));
-    players_.push_back(new Player(true, black_pieces));
+    players_.push_back(new Player(false, black_pieces));
 
     // add powerups to the game
     // PowerUp(pos, is_addPiece)
@@ -143,27 +143,25 @@ bool GameBoard::checkValidity(Tile* t, PiecePrototype*p) {
        // reds turn
        if ((t_pos.x == p_pos.x+1 || t_pos.x == p_pos.x-1) && t_pos.y == p_pos.y-1) {
            // try to go one space
-           if (getPiece(t_pos) == nullptr) {
-               return true;
-           }
+           return true;
        } else if (t_pos.x == p_pos.x-2 && t_pos.y == p_pos.y-2) {
            // try to jump piece to left
-           if (getPiece(Position{p_pos.x-1, p_pos.y-1}) != nullptr) {
-               if (getPiece(t_pos) == nullptr && !getPiece(Position{p_pos.x-1, p_pos.y-1})->get_is_red()) {
-                    // red single jump black
-                    players_[1]->removePiece(Position{p_pos.x-1, p_pos.y-1});
-                    emit updatePiecesLabel(false, players_[1]->get_num_pieces());
-                    return true;
+           PiecePrototype * p = getPiece(Position{p_pos.x-1, p_pos.y-1});
+           if (p != nullptr) {
+               if (!p->get_is_red()) {
+                   players_[1]->removePiece(Position{p_pos.x-1, p_pos.y-1});
+                   emit updatePiecesLabel(false, players_[1]->get_num_pieces());
+                   return true;
                }
            }
        } else if (t_pos.x == p_pos.x+2 && t_pos.y == p_pos.y-2) {
            // try to jump piece to right
-           if (getPiece(Position{p_pos.x+1, p_pos.y-1}) != nullptr) {
-               if (getPiece(t_pos) == nullptr && !getPiece(Position{p_pos.x+1, p_pos.y-1})->get_is_red()) {
-                    // red single jump black
-                    players_[1]->removePiece(Position{p_pos.x+1, p_pos.y-1});
-                    emit updatePiecesLabel(false, players_[1]->get_num_pieces());
-                    return true;
+           PiecePrototype * p = getPiece(Position{p_pos.x+1, p_pos.y-1});
+           if (p != nullptr) {
+               if (!p->get_is_red()) {
+                   players_[1]->removePiece(Position{p_pos.x+1, p_pos.y-1});
+                   emit updatePiecesLabel(false, players_[1]->get_num_pieces());
+                   return true;
                }
            }
        }
@@ -171,29 +169,27 @@ bool GameBoard::checkValidity(Tile* t, PiecePrototype*p) {
        // blacks turn
        if ((t_pos.x == p_pos.x+1 || t_pos.x == p_pos.x-1) && t_pos.y == p_pos.y+1) {
            // try to go one tile
-           if (getPiece(t_pos) == nullptr) {
-               return true;
-           }
+           return true;
        } else if ((t_pos.x == p_pos.x-2) && (t_pos.y == p_pos.y+2)) {
            // try to jump a Piece to the left
-           if (getPiece(Position{p_pos.x-1, p_pos.y+1}) != nullptr) {
-               if (getPiece(t_pos) == nullptr && getPiece(Position{p_pos.x-1, p_pos.y+1})->get_is_red()) {
-                    // black single jumps red
-                    players_[0]->removePiece(Position{p_pos.x-1, p_pos.y+1});
-                    emit updatePiecesLabel(true, players_[0]->get_num_pieces());
-                    return true;
+           // check piece exists
+           PiecePrototype * p = getPiece(Position{p_pos.x-1, p_pos.y+1});
+           if (p != nullptr) {
+               if (p->get_is_red()) {
+                   players_[0]->removePiece(Position{p_pos.x-1, p_pos.y+1});
+                   emit updatePiecesLabel(true, players_[0]->get_num_pieces());
+                   return true;
                }
            }
        } else if ((t_pos.x == p_pos.x+2) && (t_pos.y == p_pos.y+2)) {
            // try to jump a Piece to the right
            // check theres a piece to jump
-           if (getPiece(Position{p_pos.x+1, p_pos.y+1}) != nullptr) {
-               // check the tile we want to go to is open, and that the Piece to jump is correct color
-               if (getPiece(t_pos) == nullptr && getPiece(Position{p_pos.x+1, p_pos.y+1})->get_is_red()) {
-                    // black single jumps red
-                    players_[0]->removePiece(Position{p_pos.x+1, p_pos.y+1});
-                    emit updatePiecesLabel(true, players_[0]->get_num_pieces());
-                    return true;
+           PiecePrototype * p = getPiece(Position{p_pos.x+1, p_pos.y+1});
+           if (p != nullptr) {
+               if (p->get_is_red()) {
+                   players_[0]->removePiece(Position{p_pos.x+1, p_pos.y+1});
+                   emit updatePiecesLabel(true, players_[0]->get_num_pieces());
+                   return true;
                }
            }
        }
@@ -224,12 +220,13 @@ void GameBoard::handleSelected(Tile* t, PiecePrototype* p, bool red) {
 
 // slot for when a tile gets selected
 void GameBoard::tileSelected(Tile* t) {
-    // first make sure we have a Piece selected, and that the tiles black
-    if (getSelectedPiece() != nullptr && !t->get_is_red()) {
+    // first make sure we have a Piece selected
+    if (getSelectedPiece() != nullptr) {
         PiecePrototype* p = getSelectedPiece();
         bool p_red = p->get_is_red();
         // check that the selected piece is the same color as current player
-        if ((p_red && current_player_ == 0) || (!p_red && current_player_ == 1)) {
+        // check that theres no piece at the tile we want to go to
+        if (((p_red && current_player_ == 0) || (!p_red && current_player_ == 1)) && (getPiece(t->get_position()) == nullptr)) {
             handleSelected(t, p, p_red);
         }
     // do nothing if checks dont pass
