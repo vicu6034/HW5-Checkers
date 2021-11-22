@@ -46,7 +46,7 @@ GameBoard::GameBoard()
 
     // create players with their initial pieces
     players_.push_back(new Player(true, red_pieces));
-    players_.push_back(new Player(true, black_pieces));
+    players_.push_back(new Player(false, black_pieces));
 
     // add powerups to the game
     // PowerUp(pos, is_addPiece)
