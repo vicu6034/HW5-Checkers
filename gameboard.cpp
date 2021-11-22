@@ -108,10 +108,15 @@ PiecePrototype* GameBoard::getPiece(Position pos) {
     return nullptr;
 }
 
+// return true for valid jump, false otherwise
 bool GameBoard::jumpHelper(Position pos, bool red) {
+    // get the piece we want to jump
     PiecePrototype * p = getPiece(pos);
+    // check the piece exists
     if (p != nullptr) {
+        // check the piece to jump is opposite color of the selected piece
         if (red != p->get_is_red()) {
+            // remove jumped piece from other player, update pieces label
             players_[!current_player_]->removePiece(pos);
             emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
             return true;
@@ -120,6 +125,7 @@ bool GameBoard::jumpHelper(Position pos, bool red) {
     return false;
 }
 
+// return true for valid move, false otherwise
 bool GameBoard::checkValidity(Tile* t, bool red) {
    Position s_pos = selected_->get_position();
    Position t_pos = t->get_position();
