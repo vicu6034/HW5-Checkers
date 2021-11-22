@@ -17,7 +17,7 @@ private:
     std::vector<Tile*> tiles_;
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
-
+    PiecePrototype* selected_;
     int current_player_;
 
 public:
@@ -29,19 +29,18 @@ public:
     std::vector<PowerUp*> getPowerUps() { return powerups_; }
     std::vector<PiecePrototype*> getPieces();
     Player* getCurrentPlayer() { return players_[current_player_]; }
-    Player* getOtherPlayer();
+    Player* getOtherPlayer() { return players_[!current_player_]; }
     // get piece by Position
     PiecePrototype* getPiece(Position pos);
     // get the selected piece
-    PiecePrototype* getSelectedPiece();
 
     // deselect pieces
     void deselectPiece();
 
     // check if a tile is valid for a piece to move to
-    bool checkValidity(Tile* t, PiecePrototype* p);
+    bool checkValidity(Tile* t, bool red);
     // helper method for tileSelected
-    void handleSelected(Tile* t, PiecePrototype* p, bool red);
+    void handleSelected(Tile* t, bool red);
 
 signals:
     void addPiece(PiecePrototype* p);
@@ -50,7 +49,7 @@ signals:
 
 public slots:
     void tileSelected(Tile* t);
-    void pieceSelected();
+    void pieceSelected(PiecePrototype* p);
 };
 
 

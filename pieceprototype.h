@@ -30,7 +30,7 @@ protected:
     // each Piece has a Pos and color (bool)
     Position pos_;
     bool is_red_;
-    bool is_selected_;
+
     PieceType type_;
     // Player* owner_;
 
@@ -43,7 +43,7 @@ protected:
 
 public:
     // constructors
-    PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red), is_selected_(false) {};
+    PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red) {};
 
     // destructor
     virtual ~PiecePrototype() {}
@@ -63,11 +63,9 @@ public:
     PieceType get_type() const { return type_; }
     Position get_position() const { return pos_; }
     bool get_is_red() const { return is_red_; }
-    bool get_selected() const { return is_selected_; }
+
 
     void set_position(Position pos) { pos_ = pos; }
-    void set_selected(bool is_selected) { is_selected_ = is_selected; }
-    //void set_owner(Player* owner) { owner_ = owner; }
 
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;
@@ -79,7 +77,7 @@ public:
     }
 
 signals:
-    void gotSelected();
+    void gotSelected(PiecePrototype* p);
 
 };
 
