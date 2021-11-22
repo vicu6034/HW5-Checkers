@@ -9,12 +9,9 @@ PiecePrototype::PiecePrototype(const PiecePrototype& old_p)
     is_red_ = old_p.get_is_red();
 }
 
+// emit selected signal when Piece is left clicked
 void PiecePrototype::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        if (!is_selected_)
-            emit gotSelected();
-            is_selected_ = true;
-    }
+    if (event->button() == Qt::LeftButton) emit gotSelected(this);
 }
 
 // Set piece position

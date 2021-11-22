@@ -2,6 +2,7 @@
 
 GameBoard::GameBoard()
 {
+    selected_ = nullptr;
     current_player_ = 0;
     // here we will set up the starting state of the game
 
@@ -15,9 +16,9 @@ GameBoard::GameBoard()
             PiecePrototype* b1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,0}, false);
             PiecePrototype* b2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,2}, false);
             PiecePrototype* r = factory_->CreatePiece(PieceType::RegularPiece, Position{i,8}, true);
-            connect(b1, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
-            connect(b2, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
-            connect(r, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(b1, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            connect(b2, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            connect(r, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
             black_pieces.push_back(b1);
             black_pieces.push_back(b2);
             red_pieces.push_back(r);
@@ -25,9 +26,9 @@ GameBoard::GameBoard()
             PiecePrototype* b = factory_->CreatePiece(PieceType::RegularPiece, Position{i,1}, false);
             PiecePrototype* r1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,7}, true);
             PiecePrototype* r2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,9}, true);
-            connect(b, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
-            connect(r1, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
-            connect(r2, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+            connect(b, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            connect(r1, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            connect(r2, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
             black_pieces.push_back(b);
             red_pieces.push_back(r1);
             red_pieces.push_back(r2);
@@ -97,17 +98,6 @@ std::vector<PiecePrototype*> GameBoard::getPieces() {
     return vec1;
 }
 
-// method to return the selected piece
-PiecePrototype* GameBoard::getSelectedPiece() {
-    // get all pieces
-    for (PiecePrototype* p : getPieces()) {
-        // if ones selected, return it
-        if (p->get_selected()) return p;
-    }
-    // if no pieces selected, return null
-    return nullptr;
-}
-
 PiecePrototype* GameBoard::getPiece(Position pos) {
     // get all pieces
     for (PiecePrototype* p : getPieces()) {
@@ -116,23 +106,6 @@ PiecePrototype* GameBoard::getPiece(Position pos) {
     }
     // if no pieces selected, return null
     return nullptr;
-}
-
-Player* GameBoard::getOtherPlayer() {
-    if (current_player_ == 0) {
-        return players_[1];
-    } else {
-        return players_[0];
-    }
-}
-
-// method to deselect pieces
-void GameBoard::deselectPiece() {
-    // get all pieces
-    for (PiecePrototype* p : getPieces()) {
-        // set them all to not be selected
-        if (p->get_selected()) p->set_selected(false);
-    }
 }
 
 bool GameBoard::checkValidity(Tile* t, PiecePrototype*p) {
@@ -207,14 +180,12 @@ void GameBoard::handleSelected(Tile* t, PiecePrototype* p, bool red) {
     if (checkValidity(t, p)) {
         PieceType pt = p->get_type();
         PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), red);
-        connect(newPiece, SIGNAL(gotSelected()), this, SLOT(pieceSelected()));
+        connect(newPiece, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+        players_[current_player_]->removePiece(p->get_position());
+        players_[current_player_]->addPiece(newPiece);
         if (red) {
-            players_[0]->removePiece(p->get_position());
-            players_[0]->addPiece(newPiece);
             current_player_ = 1;
         } else {
-            players_[1]->removePiece(p->get_position());
-            players_[1]->addPiece(newPiece);
             current_player_ = 0;
         }
         emit updateTurnLabel(current_player_);
@@ -237,6 +208,8 @@ void GameBoard::tileSelected(Tile* t) {
 }
 
 // when a piece is selected, deselect all other pieces
-void GameBoard::pieceSelected() {
-    deselectPiece();
+void GameBoard::pieceSelected(PiecePrototype* p) {
+    if ((p->get_is_red() && !current_player_) || (!p->get_is_red() && current_player_)) {
+        selected_ = p;
+    }
 }
