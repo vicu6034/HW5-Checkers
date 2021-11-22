@@ -36,7 +36,7 @@ public:
 
     // deselect pieces
     void deselectPiece();
-
+    bool jumpHelper(Position pos, bool red);
     // check if a tile is valid for a piece to move to
     bool checkValidity(Tile* t, bool red);
     // helper method for tileSelected
