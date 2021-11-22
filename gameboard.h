@@ -33,15 +33,14 @@ public:
     // get piece by Position
     PiecePrototype* getPiece(Position pos);
     // get the selected piece
-    PiecePrototype* getSelectedPiece();
 
     // deselect pieces
     void deselectPiece();
 
     // check if a tile is valid for a piece to move to
-    bool checkValidity(Tile* t, PiecePrototype* p);
+    bool checkValidity(Tile* t, bool red);
     // helper method for tileSelected
-    void handleSelected(Tile* t, PiecePrototype* p, bool red);
+    void handleSelected(Tile* t, bool red);
 
 signals:
     void addPiece(PiecePrototype* p);
