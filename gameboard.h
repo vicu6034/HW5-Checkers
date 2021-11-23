@@ -13,45 +13,52 @@ class GameBoard : public QObject
 private:
     // game has a factory
     PieceFactory* factory_;
-    // game has tiles, pieces, and powerups
+
+    // game has tiles, players, and powerups
+    // pieces live in players
     std::vector<Tile*> tiles_;
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
+
+    // keep track of currently selected Piece
     PiecePrototype* selected_;
+
+    // track what players turn it is
     int current_player_;
 
 public:
     // only need default constructor
     GameBoard();
+
+    // method to reset GameBoard to its state immediately after initialization
     void Reset();
-    // getters for GraphicsItems so we can add them to scene
+
+    // getters
     std::vector<Tile*> getTiles() { return tiles_; }
     std::vector<PowerUp*> getPowerUps() { return powerups_; }
     std::vector<PiecePrototype*> getPieces();
+    PiecePrototype* getPiece(Position pos);
     Player* getCurrentPlayer() { return players_[current_player_]; }
     Player* getOtherPlayer() { return players_[!current_player_]; }
-    // get piece by Position
-    PiecePrototype* getPiece(Position pos);
-    // get the selected piece
 
-    // deselect pieces
-    void deselectPiece();
+    // handle when a player wants to jump (helps checkValidity)
     bool jumpHelper(Position pos, bool red);
-    // check if a tile is valid for a piece to move to
+    // check if a tile is valid for a piece to move to (helps handleSelected)
     bool checkValidity(Tile* t, bool red);
-    // helper method for tileSelected
+    // handles what happens when a tile is selected (helps pieceSelected)
     void handleSelected(Tile* t, bool red);
 
 signals:
-    void addPiece(PiecePrototype* p);
+   // custom signals to emit when we need to update something in window
     void updateTurnLabel(int turn);
     void updatePiecesLabel(bool red, int pieces);
     void updatePiece(PiecePrototype* p);
 
 public slots:
+    // custom slots to handle when tiles and pieces are clicked
     void tileSelected(Tile* t);
     void pieceSelected(PiecePrototype* p);
-};
 
+};
 
 #endif // GAMEBOARD_H

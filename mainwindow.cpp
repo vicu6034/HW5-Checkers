@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
 
     gameboard_ = new GameBoard();
-    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
+    // connect our custom slots and signals
     connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel(int)));
     connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel(bool,int)));
     connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece(PiecePrototype*)));
@@ -50,18 +50,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->turnLabel->setText("TURN: RED");
 }
 
-void MainWindow::addPiece(PiecePrototype* p) {
-    scene->addItem(p);
-}
-
+// update turn label with whoevers turn it is
 void MainWindow::updateTurnLabel(int turn) {
-    if (turn == 0) {
+    if (!turn) {
         ui->turnLabel->setText("TURN: RED");
     } else {
         ui->turnLabel->setText("TURN: BLACK");
     }
 }
 
+// update label displaying how many pieces a player has
 void MainWindow::updatePiecesLabel(bool red, int pieces) {
     if (red) {
         std::string s= "RED: " + std::to_string(pieces) + " Pieces Remaining";
@@ -74,21 +72,26 @@ void MainWindow::updatePiecesLabel(bool red, int pieces) {
     }
 }
 
+// update a piece after movement
 void MainWindow::updatePiece(PiecePrototype* p) {
     scene->removeItem(p);
     p->update();
     scene->addItem(p);
 }
 
+// reset the mainwindow
 void MainWindow::Reset() {
+    // remove all pieces
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
          scene->removeItem(piece);
     }
+    // reset gameboard
     gameboard_->Reset();
+    // add new pieces
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
         scene->addItem(piece);
     }
-
+    // reset piece and turn labels
     ui->turnLabel->setText("TURN: RED");
     std::string s= "RED: " + std::to_string(15) + " Pieces Remaining";
     QString pop_q(const_cast<char*>(s.c_str()));
@@ -99,10 +102,12 @@ void MainWindow::Reset() {
     ui->blackPiecesLabel->setText(pop2_q);
 }
 
+// when reset button is clicked, just reset
 void MainWindow::on_resetButton_clicked() {
     Reset();
 }
 
+// when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
    Player * p = gameboard_->getOtherPlayer();
    p->set_num_wins(p->get_num_wins()+1);
@@ -118,6 +123,7 @@ void MainWindow::on_surrenderButton_clicked() {
    Reset();
 }
 
+// destructor
 MainWindow::~MainWindow() {
     delete ui;
 }

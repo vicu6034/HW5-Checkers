@@ -3,6 +3,7 @@
 
 #include <pieceprototype.h>
 
+// Regular Piece inherits from base Piece
 class RegularPiece : public PiecePrototype
 {
 
@@ -14,9 +15,6 @@ public:
     PiecePrototype *Clone() const override {
        return new RegularPiece(*this);
     }
-
-    // Test function to prove difference between Pieces
-    void Test() override { qDebug() << "Regular"; }
 
     // override paint so Pieces have their own appearance
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;

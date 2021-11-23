@@ -15,9 +15,6 @@ public:
         return new KingPiece(*this);
     }
 
-     // Test function to prove difference between Pieces
-     void Test() override { qDebug() << "King" << pos_.x; }
-
      // override paint so Kings have their own appearance
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 

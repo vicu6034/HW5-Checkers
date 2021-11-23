@@ -183,16 +183,17 @@ void GameBoard::tileSelected(Tile* t) {
         bool p_red = selected_->get_is_red();
         // check that the selected piece is the same color as current player
         // check that theres no piece at the tile we want to go to
-        if (((p_red && !current_player_) || (!p_red && current_player_)) && (getPiece(t->get_position()) == nullptr)) {
+        if ((p_red != current_player_) && (getPiece(t->get_position()) == nullptr)) {
             handleSelected(t, p_red);
         }
     // do nothing if checks dont pass
     }
 }
 
-// when a piece is selected, deselect all other pieces
+// slot for when a piece gets selected
 void GameBoard::pieceSelected(PiecePrototype* p) {
-    if ((p->get_is_red() && !current_player_) || (!p->get_is_red() && current_player_)) {
+    // if the piece is the color of the current player, select it
+    if (p->get_is_red() != current_player_) {
         selected_ = p;
     }
 }
