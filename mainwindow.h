@@ -36,6 +36,8 @@ public slots:
     void updateTurnLabel(int turn);
     void updatePiecesLabel(bool red, int pieces);
     void updatePiece(PiecePrototype* p);
+    void addPiece(PiecePrototype* p);
+    void removePiece(PiecePrototype* p);
 
 private slots:
     // default slots for button clicks

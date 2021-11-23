@@ -41,6 +41,9 @@ public:
     Player* getCurrentPlayer() { return players_[current_player_]; }
     Player* getOtherPlayer() { return players_[!current_player_]; }
 
+    bool checkRegularMoves(Position t_pos, Position s_pos, bool red);
+    bool checkKingMoves(Position t_pos, Position s_pos, bool red);
+    bool checkTripleKMoves(Position t_pos, Position s_pos, bool red);
     // handle when a player wants to jump (helps checkValidity)
     bool jumpHelper(Position pos, bool red);
     // check if a tile is valid for a piece to move to (helps handleSelected)
@@ -53,6 +56,8 @@ signals:
     void updateTurnLabel(int turn);
     void updatePiecesLabel(bool red, int pieces);
     void updatePiece(PiecePrototype* p);
+    void addPiece(PiecePrototype* p);
+    void removePiece(PiecePrototype* p);
 
 public slots:
     // custom slots to handle when tiles and pieces are clicked
