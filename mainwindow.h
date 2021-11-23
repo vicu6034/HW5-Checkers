@@ -32,6 +32,7 @@ public slots:
     void addPiece(PiecePrototype* p);
     void updateTurnLabel(int turn);
     void updatePiecesLabel(bool red, int pieces);
+    void updatePiece(PiecePrototype* p);
 
 private slots:
     void on_resetButton_clicked();

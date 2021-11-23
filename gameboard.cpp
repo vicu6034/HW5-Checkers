@@ -162,18 +162,17 @@ bool GameBoard::checkValidity(Tile* t, bool red) {
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
     if (checkValidity(t, red)) {
-        PieceType pt = selected_->get_type();
-        PiecePrototype* newPiece = factory_->CreatePiece(pt, t->get_position(), red);
-        connect(newPiece, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-        players_[current_player_]->removePiece(selected_->get_position());
-        players_[current_player_]->addPiece(newPiece);
+        // if the move is valid, change the pieces position and update scene
+        selected_->set_position(t->get_position());
+        emit updatePiece(selected_);
+        // iterate turn
         if (red) {
             current_player_ = 1;
         } else {
             current_player_ = 0;
         }
+        // update turn label
         emit updateTurnLabel(current_player_);
-        emit addPiece(newPiece);
     }
 }
 

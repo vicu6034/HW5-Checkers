@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
     connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel(int)));
     connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel(bool,int)));
+    connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece(PiecePrototype*)));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
@@ -73,8 +74,10 @@ void MainWindow::updatePiecesLabel(bool red, int pieces) {
     }
 }
 
-MainWindow::~MainWindow() {
-    delete ui;
+void MainWindow::updatePiece(PiecePrototype* p) {
+    scene->removeItem(p);
+    p->update();
+    scene->addItem(p);
 }
 
 void MainWindow::Reset() {
@@ -113,4 +116,8 @@ void MainWindow::on_surrenderButton_clicked() {
        ui->blackWinsLabel->setText(pop_q);
    }
    Reset();
+}
+
+MainWindow::~MainWindow() {
+    delete ui;
 }

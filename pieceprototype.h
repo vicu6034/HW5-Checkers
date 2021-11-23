@@ -64,7 +64,6 @@ public:
     Position get_position() const { return pos_; }
     bool get_is_red() const { return is_red_; }
 
-
     void set_position(Position pos) { pos_ = pos; }
 
     // necessary Qt bounding and drawing methods
