@@ -86,7 +86,7 @@ void MainWindow::Reset() {
          scene->removeItem(piece);
     }
     // reset gameboard
-    gameboard_->Reset();
+    gameboard_->NewGame();
     // add new pieces
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
         scene->addItem(piece);
