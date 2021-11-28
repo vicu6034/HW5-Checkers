@@ -37,3 +37,11 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
 
     painter->setBrush(b);
 }
+
+std::string PowerUp::get_type() {
+    if (is_addPiece_) {
+        return "add";
+    } else {
+        return "level";
+    }
+}

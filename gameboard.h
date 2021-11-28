@@ -41,6 +41,7 @@ public:
     Player* getCurrentPlayer() { return players_[current_player_]; }
     Player* getOtherPlayer() { return players_[!current_player_]; }
 
+    std::string checkPowerup(Position pos);
     bool checkRegularMoves(Position t_pos, Position s_pos, bool red);
     bool checkKingMoves(Position t_pos, Position s_pos, bool red);
     bool checkTripleKMoves(Position t_pos, Position s_pos, bool red);
