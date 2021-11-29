@@ -19,8 +19,8 @@ private:
 
 public:
     // paramterized constructor with initialization list
-    Player(bool is_red, std::vector<PiecePrototype*> pieces)
-        : is_red_(is_red), pieces_(pieces), wins_(0) {}
+    Player(bool is_red)
+        : is_red_(is_red), pieces_(std::vector<PiecePrototype*>{}), wins_(0) {}
 
     // getters and setters
     bool get_is_red() { return is_red_; }
