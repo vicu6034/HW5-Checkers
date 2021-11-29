@@ -33,6 +33,8 @@ public:
     // method to reset GameBoard to its state immediately after initialization
     void Reset();
 
+    void NewGame();
+
     // getters
     std::vector<Tile*> getTiles() { return tiles_; }
     std::vector<PowerUp*> getPowerUps() { return powerups_; }

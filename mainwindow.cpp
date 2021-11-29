@@ -52,11 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 // update turn label with whoevers turn it is
 void MainWindow::updateTurnLabel(int turn) {
-    if (!turn) {
-        ui->turnLabel->setText("TURN: RED");
-    } else {
-        ui->turnLabel->setText("TURN: BLACK");
-    }
+    QString turn_str = turn ? "BLACK" : "RED";
+    ui->turnLabel->setText("TURN: " + turn_str);
 }
 
 // update label displaying how many pieces a player has
@@ -86,7 +83,7 @@ void MainWindow::Reset() {
          scene->removeItem(piece);
     }
     // reset gameboard
-    gameboard_->Reset();
+    gameboard_->NewGame();
     // add new pieces
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
         scene->addItem(piece);
