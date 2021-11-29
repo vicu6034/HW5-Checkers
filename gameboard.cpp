@@ -125,46 +125,187 @@ bool GameBoard::jumpHelper(Position pos, bool red) {
     return false;
 }
 
+// check all the tiles a regular piece could move to
+bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red) {
+    if (red) {
+        // reds turn
+        if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
+            // try to go one space
+            return true;
+        } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y-2) {
+            // try to jump piece to left
+            return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
+        } else if (t_pos.x == s_pos.x+2 && t_pos.y == s_pos.y-2) {
+            // try to jump piece to right
+            return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
+        }
+    } else {
+        // blacks turn
+        if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
+            // try to go one tile
+            return true;
+        } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
+            // try to jump a Piece to the left
+            return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
+        } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y+2)) {
+            // try to jump a Piece to the right
+            return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
+        }
+    }
+    return false;
+}
+
+// check the tiles a king could move to
+bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red) {
+    if (red) {
+        // reds turn
+        if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
+            // try to go one space
+            return true;
+        } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
+            // try to jump piece to left
+            return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
+        } else if (t_pos.x == s_pos.x+2 && t_pos.y == s_pos.y+2) {
+            // try to jump piece to right
+            return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
+        }
+    } else {
+        // blacks turn
+        if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
+            // try to go one tile
+            return true;
+        } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
+            // try to jump a Piece to the left
+            return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
+        } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y-2)) {
+            // try to jump a Piece to the right
+            return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
+        }
+    }
+    return false;
+}
+
+// check tiles triple king could move to
+// NOT CORRECT GAME LOGIC
+// FOR TESTING
+bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red) {
+    Q_UNUSED(red);
+    if ((t_pos.x == s_pos.x+2 || t_pos.x == s_pos.x-2) && t_pos.y == s_pos.y) {
+        // go a space to left or right
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // return true for valid move, false otherwise
 bool GameBoard::checkValidity(Tile* t, bool red) {
    Position s_pos = selected_->get_position();
    Position t_pos = t->get_position();
 
-   if (red) {
-       // reds turn
-       if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
-           // try to go one space
-           return true;
-       } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y-2) {
-           // try to jump piece to left
-           return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
-       } else if (t_pos.x == s_pos.x+2 && t_pos.y == s_pos.y-2) {
-           // try to jump piece to right
-           return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
-       }
-   } else {
-       // blacks turn
-       if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
-           // try to go one tile
-           return true;
-       } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
-           // try to jump a Piece to the left
-           return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
-       } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y+2)) {
-           // try to jump a Piece to the right
-           return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
-       }
+   switch (selected_->get_type()) {
+        case PieceType::RegularPiece:
+            return checkRegularMoves(t_pos, s_pos, red);
+        case PieceType::KingPiece:
+            if (checkRegularMoves(t_pos, s_pos, red)) {
+                return true;
+            } else {
+                return checkKingMoves(t_pos, s_pos, red);
+            }
+        case PieceType::TripleKingPiece:
+           if (checkRegularMoves(t_pos, s_pos, red)) {
+               return true;
+           } else if (checkKingMoves(t_pos, s_pos, red)) {
+               return true;
+           } else {
+               return checkTripleKMoves(t_pos, s_pos, red);
+           }
    }
-   // return false if the Tile isnt possible to move to
-   return false;
+}
+
+std::string GameBoard::checkPowerup(Position pos) {
+    for (PowerUp* powerup : powerups_ ) {
+        if (powerup->get_position() == pos) {
+            return powerup->get_type();
+        }
+    }
+    return "none";
+}
+
+void GameBoard::removePowerup(Position pos) {
+    for (unsigned int i = 0 ; i < powerups_.size(); i++) {
+        if (powerups_[i]->get_position() == pos) {
+            delete powerups_[i];
+            powerups_.erase(powerups_.begin() + i);
+        }
+    }
+}
+
+void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
+    // check for landing on powerups
+    if (checkPowerup(t_pos) == "add") {
+        removePowerup(t_pos);
+        // add a piece to current player
+        // create piece with new type, connect it and add to scene
+        PiecePrototype* p = factory_->CreatePiece(PieceType::RegularPiece, last_pos, red);
+        players_[current_player_]->addPiece(p);
+        connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+        emit addPiece(p);
+        emit updatePiecesLabel(red, players_[current_player_]->get_num_pieces());
+    } else if (checkPowerup(t_pos) == "level") {
+        // level up piece that landed on the powerup
+        if (selected_->get_type() == PieceType::RegularPiece) {
+            // making a regular piece into a king
+            players_[current_player_]->removePiece(last_pos);
+            removePowerup(t_pos);
+            // create piece with new type, connect it and add to scene
+            PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t_pos, red);
+            players_[current_player_]->addPiece(p);
+            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            emit addPiece(p);
+        } else if (selected_->get_type() == PieceType::KingPiece) {
+            players_[current_player_]->removePiece(last_pos);
+            removePowerup(t_pos);
+            // create piece with new type, connect it and add to scene
+            PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t_pos, red);
+            players_[current_player_]->addPiece(p);
+            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            emit addPiece(p);
+        }
+    }
 }
 
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
     if (checkValidity(t, red)) {
-        // if the move is valid, change the pieces position and update scene
-        selected_->set_position(t->get_position());
-        emit updatePiece(selected_);
+        Position last_pos = selected_->get_position();
+        // check if we need piece upgrade after the move, if not just update the piece
+        if (((t->get_position().y == 0) || (t->get_position().y == 9)) && selected_->get_type() == PieceType::RegularPiece) {
+            // making a regular piece into a king
+            players_[current_player_]->removePiece(last_pos);
+            // create piece with new type, connect it and add to scene
+            PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t->get_position(), red);
+            players_[current_player_]->addPiece(p);
+            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            emit addPiece(p);
+            handlePowerup(t->get_position(), last_pos, red);
+        } else if (((t->get_position().y == 9) || (t->get_position().y == 0)) && selected_->get_type() == PieceType::KingPiece) {
+            // making a king into a triple king
+            players_[current_player_]->removePiece(last_pos);
+            // create piece with new type, connect it and add to scene
+            PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t->get_position(), red);
+            players_[current_player_]->addPiece(p);
+            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            emit addPiece(p);
+            handlePowerup(t->get_position(), last_pos, red);
+        } else {
+            // if not changing the type just update piece
+            selected_->set_position(t->get_position());
+            players_[current_player_]->updatePiece(last_pos, t->get_position());
+            emit updatePiece(selected_);
+            handlePowerup(t->get_position(), last_pos, red);
+        }
+
         // iterate turn
         if (red) {
             current_player_ = 1;

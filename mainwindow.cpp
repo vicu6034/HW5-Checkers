@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel(int)));
     connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel(bool,int)));
     connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece(PiecePrototype*)));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
@@ -77,6 +79,16 @@ void MainWindow::updatePiece(PiecePrototype* p) {
     scene->removeItem(p);
     p->update();
     scene->addItem(p);
+}
+
+// update a piece after movement
+void MainWindow::addPiece(PiecePrototype* p) {
+    scene->addItem(p);
+}
+
+// update a piece after movement
+void MainWindow::removePiece(PiecePrototype* p) {
+    scene->removeItem(p);
 }
 
 // reset the mainwindow
