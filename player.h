@@ -33,6 +33,7 @@ public:
 
     // add/remove piece
     void addPiece(PiecePrototype* p) { pieces_.push_back(p); }
+    void updatePiece(Position last_pos, Position new_pos);
     void removePiece(Position p);
 
 };

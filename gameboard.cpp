@@ -232,58 +232,80 @@ std::string GameBoard::checkPowerup(Position pos) {
     return "none";
 }
 
+void GameBoard::removePowerup(Position pos) {
+    for (unsigned int i = 0 ; i < powerups_.size(); i++) {
+        if (powerups_[i]->get_position() == pos) {
+            delete powerups_[i];
+            powerups_.erase(powerups_.begin() + i);
+        }
+    }
+}
+
+void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
+    // check for landing on powerups
+    if (checkPowerup(t_pos) == "add") {
+        removePowerup(t_pos);
+        // add a piece to current player
+        // create piece with new type, connect it and add to scene
+        PiecePrototype* p = factory_->CreatePiece(PieceType::RegularPiece, last_pos, red);
+        players_[current_player_]->addPiece(p);
+        connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+        emit addPiece(p);
+        emit updatePiecesLabel(red, players_[current_player_]->get_num_pieces());
+    } else if (checkPowerup(t_pos) == "level") {
+        // level up piece that landed on the powerup
+        if (selected_->get_type() == PieceType::RegularPiece) {
+            // making a regular piece into a king
+            players_[current_player_]->removePiece(last_pos);
+            removePowerup(t_pos);
+            // create piece with new type, connect it and add to scene
+            PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t_pos, red);
+            players_[current_player_]->addPiece(p);
+            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            emit addPiece(p);
+        } else if (selected_->get_type() == PieceType::KingPiece) {
+            players_[current_player_]->removePiece(last_pos);
+            removePowerup(t_pos);
+            // create piece with new type, connect it and add to scene
+            PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t_pos, red);
+            players_[current_player_]->addPiece(p);
+            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            emit addPiece(p);
+        }
+    }
+}
+
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
     if (checkValidity(t, red)) {
+        Position last_pos = selected_->get_position();
         // check if we need piece upgrade after the move, if not just update the piece
-        if (((red && t->get_position().y == 0) || (!red && t->get_position().y == 9)) && selected_->get_type() == PieceType::RegularPiece) {
+        if (((t->get_position().y == 0) || (t->get_position().y == 9)) && selected_->get_type() == PieceType::RegularPiece) {
             // making a regular piece into a king
-            players_[current_player_]->removePiece(selected_->get_position());
+            players_[current_player_]->removePiece(last_pos);
             // create piece with new type, connect it and add to scene
             PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t->get_position(), red);
             players_[current_player_]->addPiece(p);
             connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
             emit addPiece(p);
-        } else if (((red && t->get_position().y == 9) || (!red && t->get_position().y == 0)) && selected_->get_type() == PieceType::KingPiece) {
+            handlePowerup(t->get_position(), last_pos, red);
+        } else if (((t->get_position().y == 9) || (t->get_position().y == 0)) && selected_->get_type() == PieceType::KingPiece) {
             // making a king into a triple king
-            players_[current_player_]->removePiece(selected_->get_position());
+            players_[current_player_]->removePiece(last_pos);
             // create piece with new type, connect it and add to scene
             PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t->get_position(), red);
             players_[current_player_]->addPiece(p);
             connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
             emit addPiece(p);
+            handlePowerup(t->get_position(), last_pos, red);
         } else {
             // if not changing the type just update piece
             selected_->set_position(t->get_position());
+            players_[current_player_]->updatePiece(last_pos, t->get_position());
             emit updatePiece(selected_);
+            handlePowerup(t->get_position(), last_pos, red);
         }
-        // check for landing on powerups
-        if (checkPowerup(t->get_position()) == "add") {
-            // add a piece to current player
-            // create piece with new type, connect it and add to scene
-            PiecePrototype* p = factory_->CreatePiece(PieceType::RegularPiece, selected_->get_position(), red);
-            players_[current_player_]->addPiece(p);
-            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            emit addPiece(p);
-        } else if (checkPowerup(t->get_position()) == "level") {
-            // level up piece that landed on the powerup
-            if (selected_->get_type() == PieceType::RegularPiece) {
-                // making a regular piece into a king
-                players_[current_player_]->removePiece(selected_->get_position());
-                // create piece with new type, connect it and add to scene
-                PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t->get_position(), red);
-                players_[current_player_]->addPiece(p);
-                connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-                emit addPiece(p);
-            } else if (selected_->get_type() == PieceType::KingPiece) {
-                players_[current_player_]->removePiece(selected_->get_position());
-                // create piece with new type, connect it and add to scene
-                PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t->get_position(), red);
-                players_[current_player_]->addPiece(p);
-                connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-                emit addPiece(p);
-            }
-        }
+
         // iterate turn
         if (red) {
             current_player_ = 1;
