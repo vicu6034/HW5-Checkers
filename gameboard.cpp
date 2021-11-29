@@ -1,10 +1,6 @@
 #include "gameboard.h"
 
 GameBoard::GameBoard() {
-    selected_ = nullptr;
-    current_player_ = 0;
-    // here we will set up the starting state of the game
-
     // create tiles
     bool switcher = false;
     for (int i = 0; i < 10; i++) {
@@ -17,11 +13,9 @@ GameBoard::GameBoard() {
         switcher = !switcher;
     }
 
-    // create players with their initial pieces
-    std::vector<PiecePrototype *> red_pieces;
-    std::vector<PiecePrototype *> black_pieces;
-    players_.push_back(new Player(true, red_pieces));
-    players_.push_back(new Player(false, black_pieces));
+    // create players
+    players_.push_back(new Player(true));
+    players_.push_back(new Player(false));
 
     // create pieces
     NewGame();
