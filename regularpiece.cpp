@@ -7,7 +7,20 @@ void RegularPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item
     Q_UNUSED(widget);
     Q_UNUSED(item);
 
+    Position pos = ConvertPosition();
+
     QBrush b = painter->brush();
+
+    // add green highlight if piece is selected
+    if (highlighted_) {
+        painter->setBrush(QBrush(QColor(0, 255, 0)));
+        painter->drawEllipse(
+            pos.x - HIGHLIGHT_SIZE,
+            pos.y - HIGHLIGHT_SIZE,
+            RADIUS + (HIGHLIGHT_SIZE * 2),
+            RADIUS + (HIGHLIGHT_SIZE * 2)
+        );
+    }
 
     // pieces are red or black
     if (is_red_) {
@@ -18,11 +31,7 @@ void RegularPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item
         painter->setPen(Qt::red);
     }
 
-    Position pos = ConvertPosition();
-
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
-
-    //painter->drawText(pos.x+20, pos.y+30, "R");
 
     painter->setBrush(b);
 }

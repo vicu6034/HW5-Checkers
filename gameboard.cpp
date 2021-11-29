@@ -137,6 +137,8 @@ void GameBoard::handleSelected(Tile* t, bool red) {
         // if the move is valid, change the pieces position and update scene
         selected_->set_position(t->get_position());
         emit updatePiece(selected_);
+        // update piece highlight
+        selected_->SetHighlighted(false);
         // iterate turn
         if (red) {
             current_player_ = 1;
@@ -166,6 +168,10 @@ void GameBoard::tileSelected(Tile* t) {
 void GameBoard::pieceSelected(PiecePrototype* p) {
     // if the piece is the color of the current player, select it
     if (p->get_is_red() != current_player_) {
+        // unhighlight previously selected piece
+        if (selected_ != nullptr) { selected_->SetHighlighted(false); }
+
         selected_ = p;
+        p->SetHighlighted(true);
     }
 }
