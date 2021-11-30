@@ -50,6 +50,8 @@ public:
     bool checkTripleKMoves(Position t_pos, Position s_pos, bool red);
     // handle when a player wants to jump (helps checkValidity)
     bool jumpHelper(Position pos, bool red);
+    bool friendlyJumpHelper(Position pos, bool red);
+    bool doubleJumpHelper(Position pos1, Position pos2, bool red);
     // check if a tile is valid for a piece to move to (helps handleSelected)
     bool checkValidity(Tile* t, bool red);
     // handles what happens when a tile is selected (helps pieceSelected)

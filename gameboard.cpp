@@ -132,42 +132,99 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red) {
     if (red) {
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
-            // try to go one space
+            // try to go one tile backwards
             return true;
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
-            // try to jump piece to left
+            // try to jump piece to left backwards
             return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
         } else if (t_pos.x == s_pos.x+2 && t_pos.y == s_pos.y+2) {
-            // try to jump piece to right
+            // try to jump piece to right backwards
             return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
         }
     } else {
         // blacks turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
-            // try to go one tile
+            // try to go one tile backwards
             return true;
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
-            // try to jump a Piece to the left
+            // try to jump a Piece to the left backwards
             return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
         } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y-2)) {
-            // try to jump a Piece to the right
+            // try to jump a Piece to the right backwards
             return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
         }
     }
     return false;
 }
 
-// check tiles triple king could move to
-// NOT CORRECT GAME LOGIC
-// FOR TESTING
-bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red) {
-    Q_UNUSED(red);
-    if ((t_pos.x == s_pos.x+2 || t_pos.x == s_pos.x-2) && t_pos.y == s_pos.y) {
-        // go a space to left or right
-        return true;
-    } else {
-        return false;
+bool GameBoard::friendlyJumpHelper(Position pos, bool red) {
+    // get the piece we want to jump
+    PiecePrototype * p = getPiece(pos);
+    // check the piece exists
+    if (p != nullptr) {
+        // check the piece to jump is the same color of the selected piece
+        if (red == p->get_is_red()) {
+            return true;
+        }
     }
+    return false;
+}
+
+bool GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red) {
+    // get the piece we want to jump
+    PiecePrototype * p = getPiece(pos1);
+    PiecePrototype * p2 = getPiece(pos2);
+    // check the piece exists
+    if ((p != nullptr) && (p2 != nullptr)) {
+        // check the piece to jump is opposite color of the selected piece
+        if ((red != p->get_is_red()) && (red != p2->get_is_red())) {
+            // remove jumped piece from other player, update pieces label
+            players_[!current_player_]->removePiece(pos1);
+            players_[!current_player_]->removePiece(pos2);
+            emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
+            return true;
+        }
+    }
+    return false;
+}
+
+// check tiles triple king could move to
+bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red) {
+    if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y+2)) {
+        // jump a friendly piece bottom right
+        return friendlyJumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
+
+    } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
+        // jump a friendly piece bottom left
+        return friendlyJumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
+
+    } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y-2)) {
+        // jump a friendly piece top right
+        return friendlyJumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
+
+    } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
+        // jump a friendly piece top left
+        return friendlyJumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
+
+    } else if ((t_pos.x == s_pos.x+3) && (t_pos.y == s_pos.y+3)) {
+        // jump 2 enemy pieces bottom right
+        return doubleJumpHelper(Position{s_pos.x+1, s_pos.y+1}, Position{s_pos.x+2, s_pos.y+2}, red);
+
+    } else if ((t_pos.x == s_pos.x-3) && (t_pos.y == s_pos.y+3)) {
+        // jump 2 enemy pieces bottom left
+        return doubleJumpHelper(Position{s_pos.x-1, s_pos.y+1}, Position{s_pos.x-2, s_pos.y+2}, red);
+
+    } else if ((t_pos.x == s_pos.x+3) && (t_pos.y == s_pos.y-3)) {
+        // jump 2 enemy pieces top right
+        return doubleJumpHelper(Position{s_pos.x+1, s_pos.y-1}, Position{s_pos.x+2, s_pos.y-2}, red);
+
+    } else if ((t_pos.x == s_pos.x-3) && (t_pos.y == s_pos.y-3)) {
+        // jump 2 enemy pieces top left
+        return doubleJumpHelper(Position{s_pos.x-1, s_pos.y-1}, Position{s_pos.x-2, s_pos.y-2}, red);
+
+    }
+
+    return false;
 }
 
 // return true for valid move, false otherwise
@@ -234,6 +291,7 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
             PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t_pos, red);
             players_[current_player_]->addPiece(p);
             connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            selected_ = p;
             emit addPiece(p);
         } else if (selected_->get_type() == PieceType::KingPiece) {
             players_[current_player_]->removePiece(last_pos);
@@ -242,6 +300,7 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
             PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t_pos, red);
             players_[current_player_]->addPiece(p);
             connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            selected_ = p;
             emit addPiece(p);
         }
     }
@@ -259,6 +318,7 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t->get_position(), red);
             players_[current_player_]->addPiece(p);
             connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            selected_ = p;
             emit addPiece(p);
             handlePowerup(t->get_position(), last_pos, red);
         } else if (((t->get_position().y == 9) || (t->get_position().y == 0)) && selected_->get_type() == PieceType::KingPiece) {
@@ -268,18 +328,17 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t->get_position(), red);
             players_[current_player_]->addPiece(p);
             connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+            selected_ = p;
             emit addPiece(p);
             handlePowerup(t->get_position(), last_pos, red);
         } else {
             // if not changing the type just update piece
             selected_->set_position(t->get_position());
             players_[current_player_]->updatePiece(last_pos, t->get_position());
+            selected_->set_highlighted(false);
             emit updatePiece(selected_);
             handlePowerup(t->get_position(), last_pos, red);
         }
-
-        // update piece highlight
-        selected_->SetHighlighted(false);
 
         // iterate turn
         if (red) {
@@ -311,9 +370,13 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
     // if the piece is the color of the current player, select it
     if (p->get_is_red() != current_player_) {
         // unhighlight previously selected piece
-        if (selected_ != nullptr) { selected_->SetHighlighted(false); }
+        if (selected_ != nullptr) {
+            selected_->set_highlighted(false);
+            emit updatePiece(selected_);
+        }
 
         selected_ = p;
-        p->SetHighlighted(true);
+        selected_->set_highlighted(true);
+        emit updatePiece(selected_);
     }
 }
