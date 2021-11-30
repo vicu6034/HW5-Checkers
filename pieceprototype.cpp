@@ -28,8 +28,3 @@ QPainterPath PiecePrototype::shape() const {
 
     return path;
 }
-
-void PiecePrototype::SetHighlighted(bool highlight) {
-    highlighted_ = highlight;
-    update();
-}
