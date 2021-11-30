@@ -94,11 +94,18 @@ void MainWindow::Reset() {
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
          scene->removeItem(piece);
     }
+    for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+        scene->removeItem(powerup);
+    }
     // reset gameboard
     gameboard_->NewGame();
     // add new pieces
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
         scene->addItem(piece);
+    }
+    // add powerups
+    for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+        scene->addItem(powerup);
     }
     // reset piece and turn labels
     ui->turnLabel->setText("TURN: RED");

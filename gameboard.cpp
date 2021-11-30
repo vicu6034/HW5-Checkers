@@ -57,6 +57,8 @@ void GameBoard::NewGame() {
      players_[0]->set_pieces(red_pieces);
      players_[1]->set_pieces(black_pieces);
 
+     // remove powerups left from last game
+     powerups_.clear();
      // add powerups to the game
      powerups_.push_back(new PowerUp(Position{4,4}, true));
      powerups_.push_back(new PowerUp(Position{5,5}, false));
