@@ -1,40 +1,9 @@
 #include "gameboard.h"
 
-GameBoard::GameBoard()
-{
-    selected_ = nullptr;
-    current_player_ = 0;
-    // here we will set up the starting state of the game
-
-    // instantiate initial Tiles and Pieces
-    std::vector<PiecePrototype*> red_pieces;
-    std::vector<PiecePrototype*> black_pieces;
+GameBoard::GameBoard() {
+    // create tiles
     bool switcher = false;
     for (int i = 0; i < 10; i++) {
-        // create pieces
-        if (i % 2 == 0) {
-            PiecePrototype* b1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,0}, false);
-            PiecePrototype* b2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,2}, false);
-            PiecePrototype* r = factory_->CreatePiece(PieceType::RegularPiece, Position{i,8}, true);
-            connect(b1, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            connect(b2, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            connect(r, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            black_pieces.push_back(b1);
-            black_pieces.push_back(b2);
-            red_pieces.push_back(r);
-        } else {
-            PiecePrototype* b = factory_->CreatePiece(PieceType::RegularPiece, Position{i,1}, false);
-            PiecePrototype* r1 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,7}, true);
-            PiecePrototype* r2 = factory_->CreatePiece(PieceType::RegularPiece, Position{i,9}, true);
-            connect(b, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            connect(r1, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            connect(r2, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            black_pieces.push_back(b);
-            red_pieces.push_back(r1);
-            red_pieces.push_back(r2);
-        }
-
-        // create tiles
         for (int j = 0; j < 10; j++) {
             Tile* tile = new Tile(Position{i,j}, switcher);
             connect(tile, SIGNAL(gotSelected(Tile*)), this, SLOT(tileSelected(Tile*)));
@@ -42,24 +11,23 @@ GameBoard::GameBoard()
             switcher = !switcher;
         }
         switcher = !switcher;
-
     }
 
-    // create players with their initial pieces
-    players_.push_back(new Player(true, red_pieces));
-    players_.push_back(new Player(false, black_pieces));
+    // create players
+    players_.push_back(new Player(true));
+    players_.push_back(new Player(false));
 
-    // add powerups to the game
-    // PowerUp(pos, is_addPiece)
-    powerups_.push_back(new PowerUp(Position{4,4}, true));
-    powerups_.push_back(new PowerUp(Position{5,5}, false));
-
+    // create pieces
+    NewGame();
 }
 
-void GameBoard::Reset() {
+// sets pieces up for a new game
+void GameBoard::NewGame() {
+    selected_ = nullptr;
     current_player_ = 0;
     std::vector<PiecePrototype*> red_pieces;
     std::vector<PiecePrototype*> black_pieces;
+
     for (int i = 0; i < 10; i++) {
         // create pieces
         if (i % 2 == 0) {
@@ -88,6 +56,10 @@ void GameBoard::Reset() {
      }
      players_[0]->set_pieces(red_pieces);
      players_[1]->set_pieces(black_pieces);
+
+     // add powerups to the game
+     powerups_.push_back(new PowerUp(Position{4,4}, true));
+     powerups_.push_back(new PowerUp(Position{5,5}, false));
 }
 
 // method to return all pieces
@@ -306,6 +278,9 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             handlePowerup(t->get_position(), last_pos, red);
         }
 
+        // update piece highlight
+        selected_->SetHighlighted(false);
+
         // iterate turn
         if (red) {
             current_player_ = 1;
@@ -335,6 +310,10 @@ void GameBoard::tileSelected(Tile* t) {
 void GameBoard::pieceSelected(PiecePrototype* p) {
     // if the piece is the color of the current player, select it
     if (p->get_is_red() != current_player_) {
+        // unhighlight previously selected piece
+        if (selected_ != nullptr) { selected_->SetHighlighted(false); }
+
         selected_ = p;
+        p->SetHighlighted(true);
     }
 }

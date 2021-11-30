@@ -30,9 +30,11 @@ protected:
     bool is_red_;
     // keep type for easy access
     PieceType type_;
+    bool highlighted_;
 
     // all Pieces have same size on screen
     static const int RADIUS = 50;
+    static const int HIGHLIGHT_SIZE = 2;
 
     // handles what happens when the mouse is clicked
     // revive cell for left click, kill cell for right click
@@ -40,7 +42,7 @@ protected:
 
 public:
     // paramterized constructor
-    PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red) {};
+    PiecePrototype(Position pos, bool is_red) : pos_(pos), is_red_(is_red), highlighted_(false) {};
 
     // virtual destructor
     virtual ~PiecePrototype() {}
@@ -60,6 +62,9 @@ public:
     bool get_is_red() const { return is_red_; }
 
     void set_position(Position pos) { pos_ = pos; }
+
+    void SetHighlighted(bool highlighted);
+    bool is_highlighted_() { return highlighted_; }
 
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;
