@@ -3,8 +3,8 @@
 #include <QtWidgets>
 
 // copy old vals to new Piece
-PiecePrototype::PiecePrototype(const PiecePrototype& old_p)
-{
+PiecePrototype::PiecePrototype(const PiecePrototype& old_p) {
+    highlighted_ = false;
     pos_ = old_p.get_position();
     is_red_ = old_p.get_is_red();
 }
@@ -25,5 +25,11 @@ QPainterPath PiecePrototype::shape() const {
     QPainterPath path;
     Position pos = ConvertPosition();
     path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
+
     return path;
+}
+
+void PiecePrototype::SetHighlighted(bool highlight) {
+    highlighted_ = highlight;
+    update();
 }

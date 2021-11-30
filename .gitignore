@@ -1,2 +1,3 @@
 *.ui
 *.user
+.DS_Store
