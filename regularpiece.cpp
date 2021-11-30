@@ -33,6 +33,12 @@ void RegularPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item
 
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
+    QImage king;
+    king.load(":/images/king");
+    king = king.scaled(RADIUS, RADIUS);
+
+    painter->drawImage(pos.x, pos.y, king);
+
     painter->setBrush(b);
 }
 
