@@ -83,6 +83,7 @@ void MainWindow::Reset() {
     ui->blackPiecesLabel->setText(pop2_q);
 }
 
+// helper method to give a player a win and update the label
 void MainWindow::iterateWinLabel(Player * p) {
     p->set_num_wins(p->get_num_wins()+1);
     if (p->get_is_red()) {
@@ -113,6 +114,7 @@ void MainWindow::updatePiecesLabel_slot(bool red, int pieces) {
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->blackPiecesLabel->setText(pop_q);
     }
+
 }
 
 // update a piece after movement
