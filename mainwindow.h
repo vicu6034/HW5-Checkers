@@ -30,15 +30,17 @@ public:
 
     // reset the mainwindow to initial game state
     void Reset();
+    // update win label
+    void iterateWinLabel(Player * p);
 
 public slots:
     // custom slots to update labels and Pieces
-    void updateTurnLabel(int turn);
-    void updatePiecesLabel(bool red, int pieces);
-    void updatePiece(PiecePrototype* p);
-    void addPiece(PiecePrototype* p);
-    void removePiece(PiecePrototype* p);
-    void gameOver();
+    void updateTurnLabel_slot(int turn);
+    void updatePiecesLabel_slot(bool red, int pieces);
+    void updatePiece_slot(PiecePrototype* p);
+    void addPiece_slot(PiecePrototype* p);
+    void removePiece_slot(PiecePrototype* p);
+    void gameOver_slot();
 
 private slots:
     // default slots for button clicks
