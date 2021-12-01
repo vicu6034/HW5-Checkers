@@ -14,9 +14,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // we need to set up the ui before we draw on our scene
     ui->setupUi(this);
-
+    // set widget to 0 (display main menu)
     ui->stackedWidget->setCurrentIndex(0);
 
+    // create Game
     gameboard_ = new GameBoard();
     // connect our custom slots and signals
     connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel_slot(int)));
@@ -26,35 +27,29 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
 
-
     // the QGraphicsView is the UI element that contains the
     // scene that we will actually get to draw on.
     QGraphicsView * view = ui->gameGraphicsView;
-
-    // scene is a QGraphicsScene pointer field of the PlotWindow class
-    // this makes our lives easier by letting us easily access it
-    // from other functions in this class.
     scene = new QGraphicsScene;
     view->setScene(scene);
     // make the scene the same size as the view containing it
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
 
-
-    // add all tiles to the scene
+    // add all graphics items to game scene
     for (Tile* tile : gameboard_->getTiles() ) {
+        // add all tiles to the scene
         scene->addItem(tile);
     }
-
-    // add all pieces to the scene
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
+        // add all pieces to the scene
         scene->addItem(piece);
     }
-
-    // add all powerups to the scene
     for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+         // add all powerups to the scene
         scene->addItem(powerup);
     }
 
+    // set initial turn label
     ui->turnLabel->setText("TURN: RED");
 
 }
@@ -162,8 +157,12 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_spButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
 }
 
+void MainWindow::on_mpButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+}
