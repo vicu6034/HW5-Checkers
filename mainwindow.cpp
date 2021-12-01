@@ -17,6 +17,11 @@ MainWindow::MainWindow(QWidget *parent)
     // set widget to 0 (display main menu)
     ui->stackedWidget->setCurrentIndex(0);
 
+    // set up popup for rules
+    rules_pupup_ = new RulesPopup();
+    rules_pupup_->setModal(true);
+    connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rulesRejected_slot()));
+
     // create Game
     gameboard_ = new GameBoard();
     // connect our custom slots and signals
@@ -160,9 +165,16 @@ MainWindow::~MainWindow() {
 void MainWindow::on_spButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
+    rules_pupup_->show();
 }
 
 void MainWindow::on_mpButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
+    rules_pupup_->show();
+}
+
+void MainWindow::rulesRejected_slot()
+{
+     ui->stackedWidget->setCurrentIndex(0);
 }
