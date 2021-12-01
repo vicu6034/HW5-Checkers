@@ -28,11 +28,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     gameboard_ = new GameBoard();
     // connect our custom slots and signals
-    connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel(int)));
-    connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel(bool,int)));
-    connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece(PiecePrototype*)));
-    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
-    connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel_slot(int)));
+    connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel_slot(bool,int)));
+    connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece_slot(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece_slot(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
@@ -50,42 +51,6 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     ui->turnLabel->setText("TURN: RED");
-}
-
-// update turn label with whoevers turn it is
-void MainWindow::updateTurnLabel(int turn) {
-    QString turn_str = turn ? "BLACK" : "RED";
-    ui->turnLabel->setText("TURN: " + turn_str);
-}
-
-// update label displaying how many pieces a player has
-void MainWindow::updatePiecesLabel(bool red, int pieces) {
-    if (red) {
-        std::string s= "RED: " + std::to_string(pieces) + " Pieces Remaining";
-        QString pop_q(const_cast<char*>(s.c_str()));
-        ui->redPiecesLabel->setText(pop_q);
-    } else {
-        std::string s= "BLACK: " + std::to_string(pieces) + " Pieces Remaining";
-        QString pop_q(const_cast<char*>(s.c_str()));
-        ui->blackPiecesLabel->setText(pop_q);
-    }
-}
-
-// update a piece after movement
-void MainWindow::updatePiece(PiecePrototype* p) {
-    scene->removeItem(p);
-    p->update();
-    scene->addItem(p);
-}
-
-// update a piece after movement
-void MainWindow::addPiece(PiecePrototype* p) {
-    scene->addItem(p);
-}
-
-// update a piece after movement
-void MainWindow::removePiece(PiecePrototype* p) {
-    scene->removeItem(p);
 }
 
 // reset the mainwindow
@@ -118,25 +83,72 @@ void MainWindow::Reset() {
     ui->blackPiecesLabel->setText(pop2_q);
 }
 
-// when reset button is clicked, just reset
-void MainWindow::on_resetButton_clicked() {
+// helper method to give a player a win and update the label
+void MainWindow::iterateWinLabel(Player * p) {
+    p->set_num_wins(p->get_num_wins()+1);
+    if (p->get_is_red()) {
+        std::string s= "RED: " + std::to_string(p->get_num_wins()) + " Wins";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->redWinsLabel->setText(pop_q);
+    } else {
+        std::string s= "BLACK: " + std::to_string(p->get_num_wins()) + " Wins";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->blackWinsLabel->setText(pop_q);
+    }
+}
+
+// update turn label with whoevers turn it is
+void MainWindow::updateTurnLabel_slot(int turn) {
+    QString turn_str = turn ? "BLACK" : "RED";
+    ui->turnLabel->setText("TURN: " + turn_str);
+}
+
+// update label displaying how many pieces a player has
+void MainWindow::updatePiecesLabel_slot(bool red, int pieces) {
+    if (red) {
+        std::string s= "RED: " + std::to_string(pieces) + " Pieces Remaining";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->redPiecesLabel->setText(pop_q);
+    } else {
+        std::string s= "BLACK: " + std::to_string(pieces) + " Pieces Remaining";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->blackPiecesLabel->setText(pop_q);
+    }
+
+}
+
+// update a piece after movement
+void MainWindow::updatePiece_slot(PiecePrototype* p) {
+    scene->removeItem(p);
+    p->update();
+    scene->addItem(p);
+}
+
+// update a piece after movement
+void MainWindow::addPiece_slot(PiecePrototype* p) {
+    scene->addItem(p);
+}
+
+// update a piece after movement
+void MainWindow::removePiece_slot(PiecePrototype* p) {
+    scene->removeItem(p);
+}
+
+// when somebody wins update ther wins label and reset game
+void MainWindow::gameOver_slot() {
+    iterateWinLabel(gameboard_->getCurrentPlayer());
     Reset();
 }
 
 // when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
-   Player * p = gameboard_->getOtherPlayer();
-   p->set_num_wins(p->get_num_wins()+1);
-   if (p->get_is_red()) {
-       std::string s= "RED: " + std::to_string(p->get_num_wins()) + " Wins";
-       QString pop_q(const_cast<char*>(s.c_str()));
-       ui->redWinsLabel->setText(pop_q);
-   } else {
-       std::string s= "BLACK: " + std::to_string(p->get_num_wins()) + " Wins";
-       QString pop_q(const_cast<char*>(s.c_str()));
-       ui->blackWinsLabel->setText(pop_q);
-   }
+   iterateWinLabel(gameboard_->getOtherPlayer());
    Reset();
+}
+
+// when reset button is clicked, just reset
+void MainWindow::on_resetButton_clicked() {
+    Reset();
 }
 
 // destructor
