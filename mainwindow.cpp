@@ -3,6 +3,7 @@
 #include <QGraphicsView>
 #include <QDebug>
 #include <QTime>
+#include <QStackedWidget>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -13,6 +14,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // we need to set up the ui before we draw on our scene
     ui->setupUi(this);
+
+    ui->stackedWidget->setCurrentIndex(0);
+
+    gameboard_ = new GameBoard();
+    // connect our custom slots and signals
+    connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel_slot(int)));
+    connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel_slot(bool,int)));
+    connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece_slot(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece_slot(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
+
 
     // the QGraphicsView is the UI element that contains the
     // scene that we will actually get to draw on.
@@ -26,14 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
     // make the scene the same size as the view containing it
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
 
-    gameboard_ = new GameBoard();
-    // connect our custom slots and signals
-    connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel_slot(int)));
-    connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel_slot(bool,int)));
-    connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece_slot(PiecePrototype*)));
-    connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece_slot(PiecePrototype*)));
-    connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
-    connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
@@ -51,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     ui->turnLabel->setText("TURN: RED");
+
 }
 
 // reset the mainwindow
@@ -155,3 +161,9 @@ void MainWindow::on_resetButton_clicked() {
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+}
+

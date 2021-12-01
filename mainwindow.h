@@ -46,6 +46,7 @@ private slots:
     // default slots for button clicks
     void on_resetButton_clicked();
     void on_surrenderButton_clicked();
+    void on_pushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

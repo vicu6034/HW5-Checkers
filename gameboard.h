@@ -5,8 +5,9 @@
 #include <player.h>
 #include <pieceprototypefactory.h>
 #include <powerup.h>
+#include <QWidget>
 
-class GameBoard : public QObject
+class GameBoard : public QWidget
 {
     Q_OBJECT
 

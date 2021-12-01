@@ -14,100 +14,127 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QGraphicsView" name="gameGraphicsView">
+   <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>50</y>
-      <width>600</width>
-      <height>600</height>
+      <x>0</x>
+      <y>-20</y>
+      <width>700</width>
+      <height>800</height>
      </rect>
     </property>
-    <property name="verticalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
-    </property>
-    <property name="horizontalScrollBarPolicy">
-     <enum>Qt::ScrollBarAlwaysOff</enum>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="resetButton">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>660</y>
-      <width>108</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>New Game</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="turnLabel">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>20</y>
-      <width>151</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TURN :</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="surrenderButton">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>10</y>
-      <width>113</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Surrender</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>660</y>
-      <width>181</width>
-      <height>111</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QLabel" name="redPiecesLabel">
-       <property name="text">
-        <string>RED: 15 Pieces Remaining</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="blackPiecesLabel">
-       <property name="text">
-        <string>BLACK: 15 Pieces Remaining</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="redWinsLabel">
-       <property name="text">
-        <string>RED: 0 Wins</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="blackWinsLabel">
-       <property name="text">
-        <string>BLACK: 0 Wins</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="page">
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>310</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_2">
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>660</y>
+        <width>181</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="redPiecesLabel">
+         <property name="text">
+          <string>RED: 15 Pieces Remaining</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="blackPiecesLabel">
+         <property name="text">
+          <string>BLACK: 15 Pieces Remaining</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="redWinsLabel">
+         <property name="text">
+          <string>RED: 0 Wins</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="blackWinsLabel">
+         <property name="text">
+          <string>BLACK: 0 Wins</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QLabel" name="turnLabel">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>30</y>
+        <width>151</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TURN :</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="surrenderButton">
+      <property name="geometry">
+       <rect>
+        <x>570</x>
+        <y>20</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Surrender</string>
+      </property>
+     </widget>
+     <widget class="QGraphicsView" name="gameGraphicsView">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>60</y>
+        <width>600</width>
+        <height>600</height>
+       </rect>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="resetButton">
+      <property name="geometry">
+       <rect>
+        <x>570</x>
+        <y>660</y>
+        <width>108</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>New Game</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
