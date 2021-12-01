@@ -38,6 +38,7 @@ public slots:
     void updatePiece(PiecePrototype* p);
     void addPiece(PiecePrototype* p);
     void removePiece(PiecePrototype* p);
+    void gameOver();
 
 private slots:
     // default slots for button clicks

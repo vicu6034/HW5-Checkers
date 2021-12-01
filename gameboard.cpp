@@ -308,6 +308,14 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
     }
 }
 
+bool GameBoard::checkForWinner() {
+    if (players_[0]->get_num_pieces() == 0 || players_[1]->get_num_pieces() == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
     if (checkValidity(t, red)) {
@@ -342,14 +350,18 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             handlePowerup(t->get_position(), last_pos, red);
         }
 
-        // iterate turn
-        if (red) {
-            current_player_ = 1;
+        if (checkForWinner()) {
+            emit gameOver();
         } else {
-            current_player_ = 0;
+            // iterate turn
+            if (red) {
+                current_player_ = 1;
+            } else {
+                current_player_ = 0;
+            }
+            // update turn label
+            emit updateTurnLabel(current_player_);
         }
-        // update turn label
-        emit updateTurnLabel(current_player_);
     }
 }
 

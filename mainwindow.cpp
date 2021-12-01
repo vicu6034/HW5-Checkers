@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece(PiecePrototype*)));
     connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece(PiecePrototype*)));
     connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece(PiecePrototype*)));
+    connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver()));
 
     // add all tiles to the scene
     for (Tile* tile : gameboard_->getTiles() ) {
@@ -116,6 +117,21 @@ void MainWindow::Reset() {
     std::string s2= "BLACK: " + std::to_string(15) + " Pieces Remaining";
     QString pop2_q(const_cast<char*>(s2.c_str()));
     ui->blackPiecesLabel->setText(pop2_q);
+}
+
+void MainWindow::gameOver() {
+    Player * p = gameboard_->getCurrentPlayer();
+    p->set_num_wins(p->get_num_wins()+1);
+    if (p->get_is_red()) {
+        std::string s= "RED: " + std::to_string(p->get_num_wins()) + " Wins";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->redWinsLabel->setText(pop_q);
+    } else {
+        std::string s= "BLACK: " + std::to_string(p->get_num_wins()) + " Wins";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->blackWinsLabel->setText(pop_q);
+    }
+    Reset();
 }
 
 // when reset button is clicked, just reset
