@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     media_player = new QMediaPlayer();
     // set media to the game start click sound
     media_player->setMedia(QUrl("qrc:/audio/game_start.mp3"));
-    media_player->setPlaybackRate(1.5);
+    media_player->setPlaybackRate(2);
     // set up popup for displaying rules
     rules_pupup_ = new RulesPopup();
     connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rules_Rejected_slot()));
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
-    connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
+    connect(gameboard_, SIGNAL(gameOver(int)), this, SLOT(gameOver_slot(int)));
     connect(gameboard_, SIGNAL(playSlideSound()), this, SLOT(playSlideSound_slot()));
     connect(gameboard_, SIGNAL(playJumpSound()), this, SLOT(playJumpSound_slot()));
     connect(gameboard_, SIGNAL(playDeniedSound()), this, SLOT(playDeniedSound_slot()));
@@ -104,24 +104,32 @@ void MainWindow::Reset() {
     ui->blackPiecesLabel->setText(pop2_q);
 }
 
-// helper method to give a player a win and update the label
-void MainWindow::iterateWinLabel(Player * p) {
-    p->set_num_wins(p->get_num_wins()+1);
-    if (p->get_is_red()) {
-        std::string s= "RED: " + std::to_string(p->get_num_wins()) + " Wins";
-        QString pop_q(const_cast<char*>(s.c_str()));
-        ui->redWinsLabel->setText(pop_q);
-    } else {
-        std::string s= "BLACK: " + std::to_string(p->get_num_wins()) + " Wins";
-        QString pop_q(const_cast<char*>(s.c_str()));
-        ui->blackWinsLabel->setText(pop_q);
-    }
-}
-
 void MainWindow::playClickSound() {
     media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
     media_player->setPlaybackRate(1);
     media_player->play();
+}
+
+void MainWindow::handleWinner(int winner) {
+    // update win label
+    if (winner == 0) {
+        std::string s= "RED: " + std::to_string(gameboard_->getPlayer(winner)->get_num_wins()) + " Wins";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->redWinsLabel->setText(pop_q);
+    } else {
+        std::string s= "BLACK: " + std::to_string(gameboard_->getPlayer(winner)->get_num_wins()) + " Wins";
+        QString pop_q(const_cast<char*>(s.c_str()));
+        ui->blackWinsLabel->setText(pop_q);
+    }
+
+    // play winner sound
+    media_player->setMedia(QUrl("qrc:/audio/player_won.mp3"));
+    media_player->setPlaybackRate(1.5);
+    media_player->play();
+
+    // set text for winner popup and show it
+    winner_popup_->setLabelText(winner);
+    winner_popup_->exec();
 }
 
 // update turn label with whoevers turn it is
@@ -162,22 +170,19 @@ void MainWindow::removePiece_slot(PiecePrototype* p) {
 }
 
 // when somebody wins update ther wins label and reset game
-void MainWindow::gameOver_slot() {
-    iterateWinLabel(gameboard_->getCurrentPlayer());
-    winner_popup_->setLabelText(gameboard_->getCurrentPlayerInt());
-    winner_popup_->exec();
+void MainWindow::gameOver_slot(int winner) {
+    handleWinner(winner);
 }
 
 // when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
     playClickSound();
-    iterateWinLabel(gameboard_->getOtherPlayer());
     int other_player = 0;
     if (gameboard_->getCurrentPlayerInt() == 0) {
         other_player = 1;
     }
-    winner_popup_->setLabelText(other_player);
-    winner_popup_->exec();
+    gameboard_->getPlayer(other_player)->set_num_wins(gameboard_->getPlayer(other_player)->get_num_wins()+1);
+    handleWinner(other_player);
 }
 
 // when reset button is clicked, just reset

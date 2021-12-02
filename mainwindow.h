@@ -37,9 +37,9 @@ public:
 
     // reset the mainwindow to initial game state
     void Reset();
-    // update win label
-    void iterateWinLabel(Player * p);
+
     void playClickSound();
+    void handleWinner(int winner);
 
 public slots:
     // slots to update labels and Pieces
@@ -50,7 +50,7 @@ public slots:
     void addPiece_slot(PiecePrototype* p);
     void removePiece_slot(PiecePrototype* p);
     // slot for when the game ends
-    void gameOver_slot();
+    void gameOver_slot(int winner);
     // slots for handling popup windows
     void rules_Rejected_slot();
     void rules_Accepted_slot();

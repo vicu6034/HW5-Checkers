@@ -315,12 +315,17 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
     }
 }
 
-bool GameBoard::checkForWinner() {
-    if (players_[0]->get_num_pieces() == 0 || players_[1]->get_num_pieces() == 0) {
-        return true;
-    } else {
-        return false;
+int GameBoard::checkForWinner() {
+    for (int i = 0; i < 2; i++) {
+        if (players_[i]->get_num_pieces() == 0) {
+            if (i == 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
+    return -1;
 }
 
 // helper for when tile is selected
@@ -356,11 +361,8 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             emit updatePiece(selected_);
             handlePowerup(t->get_position(), last_pos, red);
         }
-
-        if (checkForWinner()) {
-            emit gameOver();
-        } else {
-            // iterate turn
+        int winner = checkForWinner();
+        if (winner == -1) {
             if (red) {
                 current_player_ = 1;
             } else {
@@ -368,6 +370,9 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             }
             // update turn label
             emit updateTurnLabel(current_player_);
+        } else {
+            players_[winner]->set_num_wins(players_[winner]->get_num_wins()+1);
+            emit gameOver(winner);
         }
     } else {
         emit playDeniedSound();

@@ -41,9 +41,8 @@ public:
     std::vector<PowerUp*> getPowerUps() { return powerups_; }
     std::vector<PiecePrototype*> getPieces();
     PiecePrototype* getPiece(Position pos);
-    Player* getCurrentPlayer() { return players_[current_player_]; }
+    Player* getPlayer(int index) { return players_[index]; }
     int getCurrentPlayerInt() { return current_player_; }
-    Player* getOtherPlayer() { return players_[!current_player_]; }
 
     std::string checkPowerup(Position pos);
     void removePowerup(Position pos);
@@ -58,7 +57,7 @@ public:
     // check if a tile is valid for a piece to move to (helps handleSelected)
     bool checkValidity(Tile* t, bool red);
     // if a move was valid check if someone won
-    bool checkForWinner();
+    int checkForWinner();
     // handles what happens when a tile is selected (helps pieceSelected)
     void handleSelected(Tile* t, bool red);
     void handlePowerup(Position t_pos, Position last_pos, bool red);
@@ -70,7 +69,7 @@ signals:
     void updatePiece(PiecePrototype* p);
     void addPiece(PiecePrototype* p);
     void removePiece(PiecePrototype* p);
-    void gameOver();
+    void gameOver(int winner);
 
     void playSlideSound();
     void playJumpSound();
