@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-
+#include <QMediaPlayer>
 #include <gameboard.h>
 #include <rulespopup.h>
 #include <winnerpopup.h>
@@ -21,6 +21,7 @@ private:
     // mainwindow must have the ui and scene so we can do things
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
+    QMediaPlayer *media_player;
 
     // has a GameBoard to run the game
     GameBoard* gameboard_;
@@ -47,7 +48,8 @@ public slots:
     void addPiece_slot(PiecePrototype* p);
     void removePiece_slot(PiecePrototype* p);
     void gameOver_slot();
-    void rulesRejected_slot();
+    void rules_Rejected_slot();
+    void rules_Accepted_slot();
     void winner_PlayAgain_slot();
     void winner_Exit_slot();
 

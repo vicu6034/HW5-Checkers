@@ -17,9 +17,15 @@ MainWindow::MainWindow(QWidget *parent)
     // set widget to 0 (display main menu)
     ui->stackedWidget->setCurrentIndex(0);
 
+    // set up audio player
+    media_player = new QMediaPlayer();
+    // set media to the game start click sound
+    media_player->setMedia(QUrl("qrc:/audio/game_start.mp3"));
+
     // set up popup for displaying rules
     rules_pupup_ = new RulesPopup();
-    connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rulesRejected_slot()));
+    connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rules_Rejected_slot()));
+    connect(rules_pupup_, SIGNAL(rulesAccepted()), this, SLOT(rules_Accepted_slot()));
 
     // set up popup for displaying winner
     winner_popup_ = new WinnerPopup();
@@ -61,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->turnLabel->setText("TURN: RED");
     // gray out simulation button
     ui->simButton->setEnabled(false);
+
 }
 
 // reset the mainwindow
@@ -153,6 +160,8 @@ void MainWindow::gameOver_slot() {
 
 // when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
+    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player->play();
     iterateWinLabel(gameboard_->getOtherPlayer());
     int other_player = 0;
     if (gameboard_->getCurrentPlayerInt() == 0) {
@@ -164,6 +173,8 @@ void MainWindow::on_surrenderButton_clicked() {
 
 // when reset button is clicked, just reset
 void MainWindow::on_resetButton_clicked() {
+    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player->play();
     Reset();
 }
 
@@ -172,30 +183,43 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::on_spButton_clicked()
-{
+void MainWindow::on_spButton_clicked() {
+    // play start song
+    media_player->play();
     ui->stackedWidget->setCurrentIndex(1);
     rules_pupup_->exec();
 }
 
-void MainWindow::on_mpButton_clicked()
-{
+void MainWindow::on_mpButton_clicked() {
+    // play start song
+    media_player->play();
     ui->stackedWidget->setCurrentIndex(1);
     rules_pupup_->exec();
 }
 
-void MainWindow::rulesRejected_slot()
-{
-     ui->stackedWidget->setCurrentIndex(0);
-
+void MainWindow::rules_Rejected_slot() {
+    // set media back to regular click
+    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player->play();
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
-void MainWindow::winner_Exit_slot()
-{
+void MainWindow::rules_Accepted_slot() {
+    // set media back to regular click
+    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player->play();
+}
+
+void MainWindow::winner_Exit_slot() {
+    // set media back to regular click
+    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player->play();
     exit(1);
 }
 
-void MainWindow::winner_PlayAgain_slot()
-{
+void MainWindow::winner_PlayAgain_slot() {
+    // set media back to regular click
+    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player->play();
     Reset();
 }

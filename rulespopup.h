@@ -19,10 +19,13 @@ private:
     Ui::RulesPopup *ui;
 
 signals:
+    void rulesAccepted();
     void rulesRejected();
 
 private slots:
+    void on_rulesButtonBox_accepted();
     void on_rulesButtonBox_rejected();
+
 };
 
 #endif // RULESPOPUP_H

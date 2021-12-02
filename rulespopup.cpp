@@ -21,3 +21,7 @@ void RulesPopup::on_rulesButtonBox_rejected()
     emit rulesRejected();
 }
 
+void RulesPopup::on_rulesButtonBox_accepted()
+{
+    emit rulesAccepted();
+}
