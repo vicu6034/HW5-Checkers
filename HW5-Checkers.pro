@@ -19,7 +19,8 @@ SOURCES += \
     regularpiece.cpp \
     rulespopup.cpp \
     tile.cpp \
-    triplekingpiece.cpp
+    triplekingpiece.cpp \
+    winnerpopup.cpp
 
 HEADERS += \
     gameboard.h \
@@ -32,11 +33,13 @@ HEADERS += \
     regularpiece.h \
     rulespopup.h \
     tile.h \
-    triplekingpiece.h
+    triplekingpiece.h \
+    winnerpopup.h
 
 FORMS += \
     mainwindow.ui \
-    rulespopup.ui
+    rulespopup.ui \
+    winnerpopup.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

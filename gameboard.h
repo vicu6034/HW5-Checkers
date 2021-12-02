@@ -42,6 +42,7 @@ public:
     std::vector<PiecePrototype*> getPieces();
     PiecePrototype* getPiece(Position pos);
     Player* getCurrentPlayer() { return players_[current_player_]; }
+    int getCurrentPlayerInt() { return current_player_; }
     Player* getOtherPlayer() { return players_[!current_player_]; }
 
     std::string checkPowerup(Position pos);

@@ -16,7 +16,7 @@ RulesPopup::~RulesPopup()
     delete ui;
 }
 
-void RulesPopup::on_buttonBox_rejected()
+void RulesPopup::on_rulesButtonBox_rejected()
 {
     emit rulesRejected();
 }

@@ -17,14 +17,17 @@ MainWindow::MainWindow(QWidget *parent)
     // set widget to 0 (display main menu)
     ui->stackedWidget->setCurrentIndex(0);
 
-    // set up popup for rules
+    // set up popup for displaying rules
     rules_pupup_ = new RulesPopup();
-    rules_pupup_->setModal(true);
     connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rulesRejected_slot()));
 
-    // create Game
+    // set up popup for displaying winner
+    winner_popup_ = new WinnerPopup();
+    connect(winner_popup_, SIGNAL(PlayAgain()), this, SLOT(winner_PlayAgain_slot()));
+    connect(winner_popup_, SIGNAL(Exit()), this, SLOT(winner_Exit_slot()));
+
+    // set up game with custom slots and signals
     gameboard_ = new GameBoard();
-    // connect our custom slots and signals
     connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel_slot(int)));
     connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel_slot(bool,int)));
     connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece_slot(PiecePrototype*)));
@@ -56,7 +59,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set initial turn label
     ui->turnLabel->setText("TURN: RED");
-
+    // gray out simulation button
+    ui->simButton->setEnabled(false);
 }
 
 // reset the mainwindow
@@ -143,13 +147,19 @@ void MainWindow::removePiece_slot(PiecePrototype* p) {
 // when somebody wins update ther wins label and reset game
 void MainWindow::gameOver_slot() {
     iterateWinLabel(gameboard_->getCurrentPlayer());
-    Reset();
+    winner_popup_->setLabelText(gameboard_->getCurrentPlayerInt());
+    winner_popup_->exec();
 }
 
 // when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
-   iterateWinLabel(gameboard_->getOtherPlayer());
-   Reset();
+    iterateWinLabel(gameboard_->getOtherPlayer());
+    int other_player = 0;
+    if (gameboard_->getCurrentPlayerInt() == 0) {
+        other_player = 1;
+    }
+    winner_popup_->setLabelText(other_player);
+    winner_popup_->exec();
 }
 
 // when reset button is clicked, just reset
@@ -165,16 +175,27 @@ MainWindow::~MainWindow() {
 void MainWindow::on_spButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
-    rules_pupup_->show();
+    rules_pupup_->exec();
 }
 
 void MainWindow::on_mpButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
-    rules_pupup_->show();
+    rules_pupup_->exec();
 }
 
 void MainWindow::rulesRejected_slot()
 {
      ui->stackedWidget->setCurrentIndex(0);
+
+}
+
+void MainWindow::winner_Exit_slot()
+{
+    exit(1);
+}
+
+void MainWindow::winner_PlayAgain_slot()
+{
+    Reset();
 }

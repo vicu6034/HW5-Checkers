@@ -22,7 +22,7 @@ signals:
     void rulesRejected();
 
 private slots:
-    void on_buttonBox_rejected();
+    void on_rulesButtonBox_rejected();
 };
 
 #endif // RULESPOPUP_H

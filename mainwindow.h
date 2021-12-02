@@ -7,6 +7,7 @@
 
 #include <gameboard.h>
 #include <rulespopup.h>
+#include <winnerpopup.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,7 +24,10 @@ private:
 
     // has a GameBoard to run the game
     GameBoard* gameboard_;
+
+    // references to our popup windows
     RulesPopup* rules_pupup_;
+    WinnerPopup* winner_popup_;
 
 public:
     // constructor and destructor
@@ -44,6 +48,8 @@ public slots:
     void removePiece_slot(PiecePrototype* p);
     void gameOver_slot();
     void rulesRejected_slot();
+    void winner_PlayAgain_slot();
+    void winner_Exit_slot();
 
 private slots:
     // default slots for button clicks
