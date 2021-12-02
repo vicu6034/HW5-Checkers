@@ -105,6 +105,7 @@ bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red) {
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
             // try to go one space
+            emit playSlideSound();
             return true;
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y-2) {
             // try to jump piece to left
@@ -117,6 +118,7 @@ bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red) {
         // blacks turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
             // try to go one tile
+            emit playSlideSound();
             return true;
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
             // try to jump a Piece to the left
@@ -135,6 +137,7 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red) {
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
             // try to go one tile backwards
+            emit playSlideSound();
             return true;
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
             // try to jump piece to left backwards
@@ -147,6 +150,7 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red) {
         // blacks turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
             // try to go one tile backwards
+            emit playSlideSound();
             return true;
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
             // try to jump a Piece to the left backwards
@@ -346,7 +350,6 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             selected_->set_position(t->get_position());
             players_[current_player_]->updatePiece(last_pos, t->get_position());
             selected_->set_highlighted(false);
-            emit playSlideSound();
             emit updatePiece(selected_);
             handlePowerup(t->get_position(), last_pos, red);
         }
