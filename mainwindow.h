@@ -58,6 +58,7 @@ public slots:
     void winner_Exit_slot();
     // slots for playing specific sounds
     void playSlideSound_slot();
+    void playJumpSound_slot();
 
 private slots:
     // default slots for button clicks

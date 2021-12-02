@@ -93,6 +93,7 @@ bool GameBoard::jumpHelper(Position pos, bool red) {
             // remove jumped piece from other player, update pieces label
             players_[!current_player_]->removePiece(pos);
             emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
+            emit playJumpSound();
             return true;
         }
     }
@@ -170,6 +171,7 @@ bool GameBoard::friendlyJumpHelper(Position pos, bool red) {
     if (p != nullptr) {
         // check the piece to jump is the same color of the selected piece
         if (red == p->get_is_red()) {
+            emit playJumpSound();
             return true;
         }
     }
@@ -188,6 +190,7 @@ bool GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red) {
             players_[!current_player_]->removePiece(pos1);
             players_[!current_player_]->removePiece(pos2);
             emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
+            emit playJumpSound();
             return true;
         }
     }

@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
     connect(gameboard_, SIGNAL(playSlideSound()), this, SLOT(playSlideSound_slot()));
+    connect(gameboard_, SIGNAL(playJumpSound()), this, SLOT(playJumpSound_slot()));
 
     // the QGraphicsView is the UI element that contains the
     // scene that we will actually get to draw on.
@@ -189,20 +190,21 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_spButton_clicked() {
-    // play start song
+    // play start song and change view to game screen
     media_player->play();
     ui->stackedWidget->setCurrentIndex(1);
     rules_pupup_->exec();
 }
 
 void MainWindow::on_mpButton_clicked() {
-    // play start song
+    // play start song and change view to game screen
     media_player->play();
     ui->stackedWidget->setCurrentIndex(1);
     rules_pupup_->exec();
 }
 
 void MainWindow::rules_Rejected_slot() {
+    // if rules get rejected go back to main menu
     playClickSound();
     ui->stackedWidget->setCurrentIndex(0);
 }
@@ -212,6 +214,7 @@ void MainWindow::rules_Accepted_slot() {
 }
 
 void MainWindow::winner_Exit_slot() {
+    // exit application when exit game is clicked
     playClickSound();
     exit(1);
 }
@@ -223,6 +226,12 @@ void MainWindow::winner_PlayAgain_slot() {
 
 void MainWindow::playSlideSound_slot() {
     media_player->setMedia(QUrl("qrc:/audio/piece_slide.mp3"));
-    media_player->setPlaybackRate(2);
+    media_player->setPlaybackRate(2.5);
+    media_player->play();
+}
+
+void MainWindow::playJumpSound_slot() {
+    media_player->setMedia(QUrl("qrc:/audio/piece_jump.mp3"));
+    media_player->setPlaybackRate(1.5);
     media_player->play();
 }

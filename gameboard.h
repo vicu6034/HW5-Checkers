@@ -73,6 +73,7 @@ signals:
     void gameOver();
 
     void playSlideSound();
+    void playJumpSound();
 
 public slots:
     // custom slots to handle when tiles and pieces are clicked
