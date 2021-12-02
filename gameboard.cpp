@@ -346,6 +346,7 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             selected_->set_position(t->get_position());
             players_[current_player_]->updatePiece(last_pos, t->get_position());
             selected_->set_highlighted(false);
+            emit playSlideSound();
             emit updatePiece(selected_);
             handlePowerup(t->get_position(), last_pos, red);
         }

@@ -72,6 +72,8 @@ signals:
     void removePiece(PiecePrototype* p);
     void gameOver();
 
+    void playSlideSound();
+
 public slots:
     // custom slots to handle when tiles and pieces are clicked
     void tileSelected(Tile* t);

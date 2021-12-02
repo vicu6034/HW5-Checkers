@@ -2,5 +2,6 @@
     <qresource prefix="/audio">
         <file>menu_click.mp3</file>
         <file>game_start.mp3</file>
+        <file>piece_slide.mp3</file>
     </qresource>
 </RCC>

@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     media_player = new QMediaPlayer();
     // set media to the game start click sound
     media_player->setMedia(QUrl("qrc:/audio/game_start.mp3"));
-
+    media_player->setPlaybackRate(1.5);
     // set up popup for displaying rules
     rules_pupup_ = new RulesPopup();
     connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rules_Rejected_slot()));
@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
+    connect(gameboard_, SIGNAL(playSlideSound()), this, SLOT(playSlideSound_slot()));
 
     // the QGraphicsView is the UI element that contains the
     // scene that we will actually get to draw on.
@@ -114,6 +115,12 @@ void MainWindow::iterateWinLabel(Player * p) {
     }
 }
 
+void MainWindow::playClickSound() {
+    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player->setPlaybackRate(1);
+    media_player->play();
+}
+
 // update turn label with whoevers turn it is
 void MainWindow::updateTurnLabel_slot(int turn) {
     QString turn_str = turn ? "BLACK" : "RED";
@@ -160,8 +167,7 @@ void MainWindow::gameOver_slot() {
 
 // when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
-    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
-    media_player->play();
+    playClickSound();
     iterateWinLabel(gameboard_->getOtherPlayer());
     int other_player = 0;
     if (gameboard_->getCurrentPlayerInt() == 0) {
@@ -173,8 +179,7 @@ void MainWindow::on_surrenderButton_clicked() {
 
 // when reset button is clicked, just reset
 void MainWindow::on_resetButton_clicked() {
-    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
-    media_player->play();
+    playClickSound();
     Reset();
 }
 
@@ -198,28 +203,26 @@ void MainWindow::on_mpButton_clicked() {
 }
 
 void MainWindow::rules_Rejected_slot() {
-    // set media back to regular click
-    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
-    media_player->play();
+    playClickSound();
     ui->stackedWidget->setCurrentIndex(0);
 }
 
 void MainWindow::rules_Accepted_slot() {
-    // set media back to regular click
-    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
-    media_player->play();
+    playClickSound();
 }
 
 void MainWindow::winner_Exit_slot() {
-    // set media back to regular click
-    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
-    media_player->play();
+    playClickSound();
     exit(1);
 }
 
 void MainWindow::winner_PlayAgain_slot() {
-    // set media back to regular click
-    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
-    media_player->play();
+    playClickSound();
     Reset();
+}
+
+void MainWindow::playSlideSound_slot() {
+    media_player->setMedia(QUrl("qrc:/audio/piece_slide.mp3"));
+    media_player->setPlaybackRate(2);
+    media_player->play();
 }

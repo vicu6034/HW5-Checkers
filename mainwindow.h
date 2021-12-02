@@ -39,19 +39,25 @@ public:
     void Reset();
     // update win label
     void iterateWinLabel(Player * p);
+    void playClickSound();
 
 public slots:
-    // custom slots to update labels and Pieces
+    // slots to update labels and Pieces
     void updateTurnLabel_slot(int turn);
     void updatePiecesLabel_slot(bool red, int pieces);
+    // slots to add, remove and update pieces in the scene
     void updatePiece_slot(PiecePrototype* p);
     void addPiece_slot(PiecePrototype* p);
     void removePiece_slot(PiecePrototype* p);
+    // slot for when the game ends
     void gameOver_slot();
+    // slots for handling popup windows
     void rules_Rejected_slot();
     void rules_Accepted_slot();
     void winner_PlayAgain_slot();
     void winner_Exit_slot();
+    // slots for playing specific sounds
+    void playSlideSound_slot();
 
 private slots:
     // default slots for button clicks
