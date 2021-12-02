@@ -59,6 +59,7 @@ public slots:
     // slots for playing specific sounds
     void playSlideSound_slot();
     void playJumpSound_slot();
+    void playDeniedSound_slot();
 
 private slots:
     // default slots for button clicks

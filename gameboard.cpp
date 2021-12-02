@@ -369,20 +369,23 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             // update turn label
             emit updateTurnLabel(current_player_);
         }
+    } else {
+        emit playDeniedSound();
     }
 }
 
 // slot for when a tile gets selected
 void GameBoard::tileSelected(Tile* t) {
     // first make sure we have a Piece selected
-    if (selected_ != nullptr) {
+    if (selected_) {
         bool p_red = selected_->get_is_red();
         // check that the selected piece is the same color as current player
         // check that theres no piece at the tile we want to go to
         if ((p_red != current_player_) && (getPiece(t->get_position()) == nullptr)) {
             handleSelected(t, p_red);
         }
-    // do nothing if checks dont pass
+    } else {
+        emit playDeniedSound();
     }
 }
 

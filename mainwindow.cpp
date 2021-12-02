@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
     connect(gameboard_, SIGNAL(playSlideSound()), this, SLOT(playSlideSound_slot()));
     connect(gameboard_, SIGNAL(playJumpSound()), this, SLOT(playJumpSound_slot()));
+    connect(gameboard_, SIGNAL(playDeniedSound()), this, SLOT(playDeniedSound_slot()));
 
     // the QGraphicsView is the UI element that contains the
     // scene that we will actually get to draw on.
@@ -53,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // add all graphics items to game scene
     for (Tile* tile : gameboard_->getTiles() ) {
+        connect(tile, SIGNAL(playDeniedSound()), this, SLOT(playDeniedSound_slot()));
         // add all tiles to the scene
         scene->addItem(tile);
     }
@@ -233,5 +235,11 @@ void MainWindow::playSlideSound_slot() {
 void MainWindow::playJumpSound_slot() {
     media_player->setMedia(QUrl("qrc:/audio/piece_jump.mp3"));
     media_player->setPlaybackRate(1.5);
+    media_player->play();
+}
+
+void MainWindow::playDeniedSound_slot() {
+    media_player->setMedia(QUrl("qrc:/audio/piece_denied.mp3"));
+    media_player->setPlaybackRate(1);
     media_player->play();
 }

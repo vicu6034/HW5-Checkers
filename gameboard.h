@@ -74,6 +74,7 @@ signals:
 
     void playSlideSound();
     void playJumpSound();
+    void playDeniedSound();
 
 public slots:
     // custom slots to handle when tiles and pieces are clicked

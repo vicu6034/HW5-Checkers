@@ -4,5 +4,6 @@
         <file>game_start.mp3</file>
         <file>piece_slide.mp3</file>
         <file>piece_jump.mp3</file>
+        <file>piece_denied.mp3</file>
     </qresource>
 </RCC>
