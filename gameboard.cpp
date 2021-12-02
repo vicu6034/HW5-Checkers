@@ -83,7 +83,7 @@ PiecePrototype* GameBoard::getPiece(Position pos) {
 }
 
 // return true for valid jump, false otherwise
-bool GameBoard::jumpHelper(Position pos, bool red) {
+bool GameBoard::jumpHelper(Position pos, bool red, bool jump) {
     // get the piece we want to jump
     PiecePrototype * p = getPiece(pos);
     // check the piece exists
@@ -91,49 +91,62 @@ bool GameBoard::jumpHelper(Position pos, bool red) {
         // check the piece to jump is opposite color of the selected piece
         if (red != p->get_is_red()) {
             // remove jumped piece from other player, update pieces label
-            players_[!current_player_]->removePiece(pos);
-            emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
-            emit playJumpSound();
-            return true;
+            if (jump) {
+                players_[!current_player_]->removePiece(pos);
+                emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
+                emit playJumpSound();
+                return true;
+            } else {
+                return true;
+            }
+
         }
     }
     return false;
 }
 
 // check all the tiles a regular piece could move to
-bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red) {
+bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump) {
     if (red) {
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
             // try to go one space
-            emit playSlideSound();
-            return true;
+            if (jump) {
+                emit playSlideSound();
+                return true;
+            } else {
+                return true;
+            }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y-2) {
             // try to jump piece to left
-            return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
+            return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red, jump);
         } else if (t_pos.x == s_pos.x+2 && t_pos.y == s_pos.y-2) {
             // try to jump piece to right
-            return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
+            return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red, jump);
         }
     } else {
         // blacks turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
             // try to go one tile
-            emit playSlideSound();
-            return true;
+            if (jump) {
+                emit playSlideSound();
+                return true;
+            } else {
+                return true;
+            }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
             // try to jump a Piece to the left
-            return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
+            return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red, jump);
         } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y+2)) {
             // try to jump a Piece to the right
-            return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
+            return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red, jump);
         }
     }
     return false;
 }
 
 // check the tiles a king could move to
-bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red) {
+bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump) {
     if (red) {
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
@@ -142,10 +155,10 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red) {
             return true;
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
             // try to jump piece to left backwards
-            return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
+            return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red, jump);
         } else if (t_pos.x == s_pos.x+2 && t_pos.y == s_pos.y+2) {
             // try to jump piece to right backwards
-            return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
+            return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red, jump);
         }
     } else {
         // blacks turn
@@ -155,30 +168,34 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red) {
             return true;
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
             // try to jump a Piece to the left backwards
-            return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
+            return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red, jump);
         } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y-2)) {
             // try to jump a Piece to the right backwards
-            return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
+            return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red, jump);
         }
     }
     return false;
 }
 
-bool GameBoard::friendlyJumpHelper(Position pos, bool red) {
+bool GameBoard::friendlyJumpHelper(Position pos, bool red, bool jump) {
     // get the piece we want to jump
     PiecePrototype * p = getPiece(pos);
     // check the piece exists
     if (p != nullptr) {
         // check the piece to jump is the same color of the selected piece
         if (red == p->get_is_red()) {
-            emit playJumpSound();
-            return true;
+            if (jump) {
+                emit playJumpSound();
+                return true;
+            } else {
+                return true;
+            }
         }
     }
     return false;
 }
 
-bool GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red) {
+bool GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump) {
     // get the piece we want to jump
     PiecePrototype * p = getPiece(pos1);
     PiecePrototype * p2 = getPiece(pos2);
@@ -187,77 +204,78 @@ bool GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red) {
         // check the piece to jump is opposite color of the selected piece
         if ((red != p->get_is_red()) && (red != p2->get_is_red())) {
             // remove jumped piece from other player, update pieces label
-            players_[!current_player_]->removePiece(pos1);
-            players_[!current_player_]->removePiece(pos2);
-            emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
-            emit playJumpSound();
-            return true;
+            if (jump) {
+                players_[!current_player_]->removePiece(pos1);
+                players_[!current_player_]->removePiece(pos2);
+                emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
+                emit playJumpSound();
+                return true;
+            } else {
+                return true;
+            }
+
         }
     }
     return false;
 }
 
 // check tiles triple king could move to
-bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red) {
+bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump) {
     if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y+2)) {
         // jump a friendly piece bottom right
-        return friendlyJumpHelper(Position{s_pos.x+1, s_pos.y+1}, red);
-
+        return friendlyJumpHelper(Position{s_pos.x+1, s_pos.y+1}, red, jump);
     } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
         // jump a friendly piece bottom left
-        return friendlyJumpHelper(Position{s_pos.x-1, s_pos.y+1}, red);
-
+        return friendlyJumpHelper(Position{s_pos.x-1, s_pos.y+1}, red, jump);
     } else if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y-2)) {
         // jump a friendly piece top right
-        return friendlyJumpHelper(Position{s_pos.x+1, s_pos.y-1}, red);
-
+        return friendlyJumpHelper(Position{s_pos.x+1, s_pos.y-1}, red, jump);
     } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
         // jump a friendly piece top left
-        return friendlyJumpHelper(Position{s_pos.x-1, s_pos.y-1}, red);
-
+        return friendlyJumpHelper(Position{s_pos.x-1, s_pos.y-1}, red, jump);
     } else if ((t_pos.x == s_pos.x+3) && (t_pos.y == s_pos.y+3)) {
         // jump 2 enemy pieces bottom right
-        return doubleJumpHelper(Position{s_pos.x+1, s_pos.y+1}, Position{s_pos.x+2, s_pos.y+2}, red);
-
+        return doubleJumpHelper(Position{s_pos.x+1, s_pos.y+1}, Position{s_pos.x+2, s_pos.y+2}, red, jump);
     } else if ((t_pos.x == s_pos.x-3) && (t_pos.y == s_pos.y+3)) {
         // jump 2 enemy pieces bottom left
-        return doubleJumpHelper(Position{s_pos.x-1, s_pos.y+1}, Position{s_pos.x-2, s_pos.y+2}, red);
-
+        return doubleJumpHelper(Position{s_pos.x-1, s_pos.y+1}, Position{s_pos.x-2, s_pos.y+2}, red, jump);
     } else if ((t_pos.x == s_pos.x+3) && (t_pos.y == s_pos.y-3)) {
         // jump 2 enemy pieces top right
-        return doubleJumpHelper(Position{s_pos.x+1, s_pos.y-1}, Position{s_pos.x+2, s_pos.y-2}, red);
-
+        return doubleJumpHelper(Position{s_pos.x+1, s_pos.y-1}, Position{s_pos.x+2, s_pos.y-2}, red, jump);
     } else if ((t_pos.x == s_pos.x-3) && (t_pos.y == s_pos.y-3)) {
         // jump 2 enemy pieces top left
-        return doubleJumpHelper(Position{s_pos.x-1, s_pos.y-1}, Position{s_pos.x-2, s_pos.y-2}, red);
-
+        return doubleJumpHelper(Position{s_pos.x-1, s_pos.y-1}, Position{s_pos.x-2, s_pos.y-2}, red, jump);
+    } else {
+        return false;
     }
-
-    return false;
 }
 
 // return true for valid move, false otherwise
-bool GameBoard::checkValidity(Tile* t, bool red) {
-   Position s_pos = selected_->get_position();
+bool GameBoard::checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump) {
+   Position s_pos = p->get_position();
    Position t_pos = t->get_position();
 
-   switch (selected_->get_type()) {
-        case PieceType::RegularPiece:
-            return checkRegularMoves(t_pos, s_pos, red);
-        case PieceType::KingPiece:
-            if (checkRegularMoves(t_pos, s_pos, red)) {
-                return true;
-            } else {
-                return checkKingMoves(t_pos, s_pos, red);
-            }
-        case PieceType::TripleKingPiece:
-           if (checkRegularMoves(t_pos, s_pos, red)) {
-               return true;
-           } else if (checkKingMoves(t_pos, s_pos, red)) {
-               return true;
-           } else {
-               return checkTripleKMoves(t_pos, s_pos, red);
-           }
+   if (!getPiece(t_pos)) {
+       switch (p->get_type()) {
+            case PieceType::RegularPiece:
+                return checkRegularMoves(t_pos, s_pos, red, jump);
+            case PieceType::KingPiece:
+                if (checkRegularMoves(t_pos, s_pos, red, jump)) {
+                    return true;
+                } else {
+                    return checkKingMoves(t_pos, s_pos, red, jump);
+                }
+            case PieceType::TripleKingPiece:
+               if (checkRegularMoves(t_pos, s_pos, red, jump)) {
+                   return true;
+               } else if (checkKingMoves(t_pos, s_pos, red, jump)) {
+                   return true;
+               } else {
+                   return checkTripleKMoves(t_pos, s_pos, red, jump);
+               }
+       }
+   } else {
+       return false;
    }
 }
 
@@ -330,7 +348,7 @@ int GameBoard::checkForWinner() {
 
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
-    if (checkValidity(t, red)) {
+    if (checkValidity(t, selected_, red, true)) {
         Position last_pos = selected_->get_position();
         // check if we need piece upgrade after the move, if not just update the piece
         if (((t->get_position().y == 0) || (t->get_position().y == 9)) && selected_->get_type() == PieceType::RegularPiece) {
@@ -407,5 +425,35 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
         selected_ = p;
         selected_->set_highlighted(true);
         emit updatePiece(selected_);
+    }
+}
+
+std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
+    std::vector<Tile*> valid_tiles;
+    for (Tile* t : tiles_) {
+        if (checkValidity(t, p, false, false)) {
+            valid_tiles.push_back(t);
+        }
+    }
+    return valid_tiles;
+}
+
+void GameBoard::AI_Timer_slot() {
+    if (current_player_ == 1) {
+        // find pieces with valid moves
+        std::vector<PiecePrototype*> valid_pieces;
+        for (PiecePrototype* piece : players_[1]->get_pieces()) {
+            if (getPieceMoves(piece).size()) {
+                valid_pieces.push_back(piece);
+            }
+        }
+        // pick a piece to move
+        int p_i = arc4random()%valid_pieces.size();
+        //pieceSelected(valid_pieces[p_i]);
+        selected_ = valid_pieces[p_i];
+        // get tiles to move to
+        std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
+        int t_i = arc4random()%valid_tiles.size();
+        tileSelected(valid_tiles[t_i]);
     }
 }

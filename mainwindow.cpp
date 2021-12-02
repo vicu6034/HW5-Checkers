@@ -3,6 +3,7 @@
 #include <QGraphicsView>
 #include <QDebug>
 #include <QTime>
+#include <QTimer>
 #include <QStackedWidget>
 
 #include "mainwindow.h"
@@ -14,21 +15,23 @@ MainWindow::MainWindow(QWidget *parent)
 {
     // we need to set up the ui before we draw on our scene
     ui->setupUi(this);
+
     // set widget to 0 (display main menu)
     ui->stackedWidget->setCurrentIndex(0);
 
     // set up audio player
-    media_player = new QMediaPlayer();
+    media_player_ = new QMediaPlayer(this);
     // set media to the game start click sound
-    media_player->setMedia(QUrl("qrc:/audio/game_start.mp3"));
-    media_player->setPlaybackRate(2);
+    media_player_->setMedia(QUrl("qrc:/audio/game_start.mp3"));
+    media_player_->setPlaybackRate(2);
+
     // set up popup for displaying rules
-    rules_pupup_ = new RulesPopup();
+    rules_pupup_ = new RulesPopup(this);
     connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rules_Rejected_slot()));
     connect(rules_pupup_, SIGNAL(rulesAccepted()), this, SLOT(rules_Accepted_slot()));
 
     // set up popup for displaying winner
-    winner_popup_ = new WinnerPopup();
+    winner_popup_ = new WinnerPopup(this);
     connect(winner_popup_, SIGNAL(PlayAgain()), this, SLOT(winner_PlayAgain_slot()));
     connect(winner_popup_, SIGNAL(Exit()), this, SLOT(winner_Exit_slot()));
 
@@ -72,6 +75,10 @@ MainWindow::MainWindow(QWidget *parent)
     // gray out simulation button
     ui->simButton->setEnabled(false);
 
+    // set up timer
+    timer_ = new QTimer(this);
+    connect(timer_, SIGNAL(timeout()), gameboard_, SLOT(AI_Timer_slot()));
+
 }
 
 // reset the mainwindow
@@ -105,9 +112,9 @@ void MainWindow::Reset() {
 }
 
 void MainWindow::playClickSound() {
-    media_player->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
-    media_player->setPlaybackRate(1);
-    media_player->play();
+    media_player_->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player_->setPlaybackRate(1);
+    media_player_->play();
 }
 
 void MainWindow::handleWinner(int winner) {
@@ -123,9 +130,9 @@ void MainWindow::handleWinner(int winner) {
     }
 
     // play winner sound
-    media_player->setMedia(QUrl("qrc:/audio/player_won.mp3"));
-    media_player->setPlaybackRate(1.5);
-    media_player->play();
+    media_player_->setMedia(QUrl("qrc:/audio/player_won.mp3"));
+    media_player_->setPlaybackRate(1.5);
+    media_player_->play();
 
     // set text for winner popup and show it
     winner_popup_->setLabelText(winner);
@@ -155,7 +162,7 @@ void MainWindow::updatePiecesLabel_slot(bool red, int pieces) {
 // update a piece after movement
 void MainWindow::updatePiece_slot(PiecePrototype* p) {
     scene->removeItem(p);
-    p->update();
+    //p->update();
     scene->addItem(p);
 }
 
@@ -198,14 +205,17 @@ MainWindow::~MainWindow() {
 
 void MainWindow::on_spButton_clicked() {
     // play start song and change view to game screen
-    media_player->play();
+    media_player_->play();
     ui->stackedWidget->setCurrentIndex(1);
     rules_pupup_->exec();
+
+    // start timer for AI
+    timer_->start(3000);
 }
 
 void MainWindow::on_mpButton_clicked() {
     // play start song and change view to game screen
-    media_player->play();
+    media_player_->play();
     ui->stackedWidget->setCurrentIndex(1);
     rules_pupup_->exec();
 }
@@ -232,19 +242,19 @@ void MainWindow::winner_PlayAgain_slot() {
 }
 
 void MainWindow::playSlideSound_slot() {
-    media_player->setMedia(QUrl("qrc:/audio/piece_slide.mp3"));
-    media_player->setPlaybackRate(2.5);
-    media_player->play();
+    media_player_->setMedia(QUrl("qrc:/audio/piece_slide.mp3"));
+    media_player_->setPlaybackRate(2.5);
+    media_player_->play();
 }
 
 void MainWindow::playJumpSound_slot() {
-    media_player->setMedia(QUrl("qrc:/audio/piece_jump.mp3"));
-    media_player->setPlaybackRate(1.5);
-    media_player->play();
+    media_player_->setMedia(QUrl("qrc:/audio/piece_jump.mp3"));
+    media_player_->setPlaybackRate(1.5);
+    media_player_->play();
 }
 
 void MainWindow::playDeniedSound_slot() {
-    media_player->setMedia(QUrl("qrc:/audio/piece_denied.mp3"));
-    media_player->setPlaybackRate(1);
-    media_player->play();
+    media_player_->setMedia(QUrl("qrc:/audio/piece_denied.mp3"));
+    media_player_->setPlaybackRate(1);
+    media_player_->play();
 }

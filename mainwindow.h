@@ -21,7 +21,11 @@ private:
     // mainwindow must have the ui and scene so we can do things
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
-    QMediaPlayer *media_player;
+
+    // media player for audio
+    QMediaPlayer *media_player_;
+    // timer for ai turns
+    QTimer *timer_;
 
     // has a GameBoard to run the game
     GameBoard* gameboard_;

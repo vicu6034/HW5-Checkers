@@ -47,21 +47,22 @@ public:
     std::string checkPowerup(Position pos);
     void removePowerup(Position pos);
 
-    bool checkRegularMoves(Position t_pos, Position s_pos, bool red);
-    bool checkKingMoves(Position t_pos, Position s_pos, bool red);
-    bool checkTripleKMoves(Position t_pos, Position s_pos, bool red);
+    bool checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump);
+    bool checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump);
+    bool checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump);
     // handle when a player wants to jump (helps checkValidity)
-    bool jumpHelper(Position pos, bool red);
-    bool friendlyJumpHelper(Position pos, bool red);
-    bool doubleJumpHelper(Position pos1, Position pos2, bool red);
+    bool jumpHelper(Position pos, bool red, bool jump);
+    bool friendlyJumpHelper(Position pos, bool red, bool jump);
+    bool doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump);
     // check if a tile is valid for a piece to move to (helps handleSelected)
-    bool checkValidity(Tile* t, bool red);
+    bool checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump);
     // if a move was valid check if someone won
     int checkForWinner();
     // handles what happens when a tile is selected (helps pieceSelected)
     void handleSelected(Tile* t, bool red);
     void handlePowerup(Position t_pos, Position last_pos, bool red);
 
+    std::vector<Tile*> getPieceMoves(PiecePrototype* p);
 signals:
    // custom signals to emit when we need to update something in window
     void updateTurnLabel(int turn);
@@ -79,6 +80,9 @@ public slots:
     // custom slots to handle when tiles and pieces are clicked
     void tileSelected(Tile* t);
     void pieceSelected(PiecePrototype* p);
+
+    // slot for when SP ai needs to take its turn
+    void AI_Timer_slot();
 
 };
 
