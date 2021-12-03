@@ -448,6 +448,8 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
         selected_ = p;
         selected_->set_highlighted(true);
         emit updatePiece(selected_);
+    } else {
+        emit playDeniedSound();
     }
 }
 
