@@ -65,14 +65,14 @@ void GameBoard::NewGame() {
 }
 
 // method to return all pieces
-std::vector<PiecePrototype*> GameBoard::getPieces() {
+std::vector<PiecePrototype*> GameBoard::getPieces() const {
     std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
     std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
     vec1.insert(vec1.end(), vec2.begin(), vec2.end());
     return vec1;
 }
 
-PiecePrototype* GameBoard::getPiece(Position pos) {
+PiecePrototype* GameBoard::getPiece(Position pos) const {
     // get all pieces
     for (PiecePrototype* p : getPieces()) {
         // if ones selected, return it
@@ -415,7 +415,8 @@ void GameBoard::tileSelected(Tile* t) {
 // slot for when a piece gets selected
 void GameBoard::pieceSelected(PiecePrototype* p) {
     // if the piece is the color of the current player, select it
-    if (p->get_is_red() != current_player_) {
+    // and its not the computers turn
+    if ((p->get_is_red() != current_player_) && !(sp_ && current_player_ == 1)) {
         // unhighlight previously selected piece
         if (selected_ != nullptr) {
             selected_->set_highlighted(false);

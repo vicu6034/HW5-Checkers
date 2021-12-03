@@ -26,6 +26,8 @@ private:
 
     // track what players turn it is
     int current_player_;
+    // keep track of single or multi player
+    bool sp_;
 
 public:
     // only need default constructor
@@ -37,13 +39,14 @@ public:
     void NewGame();
 
     // getters
-    std::vector<Tile*> getTiles() { return tiles_; }
-    std::vector<PowerUp*> getPowerUps() { return powerups_; }
-    std::vector<PiecePrototype*> getPieces();
-    PiecePrototype* getPiece(Position pos);
-    Player* getPlayer(int index) { return players_[index]; }
-    int getCurrentPlayerInt() { return current_player_; }
-
+    std::vector<Tile*> getTiles() const { return tiles_; }
+    std::vector<PowerUp*> getPowerUps() const { return powerups_; }
+    std::vector<PiecePrototype*> getPieces() const;
+    PiecePrototype* getPiece(Position pos) const;
+    Player* getPlayer(int index) const { return players_[index]; }
+    int getCurrentPlayerInt() const { return current_player_; }
+    bool getSP() const { return sp_; }
+    void setSP(bool sp) { sp_ = sp; }
     std::string checkPowerup(Position pos);
     void removePowerup(Position pos);
 

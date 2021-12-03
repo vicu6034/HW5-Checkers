@@ -111,12 +111,14 @@ void MainWindow::Reset() {
     ui->blackPiecesLabel->setText(pop2_q);
 }
 
+// play a regular click sound
 void MainWindow::playClickSound() {
     media_player_->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
     media_player_->setPlaybackRate(1);
     media_player_->play();
 }
 
+// handle what happens when someone wins the game
 void MainWindow::handleWinner(int winner) {
     // update win label
     if (winner == 0) {
@@ -184,12 +186,17 @@ void MainWindow::gameOver_slot(int winner) {
 // when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
     playClickSound();
-    int other_player = 0;
-    if (gameboard_->getCurrentPlayerInt() == 0) {
-        other_player = 1;
+    // check its not the computers turn
+    if (!(gameboard_->getSP() && gameboard_->getCurrentPlayerInt() == 1)) {
+        // make the player whos turn its NOT the winner
+        int other_player = 0;
+        if (gameboard_->getCurrentPlayerInt() == 0) {
+            other_player = 1;
+        }
+        // give the player a win and handle winner
+        gameboard_->getPlayer(other_player)->set_num_wins(gameboard_->getPlayer(other_player)->get_num_wins()+1);
+        handleWinner(other_player);
     }
-    gameboard_->getPlayer(other_player)->set_num_wins(gameboard_->getPlayer(other_player)->get_num_wins()+1);
-    handleWinner(other_player);
 }
 
 // when reset button is clicked, just reset
@@ -204,16 +211,17 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_spButton_clicked() {
+    gameboard_->setSP(true);
     // play start song and change view to game screen
     media_player_->play();
     ui->stackedWidget->setCurrentIndex(1);
     rules_pupup_->exec();
-
     // start timer for AI
     timer_->start(3000);
 }
 
 void MainWindow::on_mpButton_clicked() {
+    gameboard_->setSP(false);
     // play start song and change view to game screen
     media_player_->play();
     ui->stackedWidget->setCurrentIndex(1);
