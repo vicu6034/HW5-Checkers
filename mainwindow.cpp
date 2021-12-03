@@ -210,57 +210,65 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+void MainWindow::handleMainMenuClick(bool sp) {
+    // set gamemode
+    gameboard_->setSP(sp);
+    // play start song and change view to game screen
+    media_player_->play();
+    ui->stackedWidget->setCurrentIndex(1);
+    // open popup window to display rules
+    rules_pupup_->exec();
+    if (sp) { timer_->start(3000); }
+}
+
+// slot for single player button being clicked
 void MainWindow::on_spButton_clicked() {
-    gameboard_->setSP(true);
-    // play start song and change view to game screen
-    media_player_->play();
-    ui->stackedWidget->setCurrentIndex(1);
-    rules_pupup_->exec();
-    // start timer for AI
-    timer_->start(3000);
+    handleMainMenuClick(true);
 }
 
+// slot for multiplayer button being clicked
 void MainWindow::on_mpButton_clicked() {
-    gameboard_->setSP(false);
-    // play start song and change view to game screen
-    media_player_->play();
-    ui->stackedWidget->setCurrentIndex(1);
-    rules_pupup_->exec();
+    handleMainMenuClick(false);
 }
 
+// slot for when the rules get rejected
 void MainWindow::rules_Rejected_slot() {
-    // if rules get rejected go back to main menu
+    // play click sound and go back to main menu
     playClickSound();
     ui->stackedWidget->setCurrentIndex(0);
 }
 
+// slot for when rules are accepted
 void MainWindow::rules_Accepted_slot() {
+    // play click sound and continue
     playClickSound();
 }
 
+// slot for when the winner popup chooses to exit the game
 void MainWindow::winner_Exit_slot() {
-    // exit application when exit game is clicked
+    // play click and exit application
     playClickSound();
     exit(1);
 }
 
+// slot for when play again is chosen from the winner popup
 void MainWindow::winner_PlayAgain_slot() {
+    // play click sound and reset the game
     playClickSound();
     Reset();
 }
 
+// slots for playing different sounds
 void MainWindow::playSlideSound_slot() {
     media_player_->setMedia(QUrl("qrc:/audio/piece_slide.mp3"));
     media_player_->setPlaybackRate(2.5);
     media_player_->play();
 }
-
 void MainWindow::playJumpSound_slot() {
     media_player_->setMedia(QUrl("qrc:/audio/piece_jump.mp3"));
     media_player_->setPlaybackRate(1.5);
     media_player_->play();
 }
-
 void MainWindow::playDeniedSound_slot() {
     media_player_->setMedia(QUrl("qrc:/audio/piece_denied.mp3"));
     media_player_->setPlaybackRate(1);

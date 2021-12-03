@@ -66,12 +66,14 @@ void GameBoard::NewGame() {
 
 // method to return all pieces
 std::vector<PiecePrototype*> GameBoard::getPieces() const {
+    // get both players pieces and return them all
     std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
     std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
     vec1.insert(vec1.end(), vec2.begin(), vec2.end());
     return vec1;
 }
 
+// get a piece by position
 PiecePrototype* GameBoard::getPiece(Position pos) const {
     // get all pieces
     for (PiecePrototype* p : getPieces()) {
@@ -151,8 +153,12 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool ju
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
             // try to go one tile backwards
-            emit playSlideSound();
-            return true;
+            if (jump) {
+                emit playSlideSound();
+                return true;
+            } else {
+                return true;
+            }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
             // try to jump piece to left backwards
             return jumpHelper(Position{s_pos.x-1, s_pos.y+1}, red, jump);
@@ -164,8 +170,12 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool ju
         // blacks turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
             // try to go one tile backwards
-            emit playSlideSound();
-            return true;
+            if (jump) {
+                emit playSlideSound();
+                return true;
+            } else {
+                return true;
+            }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
             // try to jump a Piece to the left backwards
             return jumpHelper(Position{s_pos.x-1, s_pos.y-1}, red, jump);
@@ -177,6 +187,7 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool ju
     return false;
 }
 
+// helper for jumping over a friendly piece
 bool GameBoard::friendlyJumpHelper(Position pos, bool red, bool jump) {
     // get the piece we want to jump
     PiecePrototype * p = getPiece(pos);
@@ -195,6 +206,8 @@ bool GameBoard::friendlyJumpHelper(Position pos, bool red, bool jump) {
     return false;
 }
 
+// helper for jumping over 2 pieces at once
+// this is TKings special move
 bool GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump) {
     // get the piece we want to jump
     PiecePrototype * p = getPiece(pos1);
@@ -251,6 +264,8 @@ bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool
 }
 
 // return true for valid move, false otherwise
+// use jump to toggle wether the jumps should actually occur
+// ie if we're just checking for a move or actually moving
 bool GameBoard::checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump) {
    Position s_pos = p->get_position();
    Position t_pos = t->get_position();
@@ -279,6 +294,7 @@ bool GameBoard::checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump) {
    }
 }
 
+// return the name of a powerup if theres one at the given position
 std::string GameBoard::checkPowerup(Position pos) {
     for (PowerUp* powerup : powerups_ ) {
         if (powerup->get_position() == pos) {
@@ -288,6 +304,7 @@ std::string GameBoard::checkPowerup(Position pos) {
     return "none";
 }
 
+// remove a powerup from the board
 void GameBoard::removePowerup(Position pos) {
     for (unsigned int i = 0 ; i < powerups_.size(); i++) {
         if (powerups_[i]->get_position() == pos) {
@@ -297,6 +314,7 @@ void GameBoard::removePowerup(Position pos) {
     }
 }
 
+// check if theres a powerupo at the landed on position and handle it if so
 void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
     // check for landing on powerups
     if (checkPowerup(t_pos) == "add") {
@@ -333,9 +351,12 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
     }
 }
 
+// check if someone won the game
 int GameBoard::checkForWinner() {
     for (int i = 0; i < 2; i++) {
+        // check if someone won the game
         if (players_[i]->get_num_pieces() == 0) {
+            // return their index
             if (i == 0) {
                 return 1;
             } else {
@@ -343,6 +364,7 @@ int GameBoard::checkForWinner() {
             }
         }
     }
+    // if noone wins return -1
     return -1;
 }
 
@@ -429,6 +451,7 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
     }
 }
 
+// get tiles a piece could move to
 std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     std::vector<Tile*> valid_tiles;
     for (Tile* t : tiles_) {
@@ -439,6 +462,7 @@ std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     return valid_tiles;
 }
 
+// handle the timeout from the AI timer to make the AIs move if its their turn
 void GameBoard::AI_Timer_slot() {
     if (current_player_ == 1) {
         // find pieces with valid moves

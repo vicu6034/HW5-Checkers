@@ -42,24 +42,30 @@ public:
     // reset the mainwindow to initial game state
     void Reset();
 
+    // helper methods
     void playClickSound();
     void handleWinner(int winner);
+    void handleMainMenuClick(bool sp);
 
 public slots:
     // slots to update labels and Pieces
     void updateTurnLabel_slot(int turn);
     void updatePiecesLabel_slot(bool red, int pieces);
+
     // slots to add, remove and update pieces in the scene
     void updatePiece_slot(PiecePrototype* p);
     void addPiece_slot(PiecePrototype* p);
     void removePiece_slot(PiecePrototype* p);
+
     // slot for when the game ends
     void gameOver_slot(int winner);
+
     // slots for handling popup windows
     void rules_Rejected_slot();
     void rules_Accepted_slot();
     void winner_PlayAgain_slot();
     void winner_Exit_slot();
+
     // slots for playing specific sounds
     void playSlideSound_slot();
     void playJumpSound_slot();

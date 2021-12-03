@@ -34,8 +34,6 @@ public:
     GameBoard();
 
     // method to reset GameBoard to its state immediately after initialization
-    void Reset();
-
     void NewGame();
 
     // getters
@@ -49,7 +47,7 @@ public:
     void setSP(bool sp) { sp_ = sp; }
     std::string checkPowerup(Position pos);
     void removePowerup(Position pos);
-
+    // check moves for different types of pieces
     bool checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump);
     bool checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump);
     bool checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump);
@@ -67,14 +65,14 @@ public:
 
     std::vector<Tile*> getPieceMoves(PiecePrototype* p);
 signals:
-   // custom signals to emit when we need to update something in window
+    // custom signals to emit when we need to update something in window
     void updateTurnLabel(int turn);
     void updatePiecesLabel(bool red, int pieces);
     void updatePiece(PiecePrototype* p);
     void addPiece(PiecePrototype* p);
     void removePiece(PiecePrototype* p);
     void gameOver(int winner);
-
+    // signals to have mainwindow play sounds
     void playSlideSound();
     void playJumpSound();
     void playDeniedSound();
