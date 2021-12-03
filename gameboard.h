@@ -61,6 +61,7 @@ public:
     int checkForWinner();
     // handles what happens when a tile is selected (helps pieceSelected)
     void handleSelected(Tile* t, bool red);
+    Position findPosForPowerup(bool red);
     void handlePowerup(Position t_pos, Position last_pos, bool red);
 
     std::vector<Tile*> getPieceMoves(PiecePrototype* p);

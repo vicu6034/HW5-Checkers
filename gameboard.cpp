@@ -314,6 +314,27 @@ void GameBoard::removePowerup(Position pos) {
     }
 }
 
+Position GameBoard::findPosForPowerup(bool red) {
+    if (!red) {
+        for (int j = 0; j < 10; j++) {
+            for (int i = 0; i < 10; i++) {
+                if (!getPiece(Position{i,j}) && (((i % 2 != 0) && (j % 2 != 0)) || ((i % 2 == 0) && (j % 2 == 0)))) {
+                    return Position{i,j};
+                }
+            }
+        }
+    } else {
+        for (int i = 9; i >= 0; i--) {
+            for (int j = 9; j >= 0; j--) {
+                if (!getPiece(Position{j,i}) && (((i % 2 != 0) && (j % 2 != 0)) || ((i % 2 == 0) && (j % 2 == 0)))) {
+                    return Position{j, i};
+                }
+            }
+        }
+    }
+    return Position{100,100};
+}
+
 // check if theres a powerupo at the landed on position and handle it if so
 void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
     // check for landing on powerups
@@ -321,7 +342,7 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
         removePowerup(t_pos);
         // add a piece to current player
         // create piece with new type, connect it and add to scene
-        PiecePrototype* p = factory_->CreatePiece(PieceType::RegularPiece, last_pos, red);
+        PiecePrototype* p = factory_->CreatePiece(PieceType::RegularPiece, findPosForPowerup(red), red);
         players_[current_player_]->addPiece(p);
         connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
         emit addPiece(p);
@@ -474,13 +495,18 @@ void GameBoard::AI_Timer_slot() {
                 valid_pieces.push_back(piece);
             }
         }
-        // pick a piece to move
-        int p_i = arc4random()%valid_pieces.size();
-        //pieceSelected(valid_pieces[p_i]);
-        selected_ = valid_pieces[p_i];
-        // get tiles to move to
-        std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
-        int t_i = arc4random()%valid_tiles.size();
-        tileSelected(valid_tiles[t_i]);
+        if (valid_pieces.size() == 0) {
+            // if no pieces have moves they lose
+            emit gameOver(0);
+        } else {
+            // pick a piece to move
+            int p_i = arc4random()%valid_pieces.size();
+            //pieceSelected(valid_pieces[p_i]);
+            selected_ = valid_pieces[p_i];
+            // get tiles to move to
+            std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
+            int t_i = arc4random()%valid_tiles.size();
+            tileSelected(valid_tiles[t_i]);
+        }
     }
 }
