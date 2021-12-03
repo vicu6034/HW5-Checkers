@@ -394,7 +394,7 @@ void GameBoard::handleSelected(Tile* t, bool red) {
     if (checkValidity(t, selected_, red, true)) {
         Position last_pos = selected_->get_position();
         // check if we need piece upgrade after the move, if not just update the piece
-        if (((t->get_position().y == 0) || (t->get_position().y == 9)) && selected_->get_type() == PieceType::RegularPiece) {
+        if (((t->get_position().y == 0 && red) || (t->get_position().y == 9 && !red)) && selected_->get_type() == PieceType::RegularPiece) {
             // making a regular piece into a king
             players_[current_player_]->removePiece(last_pos);
             // create piece with new type, connect it and add to scene
@@ -404,7 +404,7 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             selected_ = p;
             emit addPiece(p);
             handlePowerup(t->get_position(), last_pos, red);
-        } else if (((t->get_position().y == 9) || (t->get_position().y == 0)) && selected_->get_type() == PieceType::KingPiece) {
+        } else if (((t->get_position().y == 9 && red) || (t->get_position().y == 0 && !red)) && selected_->get_type() == PieceType::KingPiece) {
             // making a king into a triple king
             players_[current_player_]->removePiece(last_pos);
             // create piece with new type, connect it and add to scene
