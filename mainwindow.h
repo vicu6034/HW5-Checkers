@@ -45,7 +45,7 @@ public:
     // helper methods
     void playClickSound();
     void handleWinner(int winner);
-    void handleMainMenuClick(bool sp);
+    void handleMainMenuClick();
 
 public slots:
     // slots to update labels and Pieces
@@ -77,6 +77,8 @@ private slots:
     void on_surrenderButton_clicked();
     void on_spButton_clicked();
     void on_mpButton_clicked();
+    void on_easyButton_clicked();
+    void on_mediumButton_clicked();
 };
 
 #endif // MAINWINDOW_H

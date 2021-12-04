@@ -72,8 +72,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set initial turn label
     ui->turnLabel->setText("TURN: RED");
-    // gray out simulation button
+    // gray out simulation and hard difficulty button
     ui->simButton->setEnabled(false);
+    ui->hardButton->setEnabled(false);
 
     // set up timer
     timer_ = new QTimer(this);
@@ -187,7 +188,7 @@ void MainWindow::gameOver_slot(int winner) {
 void MainWindow::on_surrenderButton_clicked() {
     playClickSound();
     // check its not the computers turn
-    if (!(gameboard_->getSP() && gameboard_->getCurrentPlayerInt() == 1)) {
+    if (!(gameboard_->getDifficulty() != Difficulty::None && gameboard_->getCurrentPlayerInt() == 1)) {
         // make the player whos turn its NOT the winner
         int other_player = 0;
         if (gameboard_->getCurrentPlayerInt() == 0) {
@@ -210,25 +211,41 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::handleMainMenuClick(bool sp) {
-    // set gamemode
-    gameboard_->setSP(sp);
+// display rules and start setting up game
+void MainWindow::handleMainMenuClick() {
     // play start song and change view to game screen
     media_player_->play();
-    ui->stackedWidget->setCurrentIndex(1);
+    ui->stackedWidget->setCurrentIndex(2);
     // open popup window to display rules
     rules_pupup_->exec();
-    if (sp) { timer_->start(3000); }
+
 }
 
 // slot for single player button being clicked
 void MainWindow::on_spButton_clicked() {
-    handleMainMenuClick(true);
+    // set page to difficulty screen
+    ui->stackedWidget->setCurrentIndex(1);
 }
 
 // slot for multiplayer button being clicked
 void MainWindow::on_mpButton_clicked() {
-    handleMainMenuClick(false);
+    handleMainMenuClick();
+}
+
+// slot for clicking easy difficulty button
+void MainWindow::on_easyButton_clicked() {
+    // set difficulty and start game
+    gameboard_->setDifficulty(Difficulty::Easy);
+    handleMainMenuClick();
+    timer_->start(3000);
+}
+
+// slot for clicking medium difficulty button
+void MainWindow::on_mediumButton_clicked() {
+    // set difficulty and start game
+    gameboard_->setDifficulty(Difficulty::Medium);
+    handleMainMenuClick();
+    timer_->start(3000);
 }
 
 // slot for when the rules get rejected
@@ -274,3 +291,6 @@ void MainWindow::playDeniedSound_slot() {
     media_player_->setPlaybackRate(1);
     media_player_->play();
 }
+
+
+

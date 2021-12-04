@@ -1,6 +1,7 @@
 #include "gameboard.h"
 
 GameBoard::GameBoard() {
+    difficulty_ = Difficulty::None;
     // create tiles
     bool switcher = false;
     for (int i = 0; i < 10; i++) {
@@ -459,7 +460,7 @@ void GameBoard::tileSelected(Tile* t) {
 void GameBoard::pieceSelected(PiecePrototype* p) {
     // if the piece is the color of the current player, select it
     // and its not the computers turn
-    if ((p->get_is_red() != current_player_) && !(sp_ && current_player_ == 1)) {
+    if ((p->get_is_red() != current_player_) && !(difficulty_ != Difficulty::None && current_player_ == 1)) {
         // unhighlight previously selected piece
         if (selected_ != nullptr) {
             selected_->set_highlighted(false);

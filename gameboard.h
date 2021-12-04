@@ -7,6 +7,8 @@
 #include <powerup.h>
 #include <QWidget>
 
+enum class Difficulty { None = 0, Easy, Medium, Hard };
+
 class GameBoard : public QWidget
 {
     Q_OBJECT
@@ -21,13 +23,16 @@ private:
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
 
+    // difficulty for SP games
+    Difficulty difficulty_;
+
     // keep track of currently selected Piece
     PiecePrototype* selected_;
 
     // track what players turn it is
     int current_player_;
     // keep track of single or multi player
-    bool sp_;
+    //bool sp_;
 
 public:
     // only need default constructor
@@ -43,8 +48,10 @@ public:
     PiecePrototype* getPiece(Position pos) const;
     Player* getPlayer(int index) const { return players_[index]; }
     int getCurrentPlayerInt() const { return current_player_; }
-    bool getSP() const { return sp_; }
-    void setSP(bool sp) { sp_ = sp; }
+    //bool getSP() const { return sp_; }
+    //void setSP(bool sp) { sp_ = sp; }
+    Difficulty getDifficulty() const { return difficulty_; }
+    void setDifficulty(Difficulty difficulty) { difficulty_ = difficulty; }
     std::string checkPowerup(Position pos);
     void removePowerup(Position pos);
     // check moves for different types of pieces
