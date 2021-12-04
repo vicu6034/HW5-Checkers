@@ -9,6 +9,12 @@
 
 enum class Difficulty { None = 0, Easy, Medium, Hard };
 
+struct Move {
+    PiecePrototype* piece_;
+    Tile* tile_;
+    int score_;
+};
+
 class GameBoard : public QWidget
 {
     Q_OBJECT
@@ -31,8 +37,6 @@ private:
 
     // track what players turn it is
     int current_player_;
-    // keep track of single or multi player
-    //bool sp_;
 
 public:
     // only need default constructor
@@ -48,22 +52,20 @@ public:
     PiecePrototype* getPiece(Position pos) const;
     Player* getPlayer(int index) const { return players_[index]; }
     int getCurrentPlayerInt() const { return current_player_; }
-    //bool getSP() const { return sp_; }
-    //void setSP(bool sp) { sp_ = sp; }
     Difficulty getDifficulty() const { return difficulty_; }
     void setDifficulty(Difficulty difficulty) { difficulty_ = difficulty; }
     std::string checkPowerup(Position pos);
     void removePowerup(Position pos);
     // check moves for different types of pieces
-    bool checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump);
-    bool checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump);
-    bool checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump);
+    int checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump);
+    int checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump);
+    int checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump);
     // handle when a player wants to jump (helps checkValidity)
-    bool jumpHelper(Position pos, bool red, bool jump);
-    bool friendlyJumpHelper(Position pos, bool red, bool jump);
-    bool doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump);
+    int jumpHelper(Position pos, bool red, bool jump);
+    int friendlyJumpHelper(Position pos, bool red, bool jump);
+    int doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump);
     // check if a tile is valid for a piece to move to (helps handleSelected)
-    bool checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump);
+    int checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump);
     // if a move was valid check if someone won
     int checkForWinner();
     // handles what happens when a tile is selected (helps pieceSelected)
@@ -72,6 +74,8 @@ public:
     void handlePowerup(Position t_pos, Position last_pos, bool red);
 
     std::vector<Tile*> getPieceMoves(PiecePrototype* p);
+    std::pair<PiecePrototype*, Tile*> chooseMove(std::vector<PiecePrototype*> pieces);
+
 signals:
     // custom signals to emit when we need to update something in window
     void updateTurnLabel(int turn);

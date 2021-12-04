@@ -85,8 +85,25 @@ PiecePrototype* GameBoard::getPiece(Position pos) const {
     return nullptr;
 }
 
+// check if someone won the game
+int GameBoard::checkForWinner() {
+    for (int i = 0; i < 2; i++) {
+        // check if someone won the game
+        if (players_[i]->get_num_pieces() == 0) {
+            // return their index
+            if (i == 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+    // if noone wins return -1
+    return -1;
+}
+
 // return true for valid jump, false otherwise
-bool GameBoard::jumpHelper(Position pos, bool red, bool jump) {
+int GameBoard::jumpHelper(Position pos, bool red, bool jump) {
     // get the piece we want to jump
     PiecePrototype * p = getPiece(pos);
     // check the piece exists
@@ -98,27 +115,72 @@ bool GameBoard::jumpHelper(Position pos, bool red, bool jump) {
                 players_[!current_player_]->removePiece(pos);
                 emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
                 emit playJumpSound();
-                return true;
+                return 2;
             } else {
-                return true;
+                return 2;
             }
 
         }
     }
-    return false;
+    return -1;
+}
+
+// helper for jumping over a friendly piece
+int GameBoard::friendlyJumpHelper(Position pos, bool red, bool jump) {
+    // get the piece we want to jump
+    PiecePrototype * p = getPiece(pos);
+    // check the piece exists
+    if (p != nullptr) {
+        // check the piece to jump is the same color of the selected piece
+        if (red == p->get_is_red()) {
+            if (jump) {
+                emit playJumpSound();
+                return 1;
+            } else {
+                return 1;
+            }
+        }
+    }
+    return -1;
+}
+
+// helper for jumping over 2 pieces at once
+// this is TKings special move
+int GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump) {
+    // get the piece we want to jump
+    PiecePrototype * p = getPiece(pos1);
+    PiecePrototype * p2 = getPiece(pos2);
+    // check the piece exists
+    if ((p != nullptr) && (p2 != nullptr)) {
+        // check the piece to jump is opposite color of the selected piece
+        if ((red != p->get_is_red()) && (red != p2->get_is_red())) {
+            // remove jumped piece from other player, update pieces label
+            if (jump) {
+                players_[!current_player_]->removePiece(pos1);
+                players_[!current_player_]->removePiece(pos2);
+                emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
+                emit playJumpSound();
+                return 4;
+            } else {
+                return 4;
+            }
+
+        }
+    }
+    return -1;
 }
 
 // check all the tiles a regular piece could move to
-bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump) {
+int GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump) {
     if (red) {
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y-1) {
             // try to go one space
             if (jump) {
                 emit playSlideSound();
-                return true;
+                return 1;
             } else {
-                return true;
+                return 1;
             }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y-2) {
             // try to jump piece to left
@@ -133,9 +195,9 @@ bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool
             // try to go one tile
             if (jump) {
                 emit playSlideSound();
-                return true;
+                return 1;
             } else {
-                return true;
+                return 1;
             }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
             // try to jump a Piece to the left
@@ -145,20 +207,20 @@ bool GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool
             return jumpHelper(Position{s_pos.x+1, s_pos.y+1}, red, jump);
         }
     }
-    return false;
+    return -1;
 }
 
 // check the tiles a king could move to
-bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump) {
+int GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump) {
     if (red) {
         // reds turn
         if ((t_pos.x == s_pos.x+1 || t_pos.x == s_pos.x-1) && t_pos.y == s_pos.y+1) {
             // try to go one tile backwards
             if (jump) {
                 emit playSlideSound();
-                return true;
+                return 1;
             } else {
-                return true;
+                return 1;
             }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
             // try to jump piece to left backwards
@@ -173,9 +235,9 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool ju
             // try to go one tile backwards
             if (jump) {
                 emit playSlideSound();
-                return true;
+                return 1;
             } else {
-                return true;
+                return 1;
             }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
             // try to jump a Piece to the left backwards
@@ -185,56 +247,11 @@ bool GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool ju
             return jumpHelper(Position{s_pos.x+1, s_pos.y-1}, red, jump);
         }
     }
-    return false;
-}
-
-// helper for jumping over a friendly piece
-bool GameBoard::friendlyJumpHelper(Position pos, bool red, bool jump) {
-    // get the piece we want to jump
-    PiecePrototype * p = getPiece(pos);
-    // check the piece exists
-    if (p != nullptr) {
-        // check the piece to jump is the same color of the selected piece
-        if (red == p->get_is_red()) {
-            if (jump) {
-                emit playJumpSound();
-                return true;
-            } else {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-// helper for jumping over 2 pieces at once
-// this is TKings special move
-bool GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump) {
-    // get the piece we want to jump
-    PiecePrototype * p = getPiece(pos1);
-    PiecePrototype * p2 = getPiece(pos2);
-    // check the piece exists
-    if ((p != nullptr) && (p2 != nullptr)) {
-        // check the piece to jump is opposite color of the selected piece
-        if ((red != p->get_is_red()) && (red != p2->get_is_red())) {
-            // remove jumped piece from other player, update pieces label
-            if (jump) {
-                players_[!current_player_]->removePiece(pos1);
-                players_[!current_player_]->removePiece(pos2);
-                emit updatePiecesLabel(!red, players_[!current_player_]->get_num_pieces());
-                emit playJumpSound();
-                return true;
-            } else {
-                return true;
-            }
-
-        }
-    }
-    return false;
+    return -1;
 }
 
 // check tiles triple king could move to
-bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump) {
+int GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump) {
     if ((t_pos.x == s_pos.x+2) && (t_pos.y == s_pos.y+2)) {
         // jump a friendly piece bottom right
         return friendlyJumpHelper(Position{s_pos.x+1, s_pos.y+1}, red, jump);
@@ -260,14 +277,15 @@ bool GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool
         // jump 2 enemy pieces top left
         return doubleJumpHelper(Position{s_pos.x-1, s_pos.y-1}, Position{s_pos.x-2, s_pos.y-2}, red, jump);
     } else {
-        return false;
+        return -1;
     }
 }
 
 // return true for valid move, false otherwise
 // use jump to toggle wether the jumps should actually occur
 // ie if we're just checking for a move or actually moving
-bool GameBoard::checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump) {
+// -1 for invalid, 0 for get jumped, 1 for nothing, 2 for jump, 4 for double jump
+int GameBoard::checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump) {
    Position s_pos = p->get_position();
    Position t_pos = t->get_position();
 
@@ -276,22 +294,22 @@ bool GameBoard::checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump) {
             case PieceType::RegularPiece:
                 return checkRegularMoves(t_pos, s_pos, red, jump);
             case PieceType::KingPiece:
-                if (checkRegularMoves(t_pos, s_pos, red, jump)) {
-                    return true;
+                if (checkRegularMoves(t_pos, s_pos, red, false) != -1) {
+                    return checkRegularMoves(t_pos, s_pos, red, jump);
                 } else {
                     return checkKingMoves(t_pos, s_pos, red, jump);
                 }
             case PieceType::TripleKingPiece:
-               if (checkRegularMoves(t_pos, s_pos, red, jump)) {
-                   return true;
-               } else if (checkKingMoves(t_pos, s_pos, red, jump)) {
-                   return true;
+               if (checkRegularMoves(t_pos, s_pos, red, false) != -1) {
+                   return checkRegularMoves(t_pos, s_pos, red, jump);
+               } else if (checkKingMoves(t_pos, s_pos, red, false) != -1)  {
+                   return checkKingMoves(t_pos, s_pos, red, jump);
                } else {
                    return checkTripleKMoves(t_pos, s_pos, red, jump);
                }
        }
    } else {
-       return false;
+       return -1;
    }
 }
 
@@ -373,26 +391,9 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
     }
 }
 
-// check if someone won the game
-int GameBoard::checkForWinner() {
-    for (int i = 0; i < 2; i++) {
-        // check if someone won the game
-        if (players_[i]->get_num_pieces() == 0) {
-            // return their index
-            if (i == 0) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
-    // if noone wins return -1
-    return -1;
-}
-
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
-    if (checkValidity(t, selected_, red, true)) {
+    if (checkValidity(t, selected_, red, true) != -1) {
         Position last_pos = selected_->get_position();
         // check if we need piece upgrade after the move, if not just update the piece
         if (((t->get_position().y == 0 && red) || (t->get_position().y == 9 && !red)) && selected_->get_type() == PieceType::RegularPiece) {
@@ -479,7 +480,7 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
 std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     std::vector<Tile*> valid_tiles;
     for (Tile* t : tiles_) {
-        if (checkValidity(t, p, false, false)) {
+        if (checkValidity(t, p, false, false) != -1) {
             valid_tiles.push_back(t);
         }
     }
@@ -496,18 +497,53 @@ void GameBoard::AI_Timer_slot() {
                 valid_pieces.push_back(piece);
             }
         }
+
         if (valid_pieces.size() == 0) {
             // if no pieces have moves they lose
             emit gameOver(0);
         } else {
-            // pick a piece to move
-            int p_i = arc4random()%valid_pieces.size();
-            //pieceSelected(valid_pieces[p_i]);
-            selected_ = valid_pieces[p_i];
-            // get tiles to move to
-            std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
-            int t_i = arc4random()%valid_tiles.size();
-            tileSelected(valid_tiles[t_i]);
+            // pick move based on difficulty
+            if (difficulty_ == Difficulty::Easy) {
+                // pick a random move
+                int p_i = arc4random()%valid_pieces.size();
+                //pieceSelected(valid_pieces[p_i]);
+                selected_ = valid_pieces[p_i];
+                // get tiles to move to
+                std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
+                int t_i = arc4random()%valid_tiles.size();
+                tileSelected(valid_tiles[t_i]);
+            } else if (difficulty_ == Difficulty::Medium) {
+                // pick the best move for that turn
+                std::vector<Move> moves;
+                for (PiecePrototype* piece : valid_pieces) {
+                    for (Tile* tile : tiles_) {
+                        if (checkValidity(tile, piece, false, false) != -1) {
+                            moves.push_back(Move{piece, tile, checkValidity(tile, piece, false, false)});
+                        }
+                    }
+                }
+                std::vector<Move> jump_moves;
+                std::vector<Move> dbl_jump_moves;
+                for (Move m : moves) {
+                    if (m.score_ == 2) {
+                        jump_moves.push_back(m);
+                    } else if (m.score_ == 4) {
+                        dbl_jump_moves.push_back(m);
+                    }
+                }
+                if (dbl_jump_moves.size() > 0) {
+                    selected_ = dbl_jump_moves[0].piece_;
+                    tileSelected(dbl_jump_moves[0].tile_);
+                } else if (jump_moves.size() > 0) {
+                    selected_ = jump_moves[0].piece_;
+                    tileSelected(jump_moves[0].tile_);
+                } else {
+
+                    int m_i = arc4random()%moves.size();
+                    selected_ = moves[m_i].piece_;
+                    tileSelected(moves[m_i].tile_);
+                }
+            }
         }
     }
 }
