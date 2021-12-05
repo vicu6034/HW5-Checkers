@@ -229,6 +229,7 @@ void MainWindow::on_spButton_clicked() {
 
 // slot for multiplayer button being clicked
 void MainWindow::on_mpButton_clicked() {
+    gameboard_->setDifficulty(Difficulty::None);
     handleMainMenuClick();
 }
 
@@ -292,5 +293,17 @@ void MainWindow::playDeniedSound_slot() {
     media_player_->play();
 }
 
+void MainWindow::on_difficultyBackButton_clicked() {
+    // play click sound and go back to main menu
+    playClickSound();
+    ui->stackedWidget->setCurrentIndex(0);
+}
 
+
+void MainWindow::on_mainmenuButton_clicked() {
+    // play click sound and go back to main menu
+    playClickSound();
+    Reset();
+    ui->stackedWidget->setCurrentIndex(0);
+}
 

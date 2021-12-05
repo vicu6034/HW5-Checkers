@@ -79,6 +79,8 @@ private slots:
     void on_mpButton_clicked();
     void on_easyButton_clicked();
     void on_mediumButton_clicked();
+    void on_difficultyBackButton_clicked();
+    void on_mainmenuButton_clicked();
 };
 
 #endif // MAINWINDOW_H
