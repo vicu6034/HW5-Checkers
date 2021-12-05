@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/images">
-        <file alias="king">king.png</file>
+        <file alias="king">images/king.png</file>
+        <file alias="tripleking">images/tripleking.png</file>
     </qresource>
 </RCC>

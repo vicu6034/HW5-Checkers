@@ -20,7 +20,9 @@ void TripleKingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *i
 
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
-    painter->drawText(pos.x+20, pos.y+30, "T");
+    QImage tripleKing(":/images/tripleking");
+    tripleKing = tripleKing.scaled(RADIUS, RADIUS);
+    painter->drawImage(pos.x, pos.y, tripleKing);
 
     painter->setBrush(b);
 }

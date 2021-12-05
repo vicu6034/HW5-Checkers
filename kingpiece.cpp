@@ -20,7 +20,10 @@ void KingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, Q
 
     painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
-    painter->drawText(pos.x+20, pos.y+30, "K");
+    // Add king image
+    QImage king(":/images/king");
+    king = king.scaled(RADIUS, RADIUS);
+    painter->drawImage(pos.x, pos.y, king);
 
     painter->setBrush(b);
 }
