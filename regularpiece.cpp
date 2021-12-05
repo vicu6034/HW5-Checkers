@@ -22,17 +22,11 @@ void RegularPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item
         );
     }
 
-    // pieces are red or black
-    if (is_red_) {
-        painter->setBrush(QBrush(QColor(255,0,0)));
-    } else {
-        painter->setBrush(QBrush(QColor(0,0,0)));
-        // give black pieces red outline/writing
-        painter->setPen(Qt::red);
-    }
-
     // draw piece
-    painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
+    QString piecetype = is_red_ ? "redchecker" : "blackchecker";
+    QImage checker(":/images/" + piecetype);
+    checker = checker.scaled(RADIUS, RADIUS);
+    painter->drawImage(pos.x, pos.y, checker);
 
     painter->setBrush(b);
 }

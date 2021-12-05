@@ -7,23 +7,26 @@ void KingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, Q
     Q_UNUSED(widget);
     Q_UNUSED(item);
 
-    QBrush b = painter->brush();
-
-    if (is_red_) {
-        painter->setBrush(QBrush(QColor(255,0,0)));
-    } else {
-        painter->setBrush(QBrush(QColor(0,0,0)));
-        painter->setPen(Qt::red);
-    }
-
     Position pos = ConvertPosition();
 
-    painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
+    QBrush b = painter->brush();
 
-    // Add king image
-    QImage king(":/images/king");
-    king = king.scaled(RADIUS, RADIUS);
-    painter->drawImage(pos.x, pos.y, king);
+    // add green highlight if piece is selected
+    if (highlighted_) {
+        painter->setBrush(QBrush(QColor(0, 255, 0)));
+        painter->drawEllipse(
+            pos.x - HIGHLIGHT_SIZE,
+            pos.y - HIGHLIGHT_SIZE,
+            RADIUS + (HIGHLIGHT_SIZE * 2),
+            RADIUS + (HIGHLIGHT_SIZE * 2)
+        );
+    }
+
+    // draw piece
+    QString piecetype = is_red_ ? "redking" : "blackking";
+    QImage checker(":/images/" + piecetype);
+    checker = checker.scaled(RADIUS, RADIUS);
+    painter->drawImage(pos.x, pos.y, checker);
 
     painter->setBrush(b);
 }
