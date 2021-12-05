@@ -21,9 +21,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set up audio player
     media_player_ = new QMediaPlayer(this);
-    // set media to the game start click sound
-    media_player_->setMedia(QUrl("qrc:/audio/game_start.mp3"));
-    media_player_->setPlaybackRate(2);
 
     // set up popup for displaying rules
     rules_pupup_ = new RulesPopup(this);
@@ -114,7 +111,7 @@ void MainWindow::Reset() {
 
 // play a regular click sound
 void MainWindow::playClickSound() {
-    media_player_->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player_->setMedia(QUrl("qrc:/audio/audio/menu_click.mp3"));
     media_player_->setPlaybackRate(1);
     media_player_->play();
 }
@@ -133,7 +130,7 @@ void MainWindow::handleWinner(int winner) {
     }
 
     // play winner sound
-    media_player_->setMedia(QUrl("qrc:/audio/player_won.mp3"));
+    media_player_->setMedia(QUrl("qrc:/audio/audio/player_won.mp3"));
     media_player_->setPlaybackRate(1.5);
     media_player_->play();
 
@@ -214,6 +211,8 @@ MainWindow::~MainWindow() {
 // display rules and start setting up game
 void MainWindow::handleMainMenuClick() {
     // play start song and change view to game screen
+    media_player_->setMedia(QUrl("qrc:/audio/audio/game_start.mp3"));
+    media_player_->setPlaybackRate(2);
     media_player_->play();
     ui->stackedWidget->setCurrentIndex(2);
     // open popup window to display rules
@@ -224,6 +223,7 @@ void MainWindow::handleMainMenuClick() {
 // slot for single player button being clicked
 void MainWindow::on_spButton_clicked() {
     // set page to difficulty screen
+    playClickSound();
     ui->stackedWidget->setCurrentIndex(1);
 }
 
@@ -278,17 +278,17 @@ void MainWindow::winner_PlayAgain_slot() {
 
 // slots for playing different sounds
 void MainWindow::playSlideSound_slot() {
-    media_player_->setMedia(QUrl("qrc:/audio/piece_slide.mp3"));
+    media_player_->setMedia(QUrl("qrc:/audio/audio/piece_slide.mp3"));
     media_player_->setPlaybackRate(2.5);
     media_player_->play();
 }
 void MainWindow::playJumpSound_slot() {
-    media_player_->setMedia(QUrl("qrc:/audio/piece_jump.mp3"));
+    media_player_->setMedia(QUrl("qrc:/audio/audio/piece_jump.mp3"));
     media_player_->setPlaybackRate(1.5);
     media_player_->play();
 }
 void MainWindow::playDeniedSound_slot() {
-    media_player_->setMedia(QUrl("qrc:/audio/piece_denied.mp3"));
+    media_player_->setMedia(QUrl("qrc:/audio/audio/piece_denied.mp3"));
     media_player_->setPlaybackRate(1);
     media_player_->play();
 }
