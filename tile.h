@@ -38,6 +38,7 @@ public:
 signals:
     // custom signal to emit when a Tile is selected
     void gotSelected(Tile* t);
+    void playDeniedSound();
 
 };
 

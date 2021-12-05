@@ -39,7 +39,11 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
 // slot for gotselected will check if the tile is a valid move for
 // previously selected piece
 void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton && !is_red_) {
-        emit gotSelected(this);
+    if (event->button() == Qt::LeftButton) {
+        if (is_red_) {
+            emit playDeniedSound();
+        } else {
+            emit gotSelected(this);
+        }
     }
 }
