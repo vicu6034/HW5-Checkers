@@ -62,8 +62,8 @@ public:
     bool get_is_red() const { return is_red_; }
 
     void set_position(Position pos) { pos_ = pos; }
+    void set_highlighted(bool highlighted) { highlighted_ = highlighted; }
 
-    void SetHighlighted(bool highlighted);
     bool is_highlighted_() { return highlighted_; }
 
     // necessary Qt bounding and drawing methods

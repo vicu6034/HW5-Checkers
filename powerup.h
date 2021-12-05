@@ -20,6 +20,9 @@ private:
 public:
     // paramterized constructor with initialization list
     PowerUp(Position pos, bool is_addPiece) : pos_(pos), is_addPiece_(is_addPiece) {}
+    Position get_position() { return pos_; }
+    std::string get_type();
+
     // convert pos_ to oncreen position
     Position ConvertPosition() const { return Position{pos_.x*60 + 5, pos_.y*60 + 5}; }
 
