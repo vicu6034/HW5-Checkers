@@ -3,6 +3,8 @@
 #include <QGraphicsView>
 #include <QDebug>
 #include <QTime>
+#include <QTimer>
+#include <QStackedWidget>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -14,43 +16,70 @@ MainWindow::MainWindow(QWidget *parent)
     // we need to set up the ui before we draw on our scene
     ui->setupUi(this);
 
-    // the QGraphicsView is the UI element that contains the
-    // scene that we will actually get to draw on.
-    QGraphicsView * view = ui->gameGraphicsView;
+    // set widget to 0 (display main menu)
+    ui->stackedWidget->setCurrentIndex(0);
 
-    // scene is a QGraphicsScene pointer field of the PlotWindow class
-    // this makes our lives easier by letting us easily access it
-    // from other functions in this class.
-    scene = new QGraphicsScene;
-    view->setScene(scene);
-    // make the scene the same size as the view containing it
-    view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
+    // set up audio player
+    media_player_ = new QMediaPlayer(this);
+    // set media to the game start click sound
+    media_player_->setMedia(QUrl("qrc:/audio/game_start.mp3"));
+    media_player_->setPlaybackRate(2);
 
+    // set up popup for displaying rules
+    rules_pupup_ = new RulesPopup(this);
+    connect(rules_pupup_, SIGNAL(rulesRejected()), this, SLOT(rules_Rejected_slot()));
+    connect(rules_pupup_, SIGNAL(rulesAccepted()), this, SLOT(rules_Accepted_slot()));
+
+    // set up popup for displaying winner
+    winner_popup_ = new WinnerPopup(this);
+    connect(winner_popup_, SIGNAL(PlayAgain()), this, SLOT(winner_PlayAgain_slot()));
+    connect(winner_popup_, SIGNAL(Exit()), this, SLOT(winner_Exit_slot()));
+
+    // set up game with custom slots and signals
     gameboard_ = new GameBoard();
-    // connect our custom slots and signals
     connect(gameboard_, SIGNAL(updateTurnLabel(int)), this, SLOT(updateTurnLabel_slot(int)));
     connect(gameboard_, SIGNAL(updatePiecesLabel(bool,int)), this, SLOT(updatePiecesLabel_slot(bool,int)));
     connect(gameboard_, SIGNAL(updatePiece(PiecePrototype*)), this, SLOT(updatePiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(addPiece(PiecePrototype*)), this, SLOT(addPiece_slot(PiecePrototype*)));
     connect(gameboard_, SIGNAL(removePiece(PiecePrototype*)), this, SLOT(removePiece_slot(PiecePrototype*)));
-    connect(gameboard_, SIGNAL(gameOver()), this, SLOT(gameOver_slot()));
+    connect(gameboard_, SIGNAL(gameOver(int)), this, SLOT(gameOver_slot(int)));
+    connect(gameboard_, SIGNAL(playSlideSound()), this, SLOT(playSlideSound_slot()));
+    connect(gameboard_, SIGNAL(playJumpSound()), this, SLOT(playJumpSound_slot()));
+    connect(gameboard_, SIGNAL(playDeniedSound()), this, SLOT(playDeniedSound_slot()));
 
-    // add all tiles to the scene
+    // the QGraphicsView is the UI element that contains the
+    // scene that we will actually get to draw on.
+    QGraphicsView * view = ui->gameGraphicsView;
+    scene = new QGraphicsScene;
+    view->setScene(scene);
+    // make the scene the same size as the view containing it
+    view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
+
+    // add all graphics items to game scene
     for (Tile* tile : gameboard_->getTiles() ) {
+        connect(tile, SIGNAL(playDeniedSound()), this, SLOT(playDeniedSound_slot()));
+        // add all tiles to the scene
         scene->addItem(tile);
     }
-
-    // add all pieces to the scene
     for (PiecePrototype* piece : gameboard_->getPieces() ) {
+        // add all pieces to the scene
         scene->addItem(piece);
     }
-
-    // add all powerups to the scene
     for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+         // add all powerups to the scene
         scene->addItem(powerup);
     }
 
+    // set initial turn label
     ui->turnLabel->setText("TURN: RED");
+    // gray out simulation and hard difficulty button
+    ui->simButton->setEnabled(false);
+    ui->hardButton->setEnabled(false);
+
+    // set up timer
+    timer_ = new QTimer(this);
+    connect(timer_, SIGNAL(timeout()), gameboard_, SLOT(AI_Timer_slot()));
+
 }
 
 // reset the mainwindow
@@ -83,18 +112,34 @@ void MainWindow::Reset() {
     ui->blackPiecesLabel->setText(pop2_q);
 }
 
-// helper method to give a player a win and update the label
-void MainWindow::iterateWinLabel(Player * p) {
-    p->set_num_wins(p->get_num_wins()+1);
-    if (p->get_is_red()) {
-        std::string s= "RED: " + std::to_string(p->get_num_wins()) + " Wins";
+// play a regular click sound
+void MainWindow::playClickSound() {
+    media_player_->setMedia(QUrl("qrc:/audio/menu_click.mp3"));
+    media_player_->setPlaybackRate(1);
+    media_player_->play();
+}
+
+// handle what happens when someone wins the game
+void MainWindow::handleWinner(int winner) {
+    // update win label
+    if (winner == 0) {
+        std::string s= "RED: " + std::to_string(gameboard_->getPlayer(winner)->get_num_wins()) + " Wins";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->redWinsLabel->setText(pop_q);
     } else {
-        std::string s= "BLACK: " + std::to_string(p->get_num_wins()) + " Wins";
+        std::string s= "BLACK: " + std::to_string(gameboard_->getPlayer(winner)->get_num_wins()) + " Wins";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->blackWinsLabel->setText(pop_q);
     }
+
+    // play winner sound
+    media_player_->setMedia(QUrl("qrc:/audio/player_won.mp3"));
+    media_player_->setPlaybackRate(1.5);
+    media_player_->play();
+
+    // set text for winner popup and show it
+    winner_popup_->setLabelText(winner);
+    winner_popup_->exec();
 }
 
 // update turn label with whoevers turn it is
@@ -120,7 +165,7 @@ void MainWindow::updatePiecesLabel_slot(bool red, int pieces) {
 // update a piece after movement
 void MainWindow::updatePiece_slot(PiecePrototype* p) {
     scene->removeItem(p);
-    p->update();
+    //p->update();
     scene->addItem(p);
 }
 
@@ -135,19 +180,29 @@ void MainWindow::removePiece_slot(PiecePrototype* p) {
 }
 
 // when somebody wins update ther wins label and reset game
-void MainWindow::gameOver_slot() {
-    iterateWinLabel(gameboard_->getCurrentPlayer());
-    Reset();
+void MainWindow::gameOver_slot(int winner) {
+    handleWinner(winner);
 }
 
 // when surrender is clicked, give a win to the non-surrenderer & reset
 void MainWindow::on_surrenderButton_clicked() {
-   iterateWinLabel(gameboard_->getOtherPlayer());
-   Reset();
+    playClickSound();
+    // check its not the computers turn
+    if (!(gameboard_->getDifficulty() != Difficulty::None && gameboard_->getCurrentPlayerInt() == 1)) {
+        // make the player whos turn its NOT the winner
+        int other_player = 0;
+        if (gameboard_->getCurrentPlayerInt() == 0) {
+            other_player = 1;
+        }
+        // give the player a win and handle winner
+        gameboard_->getPlayer(other_player)->set_num_wins(gameboard_->getPlayer(other_player)->get_num_wins()+1);
+        handleWinner(other_player);
+    }
 }
 
 // when reset button is clicked, just reset
 void MainWindow::on_resetButton_clicked() {
+    playClickSound();
     Reset();
 }
 
@@ -155,3 +210,100 @@ void MainWindow::on_resetButton_clicked() {
 MainWindow::~MainWindow() {
     delete ui;
 }
+
+// display rules and start setting up game
+void MainWindow::handleMainMenuClick() {
+    // play start song and change view to game screen
+    media_player_->play();
+    ui->stackedWidget->setCurrentIndex(2);
+    // open popup window to display rules
+    rules_pupup_->exec();
+
+}
+
+// slot for single player button being clicked
+void MainWindow::on_spButton_clicked() {
+    // set page to difficulty screen
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+// slot for multiplayer button being clicked
+void MainWindow::on_mpButton_clicked() {
+    gameboard_->setDifficulty(Difficulty::None);
+    handleMainMenuClick();
+}
+
+// slot for clicking easy difficulty button
+void MainWindow::on_easyButton_clicked() {
+    // set difficulty and start game
+    gameboard_->setDifficulty(Difficulty::Easy);
+    handleMainMenuClick();
+    timer_->start(3000);
+}
+
+// slot for clicking medium difficulty button
+void MainWindow::on_mediumButton_clicked() {
+    // set difficulty and start game
+    gameboard_->setDifficulty(Difficulty::Medium);
+    handleMainMenuClick();
+    timer_->start(3000);
+}
+
+// slot for when the rules get rejected
+void MainWindow::rules_Rejected_slot() {
+    // play click sound and go back to main menu
+    playClickSound();
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+// slot for when rules are accepted
+void MainWindow::rules_Accepted_slot() {
+    // play click sound and continue
+    playClickSound();
+}
+
+// slot for when the winner popup chooses to exit the game
+void MainWindow::winner_Exit_slot() {
+    // play click and exit application
+    playClickSound();
+    exit(1);
+}
+
+// slot for when play again is chosen from the winner popup
+void MainWindow::winner_PlayAgain_slot() {
+    // play click sound and reset the game
+    playClickSound();
+    Reset();
+}
+
+// slots for playing different sounds
+void MainWindow::playSlideSound_slot() {
+    media_player_->setMedia(QUrl("qrc:/audio/piece_slide.mp3"));
+    media_player_->setPlaybackRate(2.5);
+    media_player_->play();
+}
+void MainWindow::playJumpSound_slot() {
+    media_player_->setMedia(QUrl("qrc:/audio/piece_jump.mp3"));
+    media_player_->setPlaybackRate(1.5);
+    media_player_->play();
+}
+void MainWindow::playDeniedSound_slot() {
+    media_player_->setMedia(QUrl("qrc:/audio/piece_denied.mp3"));
+    media_player_->setPlaybackRate(1);
+    media_player_->play();
+}
+
+void MainWindow::on_difficultyBackButton_clicked() {
+    // play click sound and go back to main menu
+    playClickSound();
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+
+void MainWindow::on_mainmenuButton_clicked() {
+    // play click sound and go back to main menu
+    playClickSound();
+    Reset();
+    ui->stackedWidget->setCurrentIndex(0);
+}
+

@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,8 +17,10 @@ SOURCES += \
     player.cpp \
     powerup.cpp \
     regularpiece.cpp \
+    rulespopup.cpp \
     tile.cpp \
-    triplekingpiece.cpp
+    triplekingpiece.cpp \
+    winnerpopup.cpp
 
 HEADERS += \
     gameboard.h \
@@ -29,11 +31,15 @@ HEADERS += \
     player.h \
     powerup.h \
     regularpiece.h \
+    rulespopup.h \
     tile.h \
-    triplekingpiece.h
+    triplekingpiece.h \
+    winnerpopup.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    rulespopup.ui \
+    winnerpopup.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -42,3 +48,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+    audio.qrc
+

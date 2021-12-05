@@ -1,5 +1,6 @@
 #include "player.h"
 
+// delete a piece by position
 void Player::removePiece(Position pos) {
     for (unsigned int i = 0 ; i < pieces_.size(); i++) {
         if (pieces_[i]->get_position() == pos) {
@@ -9,6 +10,7 @@ void Player::removePiece(Position pos) {
     }
 }
 
+// update a pieces position
 void Player::updatePiece(Position old_pos, Position new_pos) {
     for (unsigned int i = 0 ; i < pieces_.size(); i++) {
         if (pieces_[i]->get_position() == old_pos) {

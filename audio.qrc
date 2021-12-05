@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/audio">
+        <file>menu_click.mp3</file>
+        <file>game_start.mp3</file>
+        <file>piece_slide.mp3</file>
+        <file>piece_jump.mp3</file>
+        <file>piece_denied.mp3</file>
+        <file>player_won.mp3</file>
+    </qresource>
+</RCC>
