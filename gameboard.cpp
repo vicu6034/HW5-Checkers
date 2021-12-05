@@ -170,6 +170,60 @@ int GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red, bool jum
     return -1;
 }
 
+// helper for seeing if a piece will get jumped next turn
+int GameBoard::coudldGetJumped(Position t_pos, Position s_pos, bool red) {
+    // cant get jumped on edge tiles
+    if ((t_pos.x == 0) || (t_pos.x == 9)) {
+        return 1;
+    }
+    if (red) {
+        PiecePrototype * p = getPiece(Position{t_pos.x+1, t_pos.y-1});
+        PiecePrototype * p2 = getPiece(Position{t_pos.x-1, t_pos.y-1});
+        // check the piece exists
+        if (p != nullptr) {
+            // check the piece that could jump is the opposite color of the selected piece
+            if (red != p->get_is_red()) {
+                // see if theres a piece blocking the jump
+                if ((getPiece(Position{t_pos.x-1, t_pos.y+1}) == nullptr) || (s_pos == Position{t_pos.x-1, t_pos.y+1})) {
+                    return 0;
+                }
+            }
+        } else if (p2 != nullptr) {
+            // check the piece that could jump is the opposite color of the selected piece
+            if (red != p2->get_is_red()) {
+                // see if theres a piece blocking the jump
+                if ((getPiece(Position{t_pos.x+1, t_pos.y+1}) == nullptr) || (s_pos == Position{t_pos.x+1, t_pos.y+1})) {
+                    return 0;
+                }
+            }
+        }
+    } else {
+        PiecePrototype * p = getPiece(Position{t_pos.x+1, t_pos.y+1});
+        PiecePrototype * p2 = getPiece(Position{t_pos.x-1, t_pos.y+1});
+        // check the piece exists
+        if (p != nullptr) {
+            // check the piece that could jump is the opposite color of the selected piece
+            if (red != p->get_is_red()) {
+                // make sure a piece isnt blocking the jump
+                if (getPiece(Position{t_pos.x-1, t_pos.y-1}) == nullptr || (s_pos == Position{t_pos.x-1, t_pos.y-1})) {
+                    return 0;
+                }
+            }
+        } else if (p2 != nullptr) {
+            // check the piece that could jump is the opposite color of the selected piece
+            if (red != p2->get_is_red()) {
+                // see if theres a piece blocking the jump
+                if ((getPiece(Position{t_pos.x+1, t_pos.y-1}) == nullptr) || (s_pos == Position{t_pos.x+1, t_pos.y-1})) {
+                    return 0;
+                }
+            }
+        }
+    }
+
+
+    return 1;
+}
+
 // check all the tiles a regular piece could move to
 int GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump) {
     if (red) {
@@ -178,9 +232,9 @@ int GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool 
             // try to go one space
             if (jump) {
                 emit playSlideSound();
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
             } else {
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
             }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y-2) {
             // try to jump piece to left
@@ -195,9 +249,11 @@ int GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool 
             // try to go one tile
             if (jump) {
                 emit playSlideSound();
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
+                //return 1;
             } else {
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
+                //return 1;
             }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
             // try to jump a Piece to the left
@@ -218,9 +274,9 @@ int GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool jum
             // try to go one tile backwards
             if (jump) {
                 emit playSlideSound();
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
             } else {
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
             }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
             // try to jump piece to left backwards
@@ -235,9 +291,9 @@ int GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool jum
             // try to go one tile backwards
             if (jump) {
                 emit playSlideSound();
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
             } else {
-                return 1;
+                return coudldGetJumped(t_pos, s_pos, red);
             }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
             // try to jump a Piece to the left backwards
@@ -467,7 +523,6 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
             selected_->set_highlighted(false);
             emit updatePiece(selected_);
         }
-
         selected_ = p;
         selected_->set_highlighted(true);
         emit updatePiece(selected_);
@@ -480,7 +535,7 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
 std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     std::vector<Tile*> valid_tiles;
     for (Tile* t : tiles_) {
-        if (checkValidity(t, p, false, false) != -1) {
+        if (checkValidity(t, p, false, false) > -1) {
             valid_tiles.push_back(t);
         }
     }
@@ -522,10 +577,13 @@ void GameBoard::AI_Timer_slot() {
                         }
                     }
                 }
+                std::vector<Move> safe_moves;
                 std::vector<Move> jump_moves;
                 std::vector<Move> dbl_jump_moves;
                 for (Move m : moves) {
-                    if (m.score_ == 2) {
+                    if (m.score_ == 1) {
+                        safe_moves.push_back(m);
+                    } else if (m.score_ == 2) {
                         jump_moves.push_back(m);
                     } else if (m.score_ == 4) {
                         dbl_jump_moves.push_back(m);
@@ -537,8 +595,11 @@ void GameBoard::AI_Timer_slot() {
                 } else if (jump_moves.size() > 0) {
                     selected_ = jump_moves[0].piece_;
                     tileSelected(jump_moves[0].tile_);
-                } else {
-
+                } else if (safe_moves.size() > 0) {
+                    int m_i = arc4random()%safe_moves.size();
+                    selected_ = safe_moves[m_i].piece_;
+                    tileSelected(safe_moves[m_i].tile_);
+                }else {
                     int m_i = arc4random()%moves.size();
                     selected_ = moves[m_i].piece_;
                     tileSelected(moves[m_i].tile_);

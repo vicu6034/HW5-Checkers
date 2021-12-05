@@ -60,6 +60,7 @@ public:
     int checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump);
     int checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump);
     int checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump);
+    int coudldGetJumped(Position t_pos, Position s_pos, bool red);
     // handle when a player wants to jump (helps checkValidity)
     int jumpHelper(Position pos, bool red, bool jump);
     int friendlyJumpHelper(Position pos, bool red, bool jump);
