@@ -7,9 +7,9 @@ void TripleKingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *i
     Q_UNUSED(widget);
     Q_UNUSED(item);
 
-    QBrush b = painter->brush();
-
     Position pos = ConvertPosition();
+
+    QBrush b = painter->brush();
 
     // add green highlight if piece is selected
     if (highlighted_) {
@@ -22,16 +22,11 @@ void TripleKingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *i
         );
     }
 
-    if (is_red_) {
-        painter->setBrush(QBrush(QColor(255,0,0)));
-    } else {
-        painter->setBrush(QBrush(QColor(0,0,0)));
-        painter->setPen(Qt::red);
-    }
-
-    painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
-
-    painter->drawText(pos.x+20, pos.y+30, "T");
+    // draw piece
+    QString piecetype = is_red_ ? "redtriple" : "blacktriple";
+    QImage checker(":/images/" + piecetype);
+    checker = checker.scaled(RADIUS, RADIUS);
+    painter->drawImage(pos.x, pos.y, checker);
 
     painter->setBrush(b);
 }
