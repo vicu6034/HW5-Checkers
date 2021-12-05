@@ -23,17 +23,13 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
 
     QBrush b = painter->brush();
 
-    if (is_addPiece_) {
-        painter->setBrush(QBrush(QColor(0,255,0)));
-    } else {
-        painter->setBrush(QBrush(QColor(0,0,255)));
-    }
-
     Position pos = ConvertPosition();
 
-    painter->drawEllipse(pos.x, pos.y, RADIUS, RADIUS);
-
-    painter->drawText(pos.x+20, pos.y+30, "P");
+    // add piece image
+    QString imagetype = is_addPiece_ ? "addpowerup" : "levelpowerup";
+    QImage powerup(":/images/" + imagetype);
+    powerup = powerup.scaled(RADIUS, RADIUS);
+    painter->drawImage(pos.x, pos.y, powerup);
 
     painter->setBrush(b);
 }
