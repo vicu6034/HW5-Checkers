@@ -1,13 +1,21 @@
-#include <iostream>
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+
+#include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QDebug>
 #include <QTime>
 #include <QTimer>
+#include <QMediaPlayer>
 #include <QStackedWidget>
 
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include <gameboard.h>
+#include <tile.h>
+#include <pieceprototype.h>
+#include <powerup.h>
+#include <rulespopup.h>
+#include <winnerpopup.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -53,16 +61,16 @@ MainWindow::MainWindow(QWidget *parent)
     view->setSceneRect(0,0,view->frameSize().width(),view->frameSize().height());
 
     // add all graphics items to game scene
-    for (Tile* tile : gameboard_->getTiles() ) {
+    for (Tile* tile : gameboard_->get_tiles() ) {
         connect(tile, SIGNAL(playDeniedSound()), this, SLOT(playDeniedSound_slot()));
         // add all tiles to the scene
         scene->addItem(tile);
     }
-    for (PiecePrototype* piece : gameboard_->getPieces() ) {
+    for (PiecePrototype* piece : gameboard_->get_pieces() ) {
         // add all pieces to the scene
         scene->addItem(piece);
     }
-    for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+    for (PowerUp* powerup : gameboard_->get_powerups()) {
          // add all powerups to the scene
         scene->addItem(powerup);
     }
@@ -82,20 +90,20 @@ MainWindow::MainWindow(QWidget *parent)
 // reset the mainwindow
 void MainWindow::Reset() {
     // remove all pieces
-    for (PiecePrototype* piece : gameboard_->getPieces() ) {
+    for (PiecePrototype* piece : gameboard_->get_pieces() ) {
          scene->removeItem(piece);
     }
-    for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+    for (PowerUp* powerup : gameboard_->get_powerups()) {
         scene->removeItem(powerup);
     }
     // reset gameboard
     gameboard_->NewGame();
     // add new pieces
-    for (PiecePrototype* piece : gameboard_->getPieces() ) {
+    for (PiecePrototype* piece : gameboard_->get_pieces() ) {
         scene->addItem(piece);
     }
     // add powerups
-    for (PowerUp* powerup : gameboard_->getPowerUps() ) {
+    for (PowerUp* powerup : gameboard_->get_powerups() ) {
         scene->addItem(powerup);
     }
     // reset piece and turn labels
@@ -120,11 +128,11 @@ void MainWindow::playClickSound() {
 void MainWindow::handleWinner(int winner) {
     // update win label
     if (winner == 0) {
-        std::string s= "RED: " + std::to_string(gameboard_->getPlayer(winner)->get_num_wins()) + " Wins";
+        std::string s= "RED: " + std::to_string(gameboard_->get_player(winner)->get_num_wins()) + " Wins";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->redWinsLabel->setText(pop_q);
     } else {
-        std::string s= "BLACK: " + std::to_string(gameboard_->getPlayer(winner)->get_num_wins()) + " Wins";
+        std::string s= "BLACK: " + std::to_string(gameboard_->get_player(winner)->get_num_wins()) + " Wins";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->blackWinsLabel->setText(pop_q);
     }
@@ -185,14 +193,14 @@ void MainWindow::gameOver_slot(int winner) {
 void MainWindow::on_surrenderButton_clicked() {
     playClickSound();
     // check its not the computers turn
-    if (!(gameboard_->getDifficulty() != Difficulty::None && gameboard_->getCurrentPlayerInt() == 1)) {
+    if (!(gameboard_->get_difficulty() != Difficulty::None && gameboard_->get_current_player() == 1)) {
         // make the player whos turn its NOT the winner
         int other_player = 0;
-        if (gameboard_->getCurrentPlayerInt() == 0) {
+        if (gameboard_->get_current_player() == 0) {
             other_player = 1;
         }
         // give the player a win and handle winner
-        gameboard_->getPlayer(other_player)->set_num_wins(gameboard_->getPlayer(other_player)->get_num_wins()+1);
+        gameboard_->get_player(other_player)->set_num_wins(gameboard_->get_player(other_player)->get_num_wins()+1);
         handleWinner(other_player);
     }
 }
@@ -229,14 +237,14 @@ void MainWindow::on_spButton_clicked() {
 
 // slot for multiplayer button being clicked
 void MainWindow::on_mpButton_clicked() {
-    gameboard_->setDifficulty(Difficulty::None);
+    gameboard_->set_difficulty(Difficulty::None);
     handleMainMenuClick();
 }
 
 // slot for clicking easy difficulty button
 void MainWindow::on_easyButton_clicked() {
     // set difficulty and start game
-    gameboard_->setDifficulty(Difficulty::Easy);
+    gameboard_->set_difficulty(Difficulty::Easy);
     handleMainMenuClick();
     timer_->start(3000);
 }
@@ -244,7 +252,7 @@ void MainWindow::on_easyButton_clicked() {
 // slot for clicking medium difficulty button
 void MainWindow::on_mediumButton_clicked() {
     // set difficulty and start game
-    gameboard_->setDifficulty(Difficulty::Medium);
+    gameboard_->set_difficulty(Difficulty::Medium);
     handleMainMenuClick();
     timer_->start(3000);
 }

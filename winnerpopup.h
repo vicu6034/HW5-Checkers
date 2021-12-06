@@ -27,6 +27,7 @@ signals:
 private slots:
     void on_winnerButtonBox_rejected();
     void on_winnerButtonBox_accepted();
+
 };
 
 #endif // WINNERPOPUP_H

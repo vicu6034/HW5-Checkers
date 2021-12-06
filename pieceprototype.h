@@ -64,8 +64,6 @@ public:
     void set_position(Position pos) { pos_ = pos; }
     void set_highlighted(bool highlighted) { highlighted_ = highlighted; }
 
-    bool is_highlighted_() { return highlighted_; }
-
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;
     QPainterPath shape() const override;

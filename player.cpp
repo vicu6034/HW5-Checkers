@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include <pieceprototype.h>
+
 // delete a piece by position
 void Player::removePiece(Position pos) {
     for (unsigned int i = 0 ; i < pieces_.size(); i++) {

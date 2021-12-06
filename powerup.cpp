@@ -2,13 +2,15 @@
 
 #include <QtWidgets>
 
-// Set piece position
+#include <pieceprototype.h>
+
+// set piece position
 QRectF PowerUp::boundingRect() const {
     Position pos = ConvertPosition();
     return QRectF(pos.x, pos.y, RADIUS, RADIUS);
 }
 
-// Set Piece shape
+// set Piece shape
 QPainterPath PowerUp::shape() const {
     QPainterPath path;
     Position pos = ConvertPosition();
@@ -16,7 +18,7 @@ QPainterPath PowerUp::shape() const {
     return path;
 }
 
-// Set Piece visibility traits (color, size)
+// set Piece visibility traits (color, size)
 void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
     Q_UNUSED(widget);
     Q_UNUSED(item);
@@ -34,6 +36,7 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
     painter->setBrush(b);
 }
 
+// return type of piece as a string
 std::string PowerUp::get_type() {
     if (is_addPiece_) {
         return "add";

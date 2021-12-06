@@ -5,7 +5,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMediaPlayer>
+
 #include <gameboard.h>
+#include <pieceprototype.h>
 #include <rulespopup.h>
 #include <winnerpopup.h>
 
