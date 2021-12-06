@@ -1,6 +1,8 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <QGraphicsObject>
+
 #include <pieceprototype.h>
 
 // tile inherits from QGraphicsObject

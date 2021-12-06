@@ -35,14 +35,14 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
     painter->setBrush(b);
 }
 
-// emit gotselected signal for left clicks on black tiles
-// slot for gotselected will check if the tile is a valid move for
-// previously selected piece
+// emit gotselected signal to gameboard for left clicks on black tiles
 void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         if (is_red_) {
+            // play denied sound when clicking red tiles
             emit playDeniedSound();
         } else {
+            // emit this tile to gameboard
             emit gotSelected(this);
         }
     }
