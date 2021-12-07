@@ -547,18 +547,20 @@ void GameBoard::handleSelected(Tile* t, bool red) {
         return;
     }
     // check for winner and iterate turn label
-    int winner = checkForWinner();
-    if (winner == -1) {
-        if (red) {
-            current_player_ = 1;
+    if (score != -1) {
+        int winner = checkForWinner();
+        if (winner == -1) {
+            if (red) {
+                current_player_ = 1;
+            } else {
+                current_player_ = 0;
+            }
+            // update turn label
+            emit updateTurnLabel(current_player_);
         } else {
-            current_player_ = 0;
+            players_[winner]->set_num_wins(players_[winner]->get_num_wins()+1);
+            emit gameOver(winner);
         }
-        // update turn label
-        emit updateTurnLabel(current_player_);
-    } else {
-        players_[winner]->set_num_wins(players_[winner]->get_num_wins()+1);
-        emit gameOver(winner);
     }
 }
 
