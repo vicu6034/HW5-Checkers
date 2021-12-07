@@ -531,23 +531,19 @@ void GameBoard::checkLanding(Tile* t, bool red) {
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
     int score = checkValidity(t, selected_, red, true);
-    if (score == 0 || score == 1) {
-        checkLanding(t, red);
-    } else if (score == 2 || score == 4) {
-        // if we just jumped a piece, check for double jump
-        checkLanding(t, red);
-        for (Tile* p_t : getPieceMoves(selected_)) {
-            int temp = checkValidity(p_t, selected_, red, false);
-            if ((temp == 2) || (temp == 4)) {
-                handleSelected(p_t, red);
+    if (score != -1) {
+        if (score == 0 || score == 1) {
+            checkLanding(t, red);
+        } else if (score == 2 || score == 4) {
+            // if we just jumped a piece, check for double jump
+            checkLanding(t, red);
+            for (Tile* p_t : getPieceMoves(selected_)) {
+                int temp = checkValidity(p_t, selected_, red, false);
+                if ((temp == 2) || (temp == 4)) {
+                    handleSelected(p_t, red);
+                }
             }
         }
-    } else {
-        emit playDeniedSound();
-        return;
-    }
-    // check for winner and iterate turn label
-    if (score != -1) {
         int winner = checkForWinner();
         if (winner == -1) {
             if (red) {
@@ -561,6 +557,8 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             players_[winner]->set_num_wins(players_[winner]->get_num_wins()+1);
             emit gameOver(winner);
         }
+    } else {
+        emit playDeniedSound();
     }
 }
 
