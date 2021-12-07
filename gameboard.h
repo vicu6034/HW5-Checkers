@@ -71,7 +71,7 @@ public:
     int checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool jump);
 
     // see if moving to a position will leave a piece vulnerable to be jumped
-    int coudldGetJumped(Position t_pos, Position s_pos, bool red);
+    int couldGetJumped(Position t_pos, Position s_pos, bool red);
 
     // handle when a player wants to jump over a piece
     int jumpHelper(Position pos, bool red, bool jump);

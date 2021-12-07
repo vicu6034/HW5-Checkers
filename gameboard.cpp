@@ -216,7 +216,7 @@ int GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red, bool jum
  * @param bool red : color of piece that wants to move
  * @return int score of the move (-1 for invalid, 0 for able to be jumped)
 */
-int GameBoard::coudldGetJumped(Position t_pos, Position s_pos, bool red) {
+int GameBoard::couldGetJumped(Position t_pos, Position s_pos, bool red) {
     // cant get jumped on edge tiles
     if ((t_pos.x == 0) || (t_pos.x == 9)) {
         return 1;
@@ -277,9 +277,9 @@ int GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool 
             // try to go one space
             if (jump) {
                 emit playSlideSound();
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
             } else {
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
             }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y-2) {
             // try to jump piece to left
@@ -294,10 +294,10 @@ int GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool 
             // try to go one tile
             if (jump) {
                 emit playSlideSound();
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
                 //return 1;
             } else {
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
                 //return 1;
             }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
@@ -319,9 +319,9 @@ int GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool jum
             // try to go one tile backwards
             if (jump) {
                 emit playSlideSound();
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
             } else {
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
             }
         } else if (t_pos.x == s_pos.x-2 && t_pos.y == s_pos.y+2) {
             // try to jump piece to left backwards
@@ -336,9 +336,9 @@ int GameBoard::checkKingMoves(Position t_pos, Position s_pos, bool red, bool jum
             // try to go one tile backwards
             if (jump) {
                 emit playSlideSound();
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
             } else {
-                return coudldGetJumped(t_pos, s_pos, red);
+                return couldGetJumped(t_pos, s_pos, red);
             }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y-2)) {
             // try to jump a Piece to the left backwards
