@@ -80,8 +80,12 @@ void GameBoard::NewGame() {
 
      // add powerups to random positions between middle two rows
      int rando = arc4random_uniform(2);
-     powerups_.push_back(new PowerUp(Position{(int)arc4random_uniform(10),4}, rando));
-     powerups_.push_back(new PowerUp(Position{(int)arc4random_uniform(10),5}, !rando));
+
+     int a = arc4random_uniform(5) * 2;
+     int b = arc4random_uniform(5) * 2 + 1;
+
+     powerups_.push_back(new PowerUp(Position{a,4}, rando));
+     powerups_.push_back(new PowerUp(Position{b,5}, !rando));
 }
 
 /* Get all pieces in the game
