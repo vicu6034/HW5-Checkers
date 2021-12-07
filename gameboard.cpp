@@ -1,5 +1,7 @@
 #include "gameboard.h"
 
+#include <QThread>
+
 #include <tile.h>
 #include <pieceprototype.h>
 #include <regularpiece.h>
@@ -299,10 +301,8 @@ int GameBoard::checkRegularMoves(Position t_pos, Position s_pos, bool red, bool 
             if (jump) {
                 emit playSlideSound();
                 return couldGetJumped(t_pos, s_pos, red);
-                //return 1;
             } else {
                 return couldGetJumped(t_pos, s_pos, red);
-                //return 1;
             }
         } else if ((t_pos.x == s_pos.x-2) && (t_pos.y == s_pos.y+2)) {
             // try to jump a Piece to the left
@@ -496,38 +496,57 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
     }
 }
 
+// after mkoving piece, see if we need to upgrade piece or handle any powerups
+void GameBoard::checkLanding(Tile* t, bool red) {
+    Position last_pos = selected_->get_position();
+    // check if we need piece upgrade after the move, if not just update the piece
+    if (((t->get_position().y == 0 && red) || (t->get_position().y == 9 && !red)) && selected_->get_type() == PieceType::RegularPiece) {
+        // making a regular piece into a king
+        players_[current_player_]->removePiece(last_pos);
+        // create piece with new type, connect it and add to scene
+        PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t->get_position(), red);
+        players_[current_player_]->addPiece(p);
+        connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+        selected_ = p;
+        emit addPiece(p);
+        handlePowerup(t->get_position(), last_pos, red);
+    } else if (((t->get_position().y == 9 && red) || (t->get_position().y == 0 && !red)) && selected_->get_type() == PieceType::KingPiece) {
+        // making a king into a triple king
+        players_[current_player_]->removePiece(last_pos);
+        // create piece with new type, connect it and add to scene
+        PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t->get_position(), red);
+        players_[current_player_]->addPiece(p);
+        connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
+        selected_ = p;
+        emit addPiece(p);
+        handlePowerup(t->get_position(), last_pos, red);
+    } else {
+        // if not changing the type just update piece
+        selected_->set_position(t->get_position());
+        players_[current_player_]->updatePiece(last_pos, t->get_position());
+        selected_->set_highlighted(false);
+        emit updatePiece(selected_);
+        handlePowerup(t->get_position(), last_pos, red);
+    }
+
+}
+
+
 // helper for when tile is selected
 void GameBoard::handleSelected(Tile* t, bool red) {
-    if (checkValidity(t, selected_, red, true) != -1) {
-        Position last_pos = selected_->get_position();
-        // check if we need piece upgrade after the move, if not just update the piece
-        if (((t->get_position().y == 0 && red) || (t->get_position().y == 9 && !red)) && selected_->get_type() == PieceType::RegularPiece) {
-            // making a regular piece into a king
-            players_[current_player_]->removePiece(last_pos);
-            // create piece with new type, connect it and add to scene
-            PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t->get_position(), red);
-            players_[current_player_]->addPiece(p);
-            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            selected_ = p;
-            emit addPiece(p);
-            handlePowerup(t->get_position(), last_pos, red);
-        } else if (((t->get_position().y == 9 && red) || (t->get_position().y == 0 && !red)) && selected_->get_type() == PieceType::KingPiece) {
-            // making a king into a triple king
-            players_[current_player_]->removePiece(last_pos);
-            // create piece with new type, connect it and add to scene
-            PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t->get_position(), red);
-            players_[current_player_]->addPiece(p);
-            connect(p, SIGNAL(gotSelected(PiecePrototype*)), this, SLOT(pieceSelected(PiecePrototype*)));
-            selected_ = p;
-            emit addPiece(p);
-            handlePowerup(t->get_position(), last_pos, red);
-        } else {
-            // if not changing the type just update piece
-            selected_->set_position(t->get_position());
-            players_[current_player_]->updatePiece(last_pos, t->get_position());
-            selected_->set_highlighted(false);
-            emit updatePiece(selected_);
-            handlePowerup(t->get_position(), last_pos, red);
+    int score = checkValidity(t, selected_, red, true);
+    if (score != -1) {
+        if (score == 0 || score == 1) {
+            checkLanding(t, red);
+        } else if (score == 2 || score == 4) {
+            // if we just jumped a piece, check for double jump
+            checkLanding(t, red);
+            for (Tile* p_t : getPieceMoves(selected_)) {
+                int temp = checkValidity(p_t, selected_, red, false);
+                if ((temp == 2) || (temp == 4)) {
+                    handleSelected(p_t, red);
+                }
+            }
         }
         int winner = checkForWinner();
         if (winner == -1) {
@@ -584,7 +603,7 @@ void GameBoard::pieceSelected(PiecePrototype* p) {
 std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     std::vector<Tile*> valid_tiles;
     for (Tile* t : tiles_) {
-        if (checkValidity(t, p, false, false) > -1) {
+        if (checkValidity(t, p, p->get_is_red(), false) != -1) {
             valid_tiles.push_back(t);
         }
     }
