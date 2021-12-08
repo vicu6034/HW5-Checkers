@@ -85,7 +85,8 @@ public:
     // if a move was valid check if someone won
     int checkForWinner();
     // handles what happens when a tile is selected (helps pieceSelected)
-    void checkLanding(Tile* t, bool red);
+    void doMove(Position t_pos, Position s_pos, bool red);
+    void checkLanding(Position t_pos, bool red);
     void handleSelected(Tile* t, bool red);
 
     // see if theres a powerup at a position and return string of its name

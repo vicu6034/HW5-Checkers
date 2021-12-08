@@ -170,7 +170,6 @@ void MainWindow::updatePiecesLabel_slot(bool red, int pieces) {
 // update a piece after movement
 void MainWindow::updatePiece_slot(PiecePrototype* p) {
     scene->removeItem(p);
-    //p->update();
     scene->addItem(p);
 }
 
