@@ -26,8 +26,6 @@ private:
 
     // media player for audio
     QMediaPlayer *media_player_;
-    // timer for ai turns
-    QTimer *timer_;
 
     // has a GameBoard to run the game
     GameBoard* gameboard_;
@@ -83,6 +81,7 @@ private slots:
     void on_mediumButton_clicked();
     void on_difficultyBackButton_clicked();
     void on_mainmenuButton_clicked();
+    void on_simButton_clicked();
 };
 
 #endif // MAINWINDOW_H
