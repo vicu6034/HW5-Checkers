@@ -703,3 +703,8 @@ void GameBoard::black_Timer_slot() {
 void GameBoard::red_Timer_slot() {
     doAITurn(0);
 }
+
+void GameBoard::StopTimers() {
+    red_timer_->stop();
+    black_timer_->stop();
+}

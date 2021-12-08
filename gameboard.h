@@ -60,7 +60,7 @@ public:
 
     // method to reset GameBoard to its state immediately after initialization
     void NewGame();
-
+    void StopTimers();
     // getters and setter
     std::vector<Tile*> get_tiles() const { return tiles_; }
     std::vector<PowerUp*> get_powerups() const { return powerups_; }

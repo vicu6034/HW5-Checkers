@@ -303,7 +303,7 @@ void MainWindow::on_difficultyBackButton_clicked() {
 void MainWindow::on_mainmenuButton_clicked() {
     // play click sound and go back to main menu
     playClickSound();
-    Reset();
+    gameboard_->StopTimers();
     ui->stackedWidget->setCurrentIndex(0);
 }
 
