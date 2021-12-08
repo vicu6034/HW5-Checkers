@@ -5,8 +5,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QDebug>
-#include <QTime>
-#include <QTimer>
 #include <QMediaPlayer>
 #include <QStackedWidget>
 

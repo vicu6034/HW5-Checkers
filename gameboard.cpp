@@ -1,6 +1,8 @@
 #include "gameboard.h"
 
 #include <QThread>
+#include <QTime>
+#include <QTimer>
 
 #include <tile.h>
 #include <pieceprototype.h>
@@ -649,7 +651,7 @@ void GameBoard::doAITurn(int turn) {
                 selected_ = valid_pieces[p_i];
                 // get tiles to move to
                 std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
-                int t_i = arc4random()%valid_tiles.size();
+                int t_i = arc4random_uniform(valid_tiles.size());
                 tileSelected(valid_tiles[t_i]);
             } else if (difficulty_ == Difficulty::Medium || difficulty_ == Difficulty::Simulation) {
                 // pick the best move for that turn
@@ -680,11 +682,11 @@ void GameBoard::doAITurn(int turn) {
                     selected_ = jump_moves[0].piece;
                     tileSelected(jump_moves[0].tile);
                 } else if (safe_moves.size() > 0) {
-                    int m_i = arc4random()%safe_moves.size();
+                    int m_i = arc4random_uniform(safe_moves.size());
                     selected_ = safe_moves[m_i].piece;
                     tileSelected(safe_moves[m_i].tile);
                 }else {
-                    int m_i = arc4random()%moves.size();
+                    int m_i = arc4random_uniform(moves.size());
                     selected_ = moves[m_i].piece;
                     tileSelected(moves[m_i].tile);
                 }
