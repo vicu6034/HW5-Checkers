@@ -14,6 +14,12 @@
  * Set up initial game state
 */
 GameBoard::GameBoard() {
+    // set up timers
+    red_timer_ = new QTimer(this);
+    connect(red_timer_, SIGNAL(timeout()), this, SLOT(red_Timer_slot()));
+    black_timer_ = new QTimer(this);
+    connect(black_timer_, SIGNAL(timeout()), this, SLOT(black_Timer_slot()));
+
     difficulty_ = Difficulty::None;
     // create tiles
     bool switcher = false;
@@ -88,6 +94,20 @@ void GameBoard::NewGame() {
 
      powerups_.push_back(new PowerUp(Position{a,4}, rando));
      powerups_.push_back(new PowerUp(Position{b,5}, !rando));
+
+     if (difficulty_ == Difficulty::Simulation) {
+         // for simulations play both AIs
+         red_timer_->start(300);
+         black_timer_->start(500);
+     } else if (difficulty_ != Difficulty::None) {
+         // for single player stop red AI and start black
+         red_timer_->stop();
+         black_timer_->start(3000);
+     } else { // Difficulty == None
+         // stop both timers in multiplayer
+         red_timer_->stop();
+         black_timer_->stop();
+     }
 }
 
 /* Get all pieces in the game
@@ -502,7 +522,7 @@ void GameBoard::checkLanding(Position t_pos, bool red) {
     // check if we need piece upgrade after the move, if not just update the piece
     if (((t_pos.y == 0 && red) || (t_pos.y == 9 && !red)) && selected_->get_type() == PieceType::RegularPiece) {
         // making a regular piece into a king
-        players_[current_player_]->removePiece(last_pos);
+        if (get_piece(last_pos)) { players_[current_player_]->removePiece(last_pos); }
         // create piece with new type, connect it and add to scene
         PiecePrototype* p = factory_->CreatePiece(PieceType::KingPiece, t_pos, red);
         players_[current_player_]->addPiece(p);
@@ -511,7 +531,7 @@ void GameBoard::checkLanding(Position t_pos, bool red) {
         emit addPiece(p);
     } else if (((t_pos.y == 9 && red) || (t_pos.y == 0 && !red)) && selected_->get_type() == PieceType::KingPiece) {
         // making a king into a triple king
-        players_[current_player_]->removePiece(last_pos);
+        if (get_piece(last_pos)) { players_[current_player_]->removePiece(last_pos); }
         // create piece with new type, connect it and add to scene
         PiecePrototype* p = factory_->CreatePiece(PieceType::TripleKingPiece, t_pos, red);
         players_[current_player_]->addPiece(p);
@@ -607,12 +627,11 @@ std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     return valid_tiles;
 }
 
-// handle the timeout from the AI timer to make the AIs move if its their turn
-void GameBoard::AI_Timer_slot() {
-    if (current_player_ == 1) {
+void GameBoard::doAITurn(int turn) {
+    if (current_player_ == turn) {
         // find pieces with valid moves
         std::vector<PiecePrototype*> valid_pieces;
-        for (PiecePrototype* piece : players_[1]->get_pieces()) {
+        for (PiecePrototype* piece : players_[turn]->get_pieces()) {
             if (getPieceMoves(piece).size()) {
                 valid_pieces.push_back(piece);
             }
@@ -632,13 +651,13 @@ void GameBoard::AI_Timer_slot() {
                 std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
                 int t_i = arc4random()%valid_tiles.size();
                 tileSelected(valid_tiles[t_i]);
-            } else if (difficulty_ == Difficulty::Medium) {
+            } else if (difficulty_ == Difficulty::Medium || difficulty_ == Difficulty::Simulation) {
                 // pick the best move for that turn
                 std::vector<Move> moves;
                 for (PiecePrototype* piece : valid_pieces) {
                     for (Tile* tile : tiles_) {
-                        if (checkValidity(tile, piece, false, false) != -1) {
-                            moves.push_back(Move{piece, tile, checkValidity(tile, piece, false, false)});
+                        if (checkValidity(tile, piece, piece->get_is_red(), false) != -1) {
+                            moves.push_back(Move{piece, tile, checkValidity(tile, piece, piece->get_is_red(), false)});
                         }
                     }
                 }
@@ -672,4 +691,13 @@ void GameBoard::AI_Timer_slot() {
             }
         }
     }
+}
+
+// handle the timeout from the AI timer to make the AIs move if its their turn
+void GameBoard::black_Timer_slot() {
+    doAITurn(1);
+}
+
+void GameBoard::red_Timer_slot() {
+    doAITurn(0);
 }

@@ -77,13 +77,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set initial turn label
     ui->turnLabel->setText("TURN: RED");
-    // gray out simulation and hard difficulty button
-    ui->simButton->setEnabled(false);
+    // gray out hard difficulty button
     ui->hardButton->setEnabled(false);
-
-    // set up timer
-    timer_ = new QTimer(this);
-    connect(timer_, SIGNAL(timeout()), gameboard_, SLOT(AI_Timer_slot()));
 
 }
 
@@ -217,6 +212,8 @@ MainWindow::~MainWindow() {
 
 // display rules and start setting up game
 void MainWindow::handleMainMenuClick() {
+    // make sure games reset
+    Reset();
     // play start song and change view to game screen
     media_player_->setMedia(QUrl("qrc:/audio/audio/game_start.mp3"));
     media_player_->setPlaybackRate(2);
@@ -245,7 +242,6 @@ void MainWindow::on_easyButton_clicked() {
     // set difficulty and start game
     gameboard_->set_difficulty(Difficulty::Easy);
     handleMainMenuClick();
-    timer_->start(3000);
 }
 
 // slot for clicking medium difficulty button
@@ -253,7 +249,6 @@ void MainWindow::on_mediumButton_clicked() {
     // set difficulty and start game
     gameboard_->set_difficulty(Difficulty::Medium);
     handleMainMenuClick();
-    timer_->start(3000);
 }
 
 // slot for when the rules get rejected
@@ -312,5 +307,12 @@ void MainWindow::on_mainmenuButton_clicked() {
     playClickSound();
     Reset();
     ui->stackedWidget->setCurrentIndex(0);
+}
+
+
+void MainWindow::on_simButton_clicked() {
+    gameboard_->set_difficulty(Difficulty::Simulation);
+    ui->stackedWidget->setCurrentIndex(2);
+    Reset();
 }
 

@@ -10,6 +10,8 @@
 #define GAMEBOARD_H
 
 #include <QWidget>
+#include <QTime>
+#include <QTimer>
 
 #include <tile.h>
 #include <player.h>
@@ -17,7 +19,7 @@
 #include <powerup.h>
 
 
-enum class Difficulty { None = 0, Easy, Medium, Hard };
+enum class Difficulty { None = 0, Easy, Medium, Hard, Simulation };
 
 struct Move {
     PiecePrototype* piece;
@@ -30,6 +32,10 @@ class GameBoard : public QWidget
     Q_OBJECT
 
 private:
+    // timers for AI
+    QTimer* red_timer_;
+    QTimer* black_timer_;
+
     // game has a factory
     PieceFactory* factory_;
 
@@ -98,6 +104,7 @@ public:
     void handlePowerup(Position t_pos, Position last_pos, bool red);
     // get all the valid tiles a piece could move to
     std::vector<Tile*> getPieceMoves(PiecePrototype* p);
+    void doAITurn(int turn);
 
 signals:
     // custom signals to emit when we need to update something in window
@@ -118,7 +125,8 @@ public slots:
     void pieceSelected(PiecePrototype* p);
 
     // slot for when SP ai needs to take its turn
-    void AI_Timer_slot();
+    void black_Timer_slot();
+    void red_Timer_slot();
 
 };
 
