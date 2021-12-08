@@ -212,6 +212,7 @@ MainWindow::~MainWindow() {
 void MainWindow::handleMainMenuClick() {
     // make sure games reset
     Reset();
+    ui->surrenderButton->setDisabled(false);
     // play start song and change view to game screen
     media_player_->setMedia(QUrl("qrc:/audio/audio/game_start.mp3"));
     media_player_->setPlaybackRate(2);
@@ -309,6 +310,7 @@ void MainWindow::on_mainmenuButton_clicked() {
 
 
 void MainWindow::on_simButton_clicked() {
+    ui->surrenderButton->setDisabled(true);
     gameboard_->set_difficulty(Difficulty::Simulation);
     ui->stackedWidget->setCurrentIndex(2);
     Reset();
