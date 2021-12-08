@@ -1,8 +1,8 @@
 /*
- * Cell Header
- * Implements a single Cell for the CellMap
- * Cells have a color representing wether they're alive or dead
- * CSCI 3010 Homework 4
+ * GameBoard Header (Game Class)
+ * Holds information about Players, Pieces, Tiles, PowerUps
+ * Runs the actual Checkers game
+ * CSCI 3010 Homework 5
  * By: Vincent Curran & Philip Knott
 */
 
@@ -18,12 +18,16 @@
 #include <pieceprototypefactory.h>
 #include <powerup.h>
 
-
+// none for multiplayer, simulation for simulations
+// easy medium hard for single player
 enum class Difficulty { None = 0, Easy, Medium, Hard, Simulation };
 
+// struct to represent a Move
 struct Move {
+    // Piece to move to a Tile
     PiecePrototype* piece;
     Tile* tile;
+    // move has a score based on how 'good' it is
     int score;
 };
 
@@ -36,31 +40,32 @@ private:
     QTimer* red_timer_;
     QTimer* black_timer_;
 
-    // game has a factory
+    // factory for creating pieces
     PieceFactory* factory_;
 
-    // game has tiles, players, and powerups
-    // pieces live in players
+    // game has tiles, players, and powerups (pieces live in players)
     std::vector<Tile*> tiles_;
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
 
-    // difficulty for SP games
+    // track what kind of game to run
     Difficulty difficulty_;
 
-    // keep track of currently selected Piece
+    // track currently selected Piece
     PiecePrototype* selected_;
 
     // track what players turn it is
     int current_player_;
 
 public:
-    // only need default constructor
+    // default constructor
     GameBoard();
 
     // method to reset GameBoard to its state immediately after initialization
     void NewGame();
+    // stop ai from running
     void StopTimers();
+
     // getters and setter
     std::vector<Tile*> get_tiles() const { return tiles_; }
     std::vector<PowerUp*> get_powerups() const { return powerups_; }
@@ -87,10 +92,10 @@ public:
     int doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump);
 
     // check if a tile is valid for a piece to move to, and return score of the move
-    int checkValidity(Tile* t, PiecePrototype* p, bool red, bool jump);
+    int checkValidity(Position t_pos, PiecePrototype* p, bool red, bool jump);
     // if a move was valid check if someone won
     int checkForWinner();
-    // handles what happens when a tile is selected (helps pieceSelected)
+    // handles what happens when a tile is selected (helps pieceSelected_slot)
     void doMove(Position t_pos, Position s_pos, bool red);
     void checkLanding(Position t_pos, bool red);
     void handleSelected(Tile* t, bool red);
@@ -121,8 +126,8 @@ signals:
 
 public slots:
     // custom slots to handle when tiles and pieces are clicked
-    void tileSelected(Tile* t);
-    void pieceSelected(PiecePrototype* p);
+    void tileSelected_slot(Tile* t);
+    void pieceSelected_slot(PiecePrototype* p);
 
     // slot for when SP ai needs to take its turn
     void black_Timer_slot();
