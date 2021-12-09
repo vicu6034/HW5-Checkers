@@ -656,11 +656,11 @@ void GameBoard::pieceSelected_slot(PiecePrototype* p) {
         // unhighlight previously selected piece
         if (selected_ != nullptr) {
             selected_->set_highlighted(false);
-            emit updatePiece(selected_);
+            selected_->update();
         }
         selected_ = p;
         selected_->set_highlighted(true);
-        emit updatePiece(selected_);
+        selected_->update();
     } else {
         emit playDeniedSound();
     }

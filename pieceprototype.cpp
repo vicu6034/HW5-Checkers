@@ -33,7 +33,6 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
     QImage checker(":/images/" + piecetype);
     checker = checker.scaled(RADIUS, RADIUS);
     painter->drawImage(pos.x, pos.y, checker);
-
     painter->setBrush(b);
 }
 
