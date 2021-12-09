@@ -39,7 +39,7 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
 
 // emit selected signal when Piece is left clicked
 void PiecePrototype::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) emit gotSelected(this);
+    if (event->button() == Qt::LeftButton) { emit gotSelected(this); }
 }
 
 // set piece position

@@ -58,25 +58,6 @@ private:
     // track what players turn it is
     int current_player_;
 
-public:
-    // default constructor
-    GameBoard();
-
-    // method to reset GameBoard to its state immediately after initialization
-    void NewGame();
-    // stop ai from running
-    void StopTimers();
-
-    // getters and setter
-    std::vector<Tile*> get_tiles() const { return tiles_; }
-    std::vector<PowerUp*> get_powerups() const { return powerups_; }
-    std::vector<PiecePrototype*> get_pieces() const;
-    PiecePrototype* get_piece(Position pos) const;
-    Player* get_player(int index) const { return players_[index]; }
-    int get_current_player() const { return current_player_; }
-    Difficulty get_difficulty() const { return difficulty_; }
-    void set_difficulty(Difficulty difficulty) { difficulty_ = difficulty; }
-
     // check moves for different types of pieces
     int checkRegularMoves(Position t_pos, Position s_pos, bool red, bool jump);
     int checkKingMoves(Position t_pos, Position s_pos, bool red, bool jump);
@@ -112,6 +93,25 @@ public:
     std::vector<Tile*> getPieceMoves(PiecePrototype* p);
     void doAITurn(int turn);
 
+public:
+    // default constructor
+    GameBoard();
+
+    // method to reset GameBoard to its state immediately after initialization
+    void NewGame();
+    // stop ai from running
+    void StopTimers();
+
+    // getters and setter
+    std::vector<Tile*> get_tiles() const { return tiles_; }
+    std::vector<PowerUp*> get_powerups() const { return powerups_; }
+    std::vector<PiecePrototype*> get_pieces() const;
+    PiecePrototype* get_piece(Position pos) const;
+    Player* get_player(int index) const { return players_[index]; }
+    int get_current_player() const { return current_player_; }
+    Difficulty get_difficulty() const { return difficulty_; }
+    void set_difficulty(Difficulty difficulty) { difficulty_ = difficulty; }
+
 signals:
     // custom signals to emit when we need to update something in window
     void updateTurnLabel(int turn);
@@ -130,6 +130,7 @@ public slots:
     void tileSelected_slot(Tile* t);
     void pieceSelected_slot(PiecePrototype* p);
 
+private slots:
     // slot for when SP ai needs to take its turn
     void black_timer_slot();
     void red_timer_slot();

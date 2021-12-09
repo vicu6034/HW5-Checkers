@@ -53,7 +53,6 @@ public:
 
     // convert a position from tile #s to screen position
     Position ConvertPosition() const { return Position{pos_.x*60 + 5, pos_.y*60 + 5}; }
-
     // clone method
     virtual PiecePrototype *Clone() const = 0;
 

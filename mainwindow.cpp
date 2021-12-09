@@ -174,8 +174,12 @@ void MainWindow::updatePiecesLabel_slot(bool red, int pieces) {
  * @param Piece to update
 */
 void MainWindow::updatePiece_slot(PiecePrototype* p) {
-    scene->removeItem(p);
-    scene->addItem(p);
+    if (gameboard_->get_difficulty() == Difficulty::Simulation) {
+        scene->update();
+    } else {
+        scene->removeItem(p);
+        scene->addItem(p);
+    }
 }
 
 /* Add a piece to the scene
