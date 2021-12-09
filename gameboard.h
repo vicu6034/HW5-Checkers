@@ -13,6 +13,7 @@
 #include <QTime>
 #include <QTimer>
 
+#include <pieceprototype.h>
 #include <tile.h>
 #include <player.h>
 #include <pieceprototypefactory.h>
@@ -130,8 +131,8 @@ public slots:
     void pieceSelected_slot(PiecePrototype* p);
 
     // slot for when SP ai needs to take its turn
-    void black_Timer_slot();
-    void red_Timer_slot();
+    void black_timer_slot();
+    void red_timer_slot();
 
 };
 

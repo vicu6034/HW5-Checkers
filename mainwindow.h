@@ -1,3 +1,11 @@
+/*
+ * MainWindow Header
+ * Displays main menu screens, showing the game
+ * Handles buttons and popup windows
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -20,14 +28,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 private:
-    // mainwindow must have the ui and scene so we can do things
+    // mainwindow must have the ui and scene so we can access buttons and draw the game
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
-    // media player for audio
+    // media player for playing audio
     QMediaPlayer *media_player_;
 
-    // has a GameBoard to run the game
+    // has a GameBoard to run the actual game
     GameBoard* gameboard_;
 
     // references to our popup windows
@@ -43,9 +51,9 @@ public:
     void Reset();
 
     // helper methods
-    void playClickSound();
-    void handleWinner(int winner);
-    void handleMainMenuClick();
+    void PlayClickSound();
+    void HandleWinner(int winner);
+    void HandleMainMenuClick();
 
 public slots:
     // slots to update labels and Pieces

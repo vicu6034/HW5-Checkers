@@ -1,9 +1,7 @@
 #ifndef PIECEPROTOTYPEFACTORY_H
 #define PIECEPROTOTYPEFACTORY_H
 
-#include <regularpiece.h>
-#include <kingpiece.h>
-#include <triplekingpiece.h>
+#include <pieces.h>
 
 class PieceFactory
 {

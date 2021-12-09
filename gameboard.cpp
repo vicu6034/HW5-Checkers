@@ -4,11 +4,9 @@
 #include <QTime>
 #include <QTimer>
 
-#include <tile.h>
 #include <pieceprototype.h>
-#include <regularpiece.h>
-#include <kingpiece.h>
-#include <triplekingpiece.h>
+#include <pieces.h>
+#include <tile.h>
 #include <player.h>
 #include <powerup.h>
 
@@ -18,9 +16,9 @@
 GameBoard::GameBoard() {
     // set up timers
     red_timer_ = new QTimer(this);
-    connect(red_timer_, SIGNAL(timeout()), this, SLOT(red_Timer_slot()));
+    connect(red_timer_, SIGNAL(timeout()), this, SLOT(red_timer_slot()));
     black_timer_ = new QTimer(this);
-    connect(black_timer_, SIGNAL(timeout()), this, SLOT(black_Timer_slot()));
+    connect(black_timer_, SIGNAL(timeout()), this, SLOT(black_timer_slot()));
 
     difficulty_ = Difficulty::None;
     // create tiles
@@ -780,12 +778,12 @@ void GameBoard::doAITurn(int turn) {
 }
 
 // do turn for black when their timer goes off
-void GameBoard::black_Timer_slot() {
+void GameBoard::black_timer_slot() {
     doAITurn(1);
 }
 
 // do turn for red when their timer goes off
-void GameBoard::red_Timer_slot() {
+void GameBoard::red_timer_slot() {
     doAITurn(0);
 }
 
