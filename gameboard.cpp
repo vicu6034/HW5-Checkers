@@ -651,18 +651,20 @@ void GameBoard::tileSelected_slot(Tile* t) {
 */
 void GameBoard::pieceSelected_slot(PiecePrototype* p) {
     // if the piece is the color of the current player, select it
-    // and its not the computers turn
-    if ((p->get_is_red() != current_player_) && !(difficulty_ != Difficulty::None && current_player_ == 1)) {
-        // unhighlight previously selected piece
-        if (selected_ != nullptr) {
-            selected_->set_highlighted(false);
+    // and its not the computers turn or simulation
+    if (difficulty_ != Difficulty::Simulation) {
+        if ((p->get_is_red() != current_player_) && !(difficulty_ != Difficulty::None && current_player_ == 1)) {
+            // unhighlight previously selected piece
+            if (selected_ != nullptr) {
+                selected_->set_highlighted(false);
+                selected_->update();
+            }
+            selected_ = p;
+            selected_->set_highlighted(true);
             selected_->update();
+        } else {
+            emit playDeniedSound();
         }
-        selected_ = p;
-        selected_->set_highlighted(true);
-        selected_->update();
-    } else {
-        emit playDeniedSound();
     }
 }
 

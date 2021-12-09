@@ -39,12 +39,7 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
 // gotselected handles trying to move a piece to the tile
 void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        if (is_red_) {
-            // play denied sound when clicking red tiles
-            emit playDeniedSound();
-        } else {
-            // emit this tile to gameboard to try to move selected piece to it
-            emit gotSelected(this);
-        }
+        // emit this tile to gameboard to try to move selected piece to it
+        emit gotSelected(this);
     }
 }
