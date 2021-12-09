@@ -39,6 +39,7 @@ protected:
     // handles what happens when the mouse is clicked
     // revive cell for left click, kill cell for right click
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void paintHelper(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget, QString piecetype);
 
 public:
     // paramterized constructor
