@@ -26,6 +26,7 @@ public:
     void setLabelText(int current_player);
 
 private:
+    // popup has its own ui
     Ui::WinnerPopup *ui;
 
 signals:

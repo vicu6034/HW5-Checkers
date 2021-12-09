@@ -22,7 +22,7 @@ public:
     ~RulesPopup();
 
 private:
-    // popup has a ui
+    // popup has its own ui
     Ui::RulesPopup *ui;
 
 signals:
@@ -31,7 +31,7 @@ signals:
     void rulesRejected();
 
 private slots:
-    // slot for when the buttons are actually clicked
+    // slot for when the button box is accepted/rejected
     void on_rulesButtonBox_accepted();
     void on_rulesButtonBox_rejected();
 

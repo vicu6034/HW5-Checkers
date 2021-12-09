@@ -16,9 +16,9 @@ class PowerUp : public QGraphicsObject //public QObject, public QGraphicsItem
 
 private:
     // each PowerUp has a position and type
+    Position pos_;
     // addPiece : true : PowerUp adds piece to Player that collected it
     // addPiece : false : PowerUp upgrades Piece that lands on it
-    Position pos_;
     bool is_addPiece_;
 
     // all PowerUps have same size on screen

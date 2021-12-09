@@ -4,13 +4,13 @@
 
 #include <pieceprototype.h>
 
-// set piece position
+// set Powerup position
 QRectF PowerUp::boundingRect() const {
     Position pos = ConvertPosition();
     return QRectF(pos.x, pos.y, RADIUS, RADIUS);
 }
 
-// set Piece shape
+// set Powerup shape
 QPainterPath PowerUp::shape() const {
     QPainterPath path;
     Position pos = ConvertPosition();
@@ -18,7 +18,7 @@ QPainterPath PowerUp::shape() const {
     return path;
 }
 
-// set Piece visibility traits (color, size)
+// set Powerup visibility traits (color, size)
 void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
     Q_UNUSED(widget);
     Q_UNUSED(item);
@@ -27,7 +27,7 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
 
     Position pos = ConvertPosition();
 
-    // add piece image
+    // add Powerup image
     QString imagetype = is_addPiece_ ? "addpowerup" : "levelpowerup";
     QImage powerup(":/images/" + imagetype);
     powerup = powerup.scaled(RADIUS, RADIUS);
@@ -36,7 +36,9 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
     painter->setBrush(b);
 }
 
-// return type of piece as a string
+/* Get the type of the powerup
+ * @return string representing type
+*/
 std::string PowerUp::get_type() {
     if (is_addPiece_) {
         return "add";

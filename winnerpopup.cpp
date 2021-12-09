@@ -34,6 +34,7 @@ void WinnerPopup::on_winnerButtonBox_rejected() {
     emit Exit();
 }
 
+// destructor
 WinnerPopup::~WinnerPopup() {
     delete ui;
 }

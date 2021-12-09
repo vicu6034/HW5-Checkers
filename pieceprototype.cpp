@@ -9,7 +9,23 @@ PiecePrototype::PiecePrototype(const PiecePrototype& old_p) {
     is_red_ = old_p.get_is_red();
 }
 
+// set piece position
+QRectF PiecePrototype::boundingRect() const {
+    Position pos = ConvertPosition();
+    return QRectF(pos.x, pos.y, RADIUS, RADIUS);
+}
+
+// set Piece shape
+QPainterPath PiecePrototype::shape() const {
+    QPainterPath path;
+    Position pos = ConvertPosition();
+    path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
+
+    return path;
+}
+
 // helper for the pain override methods
+// @param QString type of piece to paint
 void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget, QString piecetype) {
     Q_UNUSED(widget);
     Q_UNUSED(item);
@@ -37,21 +53,7 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
 }
 
 // emit selected signal when Piece is left clicked
+// this sets the piece as 'selected' in the Game
 void PiecePrototype::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) { emit gotSelected(this); }
-}
-
-// set piece position
-QRectF PiecePrototype::boundingRect() const {
-    Position pos = ConvertPosition();
-    return QRectF(pos.x, pos.y, RADIUS, RADIUS);
-}
-
-// set Piece shape
-QPainterPath PiecePrototype::shape() const {
-    QPainterPath path;
-    Position pos = ConvertPosition();
-    path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
-
-    return path;
 }
