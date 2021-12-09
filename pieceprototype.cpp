@@ -29,8 +29,7 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
         );
     }
 
-    // draw piece
-    //QString piecetype = is_red_ ? "redchecker" : "blackchecker";
+    // set image based on piece type and draw
     QImage checker(":/images/" + piecetype);
     checker = checker.scaled(RADIUS, RADIUS);
     painter->drawImage(pos.x, pos.y, checker);
