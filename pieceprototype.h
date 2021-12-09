@@ -1,3 +1,10 @@
+/*
+ * PiecePrototype header
+ * Implements methods and fields that all Pieces now
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef PIECEPROTOTYPE_H
 #define PIECEPROTOTYPE_H
 

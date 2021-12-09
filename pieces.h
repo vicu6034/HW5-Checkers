@@ -1,3 +1,10 @@
+/*
+ * Pieces header
+ * Implements different types of pieces
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef PIECES_H
 #define PIECES_H
 

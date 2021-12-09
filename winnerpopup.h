@@ -1,3 +1,11 @@
+/*
+ * WinnerPopup header
+ * Implements popup to ask if user would like to play again
+ * after someone wins the game
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef WINNERPOPUP_H
 #define WINNERPOPUP_H
 

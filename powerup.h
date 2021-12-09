@@ -1,3 +1,10 @@
+/*
+ * Powerup header
+ * Handles drawing powerups and keeping track of their type
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef POWERUP_H
 #define POWERUP_H
 

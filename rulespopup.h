@@ -1,3 +1,10 @@
+/*
+ * RulesPopup header
+ * Implements a popup to display rules when the game starts
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef RULESPOPUP_H
 #define RULESPOPUP_H
 
