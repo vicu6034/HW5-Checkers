@@ -2,13 +2,13 @@
 
 #include <QtWidgets>
 
-// Set Tile position
+// set Tile position
 QRectF Tile::boundingRect() const {
     Position pos = ConvertPosition();
     return QRectF(pos.x, pos.y, WIDTH, WIDTH);
 }
 
-// Set Tile shape
+// set Tile shape
 QPainterPath Tile::shape() const {
     QPainterPath path;
     Position pos = ConvertPosition();
@@ -16,7 +16,7 @@ QPainterPath Tile::shape() const {
     return path;
 }
 
-// Set Tile visibility traits (color, size)
+// set Tile visibility traits (color, size)
 void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) {
     Q_UNUSED(widget);
     Q_UNUSED(item);
@@ -35,14 +35,15 @@ void Tile::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidge
     painter->setBrush(b);
 }
 
-// emit gotselected signal for left clicks on black tiles
-// slot for gotselected will check if the tile is a valid move for
-// previously selected piece
+// emit gotselected signal to gameboard for left clicks on black tiles
+// gotselected handles trying to move a piece to the tile
 void Tile::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         if (is_red_) {
+            // play denied sound when clicking red tiles
             emit playDeniedSound();
         } else {
+            // emit this tile to gameboard to try to move selected piece to it
             emit gotSelected(this);
         }
     }

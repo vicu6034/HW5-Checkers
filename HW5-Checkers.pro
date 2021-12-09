@@ -10,30 +10,26 @@ CONFIG += c++11
 
 SOURCES += \
     gameboard.cpp \
-    kingpiece.cpp \
     main.cpp \
     mainwindow.cpp \
     pieceprototype.cpp \
+    pieces.cpp \
     player.cpp \
     powerup.cpp \
-    regularpiece.cpp \
     rulespopup.cpp \
     tile.cpp \
-    triplekingpiece.cpp \
     winnerpopup.cpp
 
 HEADERS += \
     gameboard.h \
-    kingpiece.h \
     mainwindow.h \
     pieceprototype.h \
     pieceprototypefactory.h \
+    pieces.h \
     player.h \
     powerup.h \
-    regularpiece.h \
     rulespopup.h \
     tile.h \
-    triplekingpiece.h \
     winnerpopup.h
 
 FORMS += \

@@ -1,3 +1,10 @@
+/*
+ * PiecePrototype header
+ * Implements methods and fields that all Pieces now
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef PIECEPROTOTYPE_H
 #define PIECEPROTOTYPE_H
 
@@ -39,6 +46,7 @@ protected:
     // handles what happens when the mouse is clicked
     // revive cell for left click, kill cell for right click
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void paintHelper(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget, QString piecetype);
 
 public:
     // paramterized constructor
@@ -52,7 +60,6 @@ public:
 
     // convert a position from tile #s to screen position
     Position ConvertPosition() const { return Position{pos_.x*60 + 5, pos_.y*60 + 5}; }
-
     // clone method
     virtual PiecePrototype *Clone() const = 0;
 
@@ -63,8 +70,6 @@ public:
 
     void set_position(Position pos) { pos_ = pos; }
     void set_highlighted(bool highlighted) { highlighted_ = highlighted; }
-
-    bool is_highlighted_() { return highlighted_; }
 
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;

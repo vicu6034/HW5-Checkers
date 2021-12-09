@@ -1,3 +1,10 @@
+/*
+ * Player header
+ * Players have a color and hold their pieces
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef PLAYER_H
 #define PLAYER_H
 

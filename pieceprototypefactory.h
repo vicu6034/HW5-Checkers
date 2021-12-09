@@ -1,9 +1,14 @@
+/*
+ * PieceFactory header
+ * Creates pieces given a type, position, and color
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef PIECEPROTOTYPEFACTORY_H
 #define PIECEPROTOTYPEFACTORY_H
 
-#include <regularpiece.h>
-#include <kingpiece.h>
-#include <triplekingpiece.h>
+#include <pieces.h>
 
 class PieceFactory
 {

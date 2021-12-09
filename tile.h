@@ -1,5 +1,15 @@
+/*
+ * Tile header
+ * Implements draw methods for tile
+ * Tiles have a position and color
+ * CSCI 3010 Homework 5
+ * By: Vincent Curran & Philip Knott
+*/
+
 #ifndef TILE_H
 #define TILE_H
+
+#include <QGraphicsObject>
 
 #include <pieceprototype.h>
 
