@@ -52,6 +52,20 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
     painter->setBrush(b);
 }
 
+std::vector<Position> PiecePrototype::GetPossiblePos(int range) const {
+    std::vector<Position> retV;
+    // find all positions w/in 2
+    for (int i = pos_.x-range; i <= pos_.x+range; i++) {
+        for (int j = pos_.y-range; j <= pos_.y+range; j++) {
+            // checking the tile is black & we're in the baords range
+            if ((((i % 2 != 0) && (j % 2 != 0)) || ((i % 2 == 0) && (j % 2 == 0))) && (i >= 0) && (j >= 0) && (i <= 9) && (j <= 9)) {
+                retV.push_back(Position{i,j});
+            }
+        }
+    }
+    return retV;
+}
+
 // emit selected signal when Piece is left clicked
 // this sets the piece as 'selected' in the Game
 void PiecePrototype::mousePressEvent(QGraphicsSceneMouseEvent *event) {

@@ -47,6 +47,7 @@ protected:
     // revive cell for left click, kill cell for right click
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void paintHelper(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget, QString piecetype);
+    std::vector<Position> GetPossiblePos(int range) const;
 
 public:
     // paramterized constructor
@@ -70,6 +71,8 @@ public:
 
     void set_position(Position pos) { pos_ = pos; }
     void set_highlighted(bool highlighted) { highlighted_ = highlighted; }
+
+    virtual std::vector<Position> GetPossibleMoves() const = 0;
 
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;

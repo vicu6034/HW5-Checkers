@@ -18,6 +18,7 @@
 #include <player.h>
 #include <pieceprototypefactory.h>
 #include <powerup.h>
+#include <hash.h>
 
 // none for multiplayer, simulation for simulations
 // easy medium hard for single player
@@ -45,7 +46,8 @@ private:
     PieceFactory* factory_;
 
     // game has tiles, players, and powerups (pieces live in players)
-    std::vector<Tile*> tiles_;
+    HashTable tiles_;
+    //std::vector<Tile*> tiles_;
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
 
@@ -103,7 +105,7 @@ public:
     void StopTimers();
 
     // getters and setter
-    std::vector<Tile*> get_tiles() const { return tiles_; }
+    std::vector<Tile*> get_tiles() const;
     std::vector<PowerUp*> get_powerups() const { return powerups_; }
     std::vector<PiecePrototype*> get_pieces() const;
     PiecePrototype* get_piece(Position pos) const;

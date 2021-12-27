@@ -19,15 +19,17 @@ GameBoard::GameBoard() {
     connect(red_timer_, SIGNAL(timeout()), this, SLOT(red_timer_slot()));
     black_timer_ = new QTimer(this);
     connect(black_timer_, SIGNAL(timeout()), this, SLOT(black_timer_slot()));
-
+    // set difficulty to MP by default
     difficulty_ = Difficulty::None;
+    tiles_ = HashTable();
     // create tiles
     bool switcher = false;
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
             Tile* tile = new Tile(Position{i,j}, switcher);
             connect(tile, SIGNAL(gotSelected(Tile*)), this, SLOT(tileSelected_slot(Tile*)));
-            tiles_.push_back(tile);
+            tiles_.insertTile(tile);
+            //tiles_.push_back(tile);
             switcher = !switcher;
         }
         switcher = !switcher;
@@ -108,6 +110,16 @@ void GameBoard::NewGame() {
          red_timer_->stop();
          black_timer_->stop();
      }
+}
+
+std::vector<Tile*> GameBoard::get_tiles() const {
+    std::vector<Tile*> tiles;
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            tiles.push_back(tiles_.getTile(Position{i,j}));
+        }
+    }
+    return tiles;
 }
 
 /* Get all pieces in the game
@@ -674,9 +686,9 @@ void GameBoard::pieceSelected_slot(PiecePrototype* p) {
 */
 std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     std::vector<Tile*> valid_tiles;
-    for (Tile* t : tiles_) {
-        if (checkValidity(t->get_position(), p, p->get_is_red(), false) != -1) {
-            valid_tiles.push_back(t);
+    for (Position pos : p->GetPossibleMoves()) {
+        if (checkValidity(pos, p, p->get_is_red(), false) != -1) {
+            valid_tiles.push_back(tiles_.getTile(pos));
         }
     }
     return valid_tiles;
@@ -725,8 +737,9 @@ void GameBoard::doAITurn(int turn) {
                 // find all the moves we can make
                 std::vector<Move> moves;
                 for (PiecePrototype* piece : valid_pieces) {
-                    for (Tile* tile : tiles_) {
-                        if (checkValidity(tile->get_position(), piece, piece->get_is_red(), false) != -1) {
+                    for (Position pos : piece->GetPossibleMoves()) {
+                        if (checkValidity(pos, piece, piece->get_is_red(), false) != -1) {
+                            Tile* tile = tiles_.getTile(pos);
                             moves.push_back(Move{piece, tile, checkValidity(tile->get_position(), piece, piece->get_is_red(), false)});
                         }
                     }
@@ -758,7 +771,7 @@ void GameBoard::doAITurn(int turn) {
                     }
                 }
                 // make best possible move
-                // if multiple moves non-jump moves have same score pick randomly
+                // if multiple non-jump moves have same score pick randomly
                 if (dbl_jump_moves.size() > 0) {
                     selected_ = dbl_jump_moves[0].piece;
                     tileSelected_slot(dbl_jump_moves[0].tile);

@@ -21,6 +21,8 @@ public:
        return new RegularPiece(*this);
     }
 
+    std::vector<Position> GetPossibleMoves() const override;
+
     // override paint so Pieces have their own appearance
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 };
@@ -35,7 +37,7 @@ public:
     PiecePrototype *Clone() const override {
         return new KingPiece(*this);
     }
-
+    std::vector<Position> GetPossibleMoves() const override;
      // override paint so Kings have their own appearance
      void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 };
@@ -50,7 +52,7 @@ public:
     PiecePrototype *Clone() const override {
        return new TripleKingPiece(*this);
     }
-
+    std::vector<Position> GetPossibleMoves() const override;
     // override paint so Pieces have their own appearance
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 };
