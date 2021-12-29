@@ -9,8 +9,8 @@ HashTable::HashTable() {
 }
 
 void HashTable::insertTile(Tile *tile) {
-    Hnode* newNode = new Hnode(tile);
-    int index = hashFunction(tile->get_position());
+    auto newNode = new Hnode(tile);
+    auto index = hashFunction(tile->get_position());
     if (table_[index] == 0) {
         table_[index] = newNode;
     } else {
@@ -23,13 +23,13 @@ void HashTable::insertTile(Tile *tile) {
 }
 
 Tile* HashTable::getTile(Position pos) const {
-    int index = hashFunction(pos);
+    auto index = hashFunction(pos);
     if (table_[index] == 0) {
         return nullptr;
     } else if (table_[index]->tile_->get_position() == pos) {
         return table_[index]->tile_;
     } else {
-        Hnode* curr = table_[index];
+        auto curr = table_[index];
         while (curr != 0) {
             if (curr->tile_->get_position() == pos) { return curr->tile_; }
             else { curr = curr->next_; }

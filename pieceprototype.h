@@ -26,6 +26,8 @@ struct Position {
     }
 };
 
+using PositionVec = std::vector<Position>;
+
 // PiecePrototype inherits QGraphicsObject
 class PiecePrototype : public QGraphicsObject
 {
@@ -43,11 +45,11 @@ protected:
     static const int RADIUS = 50;
     static const int HIGHLIGHT_SIZE = 2;
 
-    // handles what happens when the mouse is clicked
-    // revive cell for left click, kill cell for right click
+    // when a piece is clicked, 'select' it
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void paintHelper(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget, QString piecetype);
-    std::vector<Position> GetPossiblePos(int range) const;
+    // helper to get all valid tiles in a range from current pos
+    PositionVec GetPossiblePos(int range) const;
 
 public:
     // paramterized constructor
@@ -72,7 +74,7 @@ public:
     void set_position(Position pos) { pos_ = pos; }
     void set_highlighted(bool highlighted) { highlighted_ = highlighted; }
 
-    virtual std::vector<Position> GetPossibleMoves() const = 0;
+    virtual PositionVec GetPossibleMoves() const = 0;
 
     // necessary Qt bounding and drawing methods
     QRectF boundingRect() const override;
@@ -88,5 +90,7 @@ signals:
     void gotSelected(PiecePrototype* p);
 
 };
+
+using PieceVec = std::vector<PiecePrototype*>;
 
 #endif // PIECEPROTOTYPE_H

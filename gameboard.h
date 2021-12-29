@@ -108,7 +108,7 @@ public:
     // getters and setter
     std::vector<Tile*> get_tiles() const;
     std::vector<PowerUp*> get_powerups() const { return powerups_; }
-    std::vector<PiecePrototype*> get_pieces() const;
+    PieceVec get_pieces() const;
     PiecePrototype* get_piece(Position pos) const;
     Player* get_player(int index) const { return players_[index]; }
     int get_current_player() const { return current_player_; }
