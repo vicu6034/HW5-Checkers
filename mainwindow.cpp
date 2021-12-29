@@ -333,9 +333,19 @@ void MainWindow::on_difficultyBackButton_clicked() {
 /* When we click main menu button, stop all timers and go to main menu
 */
 void MainWindow::on_mainmenuButton_clicked() {
-    // play click sound and go back to main menu
+    // play click sound, stop timers, reset wins and go back to main menu
     PlayClickSound();
     gameboard_->StopTimers();
+    gameboard_->ResetWins();
+
+    std::string s= "RED: " + std::to_string(0) + " Wins";
+    QString pop_q(const_cast<char*>(s.c_str()));
+    ui->redWinsLabel->setText(pop_q);
+
+    std::string s2= "BLACK: " + std::to_string(0) + " Wins";
+    QString pop_q2(const_cast<char*>(s.c_str()));
+    ui->blackWinsLabel->setText(pop_q2);
+
     ui->stackedWidget->setCurrentIndex(0);
 }
 

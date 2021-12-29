@@ -112,6 +112,16 @@ void GameBoard::NewGame() {
      }
 }
 
+/* Reset both players wins to 0
+*/
+void GameBoard::ResetWins() {
+    players_[0]->set_num_wins(0);
+    players_[1]->set_num_wins(0);
+}
+
+/* Get all tiles
+ * @return vec<Tile*>
+*/
 std::vector<Tile*> GameBoard::get_tiles() const {
     std::vector<Tile*> tiles;
     for (int i = 0; i < 10; i++) {
@@ -123,7 +133,7 @@ std::vector<Tile*> GameBoard::get_tiles() const {
 }
 
 /* Get all pieces in the game
- * @return vec<Piece*> all pieces
+ * @return vec<Piece*>
 */
 std::vector<PiecePrototype*> GameBoard::get_pieces() const {
     // get both players pieces and return them all
@@ -500,7 +510,7 @@ void GameBoard::removePowerup(Position pos) {
  * @param bool red or black player
  * @return Position to add piece to
 */
-Position GameBoard::findPosForPowerup(bool red) {
+Position GameBoard::findPosForPowerup(bool red) const {
     if (!red) {
         // for black player start from top of board moving looking for first black tile with no pieces
         for (int j = 0; j < 10; j++) {

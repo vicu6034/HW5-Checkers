@@ -89,7 +89,7 @@ private:
     // remove a powerup from the game
     void removePowerup(Position pos);
     // find an open space to put the piece added from powerup to
-    Position findPosForPowerup(bool red);
+    Position findPosForPowerup(bool red) const;
     void handlePowerup(Position t_pos, Position last_pos, bool red);
     // get all the valid tiles a piece could move to
     std::vector<Tile*> getPieceMoves(PiecePrototype* p);
@@ -103,7 +103,8 @@ public:
     void NewGame();
     // stop ai from running
     void StopTimers();
-
+    // set players wins to 0
+    void ResetWins();
     // getters and setter
     std::vector<Tile*> get_tiles() const;
     std::vector<PowerUp*> get_powerups() const { return powerups_; }
