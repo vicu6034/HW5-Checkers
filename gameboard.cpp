@@ -50,8 +50,8 @@ void GameBoard::NewGame() {
     // make no piece selected and reset current player
     selected_ = nullptr;
     current_player_ = 0;
-    std::vector<PiecePrototype*> red_pieces;
-    std::vector<PiecePrototype*> black_pieces;
+    PieceVec red_pieces;
+    PieceVec black_pieces;
 
     // create starting set of pieces
     for (int i = 0; i < 10; i++) {
@@ -135,7 +135,7 @@ std::vector<Tile*> GameBoard::get_tiles() const {
 /* Get all pieces in the game
  * @return vec<Piece*>
 */
-std::vector<PiecePrototype*> GameBoard::get_pieces() const {
+PieceVec GameBoard::get_pieces() const {
     // get both players pieces and return them all
     auto vec1 = players_[0]->get_pieces();
     auto vec2 = players_[1]->get_pieces();
@@ -718,7 +718,7 @@ void GameBoard::doAITurn(int turn) {
     // check its the player we want to moves turn
     if (current_player_ == turn) {
         // find pieces with valid moves
-        std::vector<PiecePrototype*> valid_pieces;
+        PieceVec valid_pieces;
         for (const auto& piece : players_[turn]->get_pieces()) {
             if (getPieceMoves(piece).size()) {
                 valid_pieces.push_back(piece);
