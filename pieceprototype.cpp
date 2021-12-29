@@ -11,14 +11,14 @@ PiecePrototype::PiecePrototype(const PiecePrototype& old_p) {
 
 // set piece position
 QRectF PiecePrototype::boundingRect() const {
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
     return QRectF(pos.x, pos.y, RADIUS, RADIUS);
 }
 
 // set Piece shape
 QPainterPath PiecePrototype::shape() const {
     QPainterPath path;
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
     path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
     return path;
@@ -30,9 +30,9 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
     Q_UNUSED(widget);
     Q_UNUSED(item);
 
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
 
-    QBrush b = painter->brush();
+    auto b = painter->brush();
 
     // add green highlight if piece is selected
     if (highlighted_) {
@@ -50,6 +50,20 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
     checker = checker.scaled(RADIUS, RADIUS);
     painter->drawImage(pos.x, pos.y, checker);
     painter->setBrush(b);
+}
+
+std::vector<Position> PiecePrototype::GetPossiblePos(int range) const {
+    std::vector<Position> retV;
+    // find all positions w/in 2
+    for (int i = pos_.x-range; i <= pos_.x+range; i++) {
+        for (int j = pos_.y-range; j <= pos_.y+range; j++) {
+            // checking the tile is black & we're in the baords range
+            if ((((i % 2 != 0) && (j % 2 != 0)) || ((i % 2 == 0) && (j % 2 == 0))) && (i >= 0) && (j >= 0) && (i <= 9) && (j <= 9)) {
+                retV.push_back(Position{i,j});
+            }
+        }
+    }
+    return retV;
 }
 
 // emit selected signal when Piece is left clicked

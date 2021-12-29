@@ -18,6 +18,7 @@
 #include <player.h>
 #include <pieceprototypefactory.h>
 #include <powerup.h>
+#include <hash.h>
 
 // none for multiplayer, simulation for simulations
 // easy medium hard for single player
@@ -45,7 +46,8 @@ private:
     PieceFactory* factory_;
 
     // game has tiles, players, and powerups (pieces live in players)
-    std::vector<Tile*> tiles_;
+    HashTable tiles_;
+    //std::vector<Tile*> tiles_;
     std::vector<Player*> players_;
     std::vector<PowerUp*> powerups_;
 
@@ -87,7 +89,7 @@ private:
     // remove a powerup from the game
     void removePowerup(Position pos);
     // find an open space to put the piece added from powerup to
-    Position findPosForPowerup(bool red);
+    Position findPosForPowerup(bool red) const;
     void handlePowerup(Position t_pos, Position last_pos, bool red);
     // get all the valid tiles a piece could move to
     std::vector<Tile*> getPieceMoves(PiecePrototype* p);
@@ -101,11 +103,12 @@ public:
     void NewGame();
     // stop ai from running
     void StopTimers();
-
+    // set players wins to 0
+    void ResetWins();
     // getters and setter
-    std::vector<Tile*> get_tiles() const { return tiles_; }
+    std::vector<Tile*> get_tiles() const;
     std::vector<PowerUp*> get_powerups() const { return powerups_; }
-    std::vector<PiecePrototype*> get_pieces() const;
+    PieceVec get_pieces() const;
     PiecePrototype* get_piece(Position pos) const;
     Player* get_player(int index) const { return players_[index]; }
     int get_current_player() const { return current_player_; }

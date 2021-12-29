@@ -19,15 +19,17 @@ GameBoard::GameBoard() {
     connect(red_timer_, SIGNAL(timeout()), this, SLOT(red_timer_slot()));
     black_timer_ = new QTimer(this);
     connect(black_timer_, SIGNAL(timeout()), this, SLOT(black_timer_slot()));
-
+    // set difficulty to MP by default
     difficulty_ = Difficulty::None;
+    tiles_ = HashTable();
     // create tiles
-    bool switcher = false;
+    auto switcher = false;
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
             Tile* tile = new Tile(Position{i,j}, switcher);
             connect(tile, SIGNAL(gotSelected(Tile*)), this, SLOT(tileSelected_slot(Tile*)));
-            tiles_.push_back(tile);
+            tiles_.insertTile(tile);
+            //tiles_.push_back(tile);
             switcher = !switcher;
         }
         switcher = !switcher;
@@ -48,8 +50,8 @@ void GameBoard::NewGame() {
     // make no piece selected and reset current player
     selected_ = nullptr;
     current_player_ = 0;
-    std::vector<PiecePrototype*> red_pieces;
-    std::vector<PiecePrototype*> black_pieces;
+    PieceVec red_pieces;
+    PieceVec black_pieces;
 
     // create starting set of pieces
     for (int i = 0; i < 10; i++) {
@@ -110,13 +112,33 @@ void GameBoard::NewGame() {
      }
 }
 
-/* Get all pieces in the game
- * @return vec<Piece*> all pieces
+/* Reset both players wins to 0
 */
-std::vector<PiecePrototype*> GameBoard::get_pieces() const {
+void GameBoard::ResetWins() {
+    players_[0]->set_num_wins(0);
+    players_[1]->set_num_wins(0);
+}
+
+/* Get all tiles
+ * @return vec<Tile*>
+*/
+std::vector<Tile*> GameBoard::get_tiles() const {
+    std::vector<Tile*> tiles;
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+            tiles.push_back(tiles_.getTile(Position{i,j}));
+        }
+    }
+    return tiles;
+}
+
+/* Get all pieces in the game
+ * @return vec<Piece*>
+*/
+PieceVec GameBoard::get_pieces() const {
     // get both players pieces and return them all
-    std::vector<PiecePrototype*> vec1 = players_[0]->get_pieces();
-    std::vector<PiecePrototype*> vec2 = players_[1]->get_pieces();
+    auto vec1 = players_[0]->get_pieces();
+    auto vec2 = players_[1]->get_pieces();
     vec1.insert(vec1.end(), vec2.begin(), vec2.end());
     return vec1;
 }
@@ -127,7 +149,7 @@ std::vector<PiecePrototype*> GameBoard::get_pieces() const {
 */
 PiecePrototype* GameBoard::get_piece(Position pos) const {
     // get all pieces
-    for (PiecePrototype* p : get_pieces()) {
+    for (const auto& p : get_pieces()) {
         // if ones selected, return it
         if (p->get_position() == pos) return p;
     }
@@ -162,7 +184,7 @@ int GameBoard::checkForWinner() {
 */
 int GameBoard::jumpHelper(Position pos, bool red, bool jump) {
     // get the piece we want to jump
-    PiecePrototype * p = get_piece(pos);
+    auto p = get_piece(pos);
     // check the piece exists
     if (p != nullptr) {
         // check the piece to jump is opposite color of the selected piece
@@ -189,7 +211,7 @@ int GameBoard::jumpHelper(Position pos, bool red, bool jump) {
 */
 int GameBoard::friendlyJumpHelper(Position pos, bool red, bool jump) {
     // get the piece we want to jump
-    PiecePrototype * p = get_piece(pos);
+    auto p = get_piece(pos);
     // check the piece exists
     if (p != nullptr) {
         // check the piece to jump is the same color of the selected piece
@@ -214,8 +236,8 @@ int GameBoard::friendlyJumpHelper(Position pos, bool red, bool jump) {
 */
 int GameBoard::doubleJumpHelper(Position pos1, Position pos2, bool red, bool jump) {
     // get the piece we want to jump
-    PiecePrototype * p = get_piece(pos1);
-    PiecePrototype * p2 = get_piece(pos2);
+    auto p = get_piece(pos1);
+    auto p2 = get_piece(pos2);
     // check the piece exists
     if ((p != nullptr) && (p2 != nullptr)) {
         // check the piece to jump is opposite color of the selected piece
@@ -248,8 +270,8 @@ int GameBoard::couldGetJumped(Position t_pos, Position s_pos, bool red) {
         return 1;
     }
     if (red) {
-        PiecePrototype * p = get_piece(Position{t_pos.x+1, t_pos.y-1});
-        PiecePrototype * p2 = get_piece(Position{t_pos.x-1, t_pos.y-1});
+        auto p = get_piece(Position{t_pos.x+1, t_pos.y-1});
+        auto p2 = get_piece(Position{t_pos.x-1, t_pos.y-1});
         // check the piece exists
         if (p != nullptr) {
             // check the piece that could jump is the opposite color of the selected piece
@@ -269,8 +291,8 @@ int GameBoard::couldGetJumped(Position t_pos, Position s_pos, bool red) {
             }
         }
     } else {
-        PiecePrototype * p = get_piece(Position{t_pos.x+1, t_pos.y+1});
-        PiecePrototype * p2 = get_piece(Position{t_pos.x-1, t_pos.y+1});
+        auto p = get_piece(Position{t_pos.x+1, t_pos.y+1});
+        auto p2 = get_piece(Position{t_pos.x-1, t_pos.y+1});
         // check the piece exists
         if (p != nullptr) {
             // check the piece that could jump is the opposite color of the selected piece
@@ -433,7 +455,7 @@ int GameBoard::checkTripleKMoves(Position t_pos, Position s_pos, bool red, bool 
  * score of -1 is invalid, 0 is unsafe, 1 is safe, 2 is jump, 4 is doublejump
 */
 int GameBoard::checkValidity(Position t_pos, PiecePrototype* p, bool red, bool jump) {
-   Position s_pos = p->get_position();
+   auto s_pos = p->get_position();
 
    if (!get_piece(t_pos)) {
        switch (p->get_type()) {
@@ -464,7 +486,7 @@ int GameBoard::checkValidity(Position t_pos, PiecePrototype* p, bool red, bool j
  * @return string name of the move ("none" if none)
 */
 std::string GameBoard::checkPowerup(Position pos) {
-    for (PowerUp* powerup : powerups_ ) {
+    for (const auto& powerup : powerups_ ) {
         if (powerup->get_position() == pos) {
             return powerup->get_type();
         }
@@ -488,7 +510,7 @@ void GameBoard::removePowerup(Position pos) {
  * @param bool red or black player
  * @return Position to add piece to
 */
-Position GameBoard::findPosForPowerup(bool red) {
+Position GameBoard::findPosForPowerup(bool red) const {
     if (!red) {
         // for black player start from top of board moving looking for first black tile with no pieces
         for (int j = 0; j < 10; j++) {
@@ -551,7 +573,7 @@ void GameBoard::handlePowerup(Position t_pos, Position last_pos, bool red) {
  * @param bool color of player
 */
 void GameBoard::checkLanding(Position t_pos, bool red) {
-    Position last_pos = selected_->get_position();
+    auto last_pos = selected_->get_position();
     // check if we need piece upgrade after the move, if not just update the piece
     if (((t_pos.y == 0 && red) || (t_pos.y == 9 && !red)) && selected_->get_type() == PieceType::RegularPiece) {
         // making a regular piece into a king
@@ -589,7 +611,7 @@ void GameBoard::checkLanding(Position t_pos, bool red) {
 */
 void GameBoard::handleSelected(Tile* t, bool red) {
     // try do the move
-    int score = checkValidity(t->get_position(), selected_, red, true);
+    auto score = checkValidity(t->get_position(), selected_, red, true);
     if (score != -1) {
         // valid moves
         if (score == 0 || score == 1) {
@@ -607,7 +629,7 @@ void GameBoard::handleSelected(Tile* t, bool red) {
             }
         }
         // see if theres a winner
-        int winner = checkForWinner();
+        auto winner = checkForWinner();
         if (winner == -1) {
             // if no winner iterate turn
             if (red) {
@@ -635,7 +657,7 @@ void GameBoard::handleSelected(Tile* t, bool red) {
 void GameBoard::tileSelected_slot(Tile* t) {
     // first make sure we have a Piece selected
     if (selected_) {
-        bool p_red = selected_->get_is_red();
+        auto p_red = selected_->get_is_red();
         // check that the selected piece is the same color as current player
         // check that theres no piece at the tile we want to go to
         if ((p_red != current_player_) && (get_piece(t->get_position()) == nullptr)) {
@@ -674,9 +696,9 @@ void GameBoard::pieceSelected_slot(PiecePrototype* p) {
 */
 std::vector<Tile*> GameBoard::getPieceMoves(PiecePrototype* p) {
     std::vector<Tile*> valid_tiles;
-    for (Tile* t : tiles_) {
-        if (checkValidity(t->get_position(), p, p->get_is_red(), false) != -1) {
-            valid_tiles.push_back(t);
+    for (const auto& pos : p->GetPossibleMoves()) {
+        if (checkValidity(pos, p, p->get_is_red(), false) != -1) {
+            valid_tiles.push_back(tiles_.getTile(pos));
         }
     }
     return valid_tiles;
@@ -696,8 +718,8 @@ void GameBoard::doAITurn(int turn) {
     // check its the player we want to moves turn
     if (current_player_ == turn) {
         // find pieces with valid moves
-        std::vector<PiecePrototype*> valid_pieces;
-        for (PiecePrototype* piece : players_[turn]->get_pieces()) {
+        PieceVec valid_pieces;
+        for (const auto& piece : players_[turn]->get_pieces()) {
             if (getPieceMoves(piece).size()) {
                 valid_pieces.push_back(piece);
             }
@@ -718,15 +740,16 @@ void GameBoard::doAITurn(int turn) {
                 //pieceSelected_slot(valid_pieces[p_i]);
                 selected_ = valid_pieces[p_i];
                 // get tiles to move to
-                std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
-                int t_i = arc4random_uniform(valid_tiles.size());
+                auto valid_tiles = getPieceMoves(valid_pieces[p_i]);
+                auto t_i = arc4random_uniform(valid_tiles.size());
                 tileSelected_slot(valid_tiles[t_i]);
             } else if (difficulty_ == Difficulty::Medium || difficulty_ == Difficulty::Simulation) {
                 // find all the moves we can make
                 std::vector<Move> moves;
-                for (PiecePrototype* piece : valid_pieces) {
-                    for (Tile* tile : tiles_) {
-                        if (checkValidity(tile->get_position(), piece, piece->get_is_red(), false) != -1) {
+                for (const auto& piece : valid_pieces) {
+                    for (const auto& pos : piece->GetPossibleMoves()) {
+                        if (checkValidity(pos, piece, piece->get_is_red(), false) != -1) {
+                            Tile* tile = tiles_.getTile(pos);
                             moves.push_back(Move{piece, tile, checkValidity(tile->get_position(), piece, piece->get_is_red(), false)});
                         }
                     }
@@ -748,7 +771,7 @@ void GameBoard::doAITurn(int turn) {
                 std::vector<Move> safe_moves;
                 std::vector<Move> jump_moves;
                 std::vector<Move> dbl_jump_moves;
-                for (Move m : moves) {
+                for (const auto& m : moves) {
                     if (m.score == 1) {
                         safe_moves.push_back(m);
                     } else if (m.score == 2) {
@@ -758,7 +781,7 @@ void GameBoard::doAITurn(int turn) {
                     }
                 }
                 // make best possible move
-                // if multiple moves non-jump moves have same score pick randomly
+                // if multiple non-jump moves have same score pick randomly
                 if (dbl_jump_moves.size() > 0) {
                     selected_ = dbl_jump_moves[0].piece;
                     tileSelected_slot(dbl_jump_moves[0].tile);

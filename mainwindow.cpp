@@ -126,11 +126,11 @@ void MainWindow::PlayClickSound() {
 void MainWindow::HandleWinner(int winner) {
     // update win label
     if (winner == 0) {
-        std::string s= "RED: " + std::to_string(gameboard_->get_player(winner)->get_num_wins()) + " Wins";
+        auto s= "RED: " + std::to_string(gameboard_->get_player(winner)->get_num_wins()) + " Wins";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->redWinsLabel->setText(pop_q);
     } else {
-        std::string s= "BLACK: " + std::to_string(gameboard_->get_player(winner)->get_num_wins()) + " Wins";
+        auto s= "BLACK: " + std::to_string(gameboard_->get_player(winner)->get_num_wins()) + " Wins";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->blackWinsLabel->setText(pop_q);
     }
@@ -159,11 +159,11 @@ void MainWindow::updateTurnLabel_slot(int turn) {
 */
 void MainWindow::updatePiecesLabel_slot(bool red, int pieces) {
     if (red) {
-        std::string s= "RED: " + std::to_string(pieces) + " Pieces Remaining";
+        auto s= "RED: " + std::to_string(pieces) + " Pieces Remaining";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->redPiecesLabel->setText(pop_q);
     } else {
-        std::string s= "BLACK: " + std::to_string(pieces) + " Pieces Remaining";
+        auto s= "BLACK: " + std::to_string(pieces) + " Pieces Remaining";
         QString pop_q(const_cast<char*>(s.c_str()));
         ui->blackPiecesLabel->setText(pop_q);
     }
@@ -333,9 +333,19 @@ void MainWindow::on_difficultyBackButton_clicked() {
 /* When we click main menu button, stop all timers and go to main menu
 */
 void MainWindow::on_mainmenuButton_clicked() {
-    // play click sound and go back to main menu
+    // play click sound, stop timers, reset wins and go back to main menu
     PlayClickSound();
     gameboard_->StopTimers();
+    gameboard_->ResetWins();
+
+    auto s= "RED: " + std::to_string(0) + " Wins";
+    QString pop_q(const_cast<char*>(s.c_str()));
+    ui->redWinsLabel->setText(pop_q);
+
+    auto s2= "BLACK: " + std::to_string(0) + " Wins";
+    QString pop_q2(const_cast<char*>(s.c_str()));
+    ui->blackWinsLabel->setText(pop_q2);
+
     ui->stackedWidget->setCurrentIndex(0);
 }
 

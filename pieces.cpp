@@ -19,3 +19,15 @@ void TripleKingPiece::paint(QPainter *painter, const QStyleOptionGraphicsItem *i
     QString piecetype = is_red_ ? "redtriple" : "blacktriple";
     paintHelper(painter, item, widget, piecetype);
 }
+
+std::vector<Position> RegularPiece::GetPossibleMoves() const {
+    return GetPossiblePos(2);
+}
+
+std::vector<Position> KingPiece::GetPossibleMoves() const {
+    return GetPossiblePos(2);
+}
+
+std::vector<Position> TripleKingPiece::GetPossibleMoves() const {
+    return GetPossiblePos(3);
+}

@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     gameboard.cpp \
+    hash.cpp \
     main.cpp \
     mainwindow.cpp \
     pieceprototype.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
 
 HEADERS += \
     gameboard.h \
+    hash.h \
     mainwindow.h \
     pieceprototype.h \
     pieceprototypefactory.h \

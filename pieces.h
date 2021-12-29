@@ -21,6 +21,9 @@ public:
        return new RegularPiece(*this);
     }
 
+    // get all positions a regular piece can move to
+    PositionVec GetPossibleMoves() const override;
+
     // override paint so Pieces have their own appearance
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 };
@@ -30,14 +33,14 @@ class KingPiece : public PiecePrototype {
 public:
     // constructor inherits from PiecePrototype
     KingPiece(Position pos, bool is_red) : PiecePrototype(pos, is_red) { type_ = PieceType::KingPiece; }
-
     // clone method (implicitly called by factory)
     PiecePrototype *Clone() const override {
         return new KingPiece(*this);
     }
-
-     // override paint so Kings have their own appearance
-     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
+    // get all positions a king can go to
+    PositionVec GetPossibleMoves() const override;
+    // override paint so Kings have their own appearance
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 };
 
 // TripleKing inherits from base Piece
@@ -50,7 +53,8 @@ public:
     PiecePrototype *Clone() const override {
        return new TripleKingPiece(*this);
     }
-
+    // get all positions a TK can go to
+    PositionVec GetPossibleMoves() const override;
     // override paint so Pieces have their own appearance
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget) override;
 };
