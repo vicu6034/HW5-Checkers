@@ -11,14 +11,14 @@ PiecePrototype::PiecePrototype(const PiecePrototype& old_p) {
 
 // set piece position
 QRectF PiecePrototype::boundingRect() const {
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
     return QRectF(pos.x, pos.y, RADIUS, RADIUS);
 }
 
 // set Piece shape
 QPainterPath PiecePrototype::shape() const {
     QPainterPath path;
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
     path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
 
     return path;
@@ -30,9 +30,9 @@ void PiecePrototype::paintHelper(QPainter *painter, const QStyleOptionGraphicsIt
     Q_UNUSED(widget);
     Q_UNUSED(item);
 
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
 
-    QBrush b = painter->brush();
+    auto b = painter->brush();
 
     // add green highlight if piece is selected
     if (highlighted_) {

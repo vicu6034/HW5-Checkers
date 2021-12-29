@@ -6,14 +6,14 @@
 
 // set Powerup position
 QRectF PowerUp::boundingRect() const {
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
     return QRectF(pos.x, pos.y, RADIUS, RADIUS);
 }
 
 // set Powerup shape
 QPainterPath PowerUp::shape() const {
     QPainterPath path;
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
     path.addEllipse(pos.x, pos.y, RADIUS, RADIUS);
     return path;
 }
@@ -23,9 +23,9 @@ void PowerUp::paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWi
     Q_UNUSED(widget);
     Q_UNUSED(item);
 
-    QBrush b = painter->brush();
+    auto b = painter->brush();
 
-    Position pos = ConvertPosition();
+    auto pos = ConvertPosition();
 
     // add Powerup image
     QString imagetype = is_addPiece_ ? "addpowerup" : "levelpowerup";
