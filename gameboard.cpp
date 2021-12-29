@@ -740,14 +740,14 @@ void GameBoard::doAITurn(int turn) {
                 //pieceSelected_slot(valid_pieces[p_i]);
                 selected_ = valid_pieces[p_i];
                 // get tiles to move to
-                std::vector<Tile*> valid_tiles = getPieceMoves(valid_pieces[p_i]);
-                int t_i = arc4random_uniform(valid_tiles.size());
+                auto valid_tiles = getPieceMoves(valid_pieces[p_i]);
+                auto t_i = arc4random_uniform(valid_tiles.size());
                 tileSelected_slot(valid_tiles[t_i]);
             } else if (difficulty_ == Difficulty::Medium || difficulty_ == Difficulty::Simulation) {
                 // find all the moves we can make
                 std::vector<Move> moves;
-                for (PiecePrototype* piece : valid_pieces) {
-                    for (Position pos : piece->GetPossibleMoves()) {
+                for (const auto& piece : valid_pieces) {
+                    for (const auto& pos : piece->GetPossibleMoves()) {
                         if (checkValidity(pos, piece, piece->get_is_red(), false) != -1) {
                             Tile* tile = tiles_.getTile(pos);
                             moves.push_back(Move{piece, tile, checkValidity(tile->get_position(), piece, piece->get_is_red(), false)});
