@@ -8,9 +8,10 @@
 #ifndef POWERUP_H
 #define POWERUP_H
 
+#include <QGraphicsObject>
 #include <pieceprototype.h>
 
-class PowerUp : public QGraphicsObject //public QObject, public QGraphicsItem
+class PowerUp : public QGraphicsObject
 {
     Q_OBJECT
 
